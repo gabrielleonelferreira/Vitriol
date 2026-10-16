@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vitriol.local/schema/receita.schema.json",
+  "title": "Receita",
+  "description": "Transformação de entradas em saídas numa estação, sob condições.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "nome", "estacao", "processo", "entradas", "saidas", "requer", "tempo_s", "maestria", "xp", "desbloqueio"],
+  "properties": {
+    "id": {"$ref": "comum.schema.json#/$defs/id"},
+    "nome": {"type": "string", "minLength": 1},
+    "estacao": {"$ref": "comum.schema.json#/$defs/id"},
+    "processo": {
+      "enum": ["queima", "pirolise", "fundicao", "reducao", "liga", "cementacao", "calcinacao", "coccao", "mistura", "fusao_vidro", "descarga_eletrica", "montagem"]
+    },
+    "entradas": {"type": "array", "items": {"$ref": "comum.schema.json#/$defs/quantidade"}, "minItems": 1},
+    "saidas": {"type": "array", "items": {"$ref": "comum.schema.json#/$defs/quantidade"}, "minItems": 1},
+    "temperatura_min_c": {"type": ["number", "null"]},
+    "requer": {
+      "description": "Condições alternativas (basta uma). Vazio = sem requisito especial.",
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object", "additionalProperties": false, "required": ["tipo", "id"],
+            "properties": {"tipo": {"const": "magia"}, "id": {"$ref": "comum.schema.json#/$defs/escola"}}
+          },
+          {
+            "type": "object", "additionalProperties": false, "required": ["tipo", "id"],
+            "properties": {"tipo": {"const": "evento"}, "id": {"$ref": "comum.schema.json#/$defs/evento"}}
+          }
+        ]
+      }
+    },
+    "tempo_s": {"description": "Tempo base em segundos, antes do bônus de maestria.", "type": "number", "exclusiveMinimum": 0},
+    "maestria": {"$ref": "comum.schema.json#/$defs/maestria"},
+    "xp": {"description": "XP de maestria ganho a cada execução.", "type": "integer", "minimum": 0},
+    "desbloqueio": {
+      "description": "inicial = disponível desde o começo; xp = libera ao atingir nivel_maestria; experimentacao = descoberta por tentativa e erro.",
+      "enum": ["inicial", "xp", "experimentacao"]
+    },
+    "nivel_maestria": {"type": ["integer", "null"], "minimum": 1},
+    "base_real": {"type": "string"}
+  }
+}

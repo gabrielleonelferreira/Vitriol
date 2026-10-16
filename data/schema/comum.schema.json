@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vitriol.local/schema/comum.schema.json",
+  "title": "Definições comuns",
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$", "maxLength": 48},
+    "tier": {"enum": ["comum", "raro", "epico", "mitico", "primordial"]},
+    "fonte": {
+      "description": "De onde o material vem: mineração, coleta à mão ou com ferramenta, bioma específico, evento de mundo, criatura, processo (receita) ou Abismo Primordial.",
+      "enum": ["mineracao", "coleta", "bioma", "evento", "criatura", "processo", "abismo"]
+    },
+    "maestria": {"enum": ["metalurgia", "quimica", "vidraria", "construcao", "arcano"]},
+    "escola": {"enum": ["ignarquia", "tempestaria", "hibernia", "teluria", "verdancia", "umbra"]},
+    "evento": {"enum": ["tempestade", "eclipse", "chuva_de_meteoros", "erupcao", "aurora"]},
+    "quantidade": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "qtd"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "qtd": {"type": "integer", "minimum": 1}
+      }
+    }
+  }
+}

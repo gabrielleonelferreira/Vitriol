@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vitriol.local/schema/item.schema.json",
+  "title": "Item",
+  "description": "Ferramenta, estação de trabalho ou fenômeno usado como estação (ex.: raio).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "nome", "tipo"],
+  "properties": {
+    "id": {"$ref": "comum.schema.json#/$defs/id"},
+    "nome": {"type": "string", "minLength": 1},
+    "tipo": {"enum": ["ferramenta", "estacao", "fenomeno"]},
+    "material_base": {"anyOf": [{"$ref": "comum.schema.json#/$defs/id"}, {"type": "null"}]},
+    "poder_mineracao": {
+      "description": "Minera blocos com dureza_bloco menor ou igual a este valor. Mãos = 1.",
+      "type": ["number", "null"], "minimum": 0, "maximum": 10
+    },
+    "durabilidade": {"description": "Usos antes de quebrar. Nulo = não desgasta.", "type": ["integer", "null"], "minimum": 1},
+    "temperatura_max_c": {"description": "Temperatura máxima que a estação alcança (°C).", "type": ["number", "null"]},
+    "descricao": {"type": "string"}
+  }
+}
