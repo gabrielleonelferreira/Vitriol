@@ -1,0 +1,145 @@
+{
+  "versao": 1,
+  "itens": [
+    {
+      "id": "mao",
+      "nome": "Mãos",
+      "tipo": "estacao",
+      "material_base": null,
+      "poder_mineracao": 1,
+      "durabilidade": null,
+      "temperatura_max_c": null,
+      "descricao": "Fazer à mão, sem estação. Minera blocos de dureza até 1."
+    },
+    {
+      "id": "fogueira",
+      "nome": "Fogueira",
+      "tipo": "estacao",
+      "material_base": "madeira",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": 600,
+      "descricao": "Queima madeira. Luz e calor básicos."
+    },
+    {
+      "id": "bancada",
+      "nome": "Bancada",
+      "tipo": "estacao",
+      "material_base": "madeira",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": null,
+      "descricao": "Montagem de ferramentas e misturas."
+    },
+    {
+      "id": "fornalha",
+      "nome": "Fornalha de argila",
+      "tipo": "estacao",
+      "material_base": "argila",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": 1250,
+      "descricao": "Forno de redução a carvão vegetal, com fole. Funde e reduz minérios."
+    },
+    {
+      "id": "forno",
+      "nome": "Forno de tijolos",
+      "tipo": "estacao",
+      "material_base": "tijolo",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": 1200,
+      "descricao": "Calcinação, coqueificação e cozimento de cerâmica."
+    },
+    {
+      "id": "forno_de_vidro",
+      "nome": "Forno de vidro",
+      "tipo": "estacao",
+      "material_base": "tijolo_refratario",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": 1400,
+      "descricao": "Funde vidro. Revestido de tijolo refratário."
+    },
+    {
+      "id": "raio",
+      "nome": "Raio",
+      "tipo": "fenomeno",
+      "material_base": null,
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": 30000,
+      "descricao": "Descarga de tempestade ou da Tempestária. Chega a cerca de 30.000 °C."
+    },
+    {
+      "id": "picareta_silex",
+      "nome": "Picareta de sílex",
+      "tipo": "ferramenta",
+      "material_base": "silex",
+      "poder_mineracao": 4,
+      "durabilidade": 40,
+      "temperatura_max_c": null,
+      "descricao": "Dura, mas quebra fácil."
+    },
+    {
+      "id": "picareta_cobre",
+      "nome": "Picareta de cobre",
+      "tipo": "ferramenta",
+      "material_base": "lingote_cobre",
+      "poder_mineracao": 4,
+      "durabilidade": 150,
+      "temperatura_max_c": null,
+      "descricao": "Mesma força do sílex e muito mais durável."
+    },
+    {
+      "id": "picareta_bronze",
+      "nome": "Picareta de bronze",
+      "tipo": "ferramenta",
+      "material_base": "bronze",
+      "poder_mineracao": 5,
+      "durabilidade": 300,
+      "temperatura_max_c": null,
+      "descricao": "Abre caminho pela camada Metamórfica."
+    },
+    {
+      "id": "picareta_ferro",
+      "nome": "Picareta de ferro",
+      "tipo": "ferramenta",
+      "material_base": "lingote_ferro",
+      "poder_mineracao": 6,
+      "durabilidade": 500,
+      "temperatura_max_c": null,
+      "descricao": "Minera hematita."
+    },
+    {
+      "id": "picareta_aco",
+      "nome": "Picareta de aço",
+      "tipo": "ferramenta",
+      "material_base": "aco",
+      "poder_mineracao": 7.5,
+      "durabilidade": 1000,
+      "temperatura_max_c": null,
+      "descricao": "Minera quartzo."
+    },
+    {
+      "id": "bateia",
+      "nome": "Bateia",
+      "tipo": "ferramenta",
+      "material_base": "madeira",
+      "poder_mineracao": null,
+      "durabilidade": 200,
+      "temperatura_max_c": null,
+      "descricao": "Prato raso para garimpar cascalho de rio."
+    },
+    {
+      "id": "balde",
+      "nome": "Balde",
+      "tipo": "ferramenta",
+      "material_base": "madeira",
+      "poder_mineracao": null,
+      "durabilidade": 300,
+      "temperatura_max_c": null,
+      "descricao": "Carrega água."
+    }
+  ]
+}

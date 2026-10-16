@@ -1,0 +1,32 @@
+id,nome,estacao,processo,entradas,saidas,temperatura_min_c,requer,tempo_s,maestria,xp,desbloqueio,nivel_maestria,base_real
+fazer_fogueira,Fogueira,mao,montagem,madeira:3,fogueira:1,,,3,construcao,1,inicial,,
+fazer_bancada,Bancada,mao,montagem,madeira:4,bancada:1,,,4,construcao,1,inicial,,
+fazer_picareta_silex,Picareta de sílex,mao,montagem,silex:2;madeira:1,picareta_silex:1,,,3,construcao,2,inicial,,Ferramentas de pedra lascada.
+fazer_bateia,Bateia,bancada,montagem,madeira:2,bateia:1,,,3,construcao,1,inicial,,Garimpo de aluvião.
+fazer_balde,Balde,bancada,montagem,madeira:3,balde:1,,,3,construcao,1,inicial,,
+queimar_madeira,Queimar madeira,fogueira,queima,madeira:1,cinzas:1,400,,5,quimica,1,inicial,,Cinza de madeira é rica em potassa.
+fazer_fornalha,Fornalha de argila,bancada,montagem,argila:6;calcario:2,fornalha:1,,,6,construcao,3,inicial,,Fornos de redução antigos eram feitos de argila.
+carvoaria,Carvoaria,fornalha,pirolise,madeira:2,carvao_vegetal:1,400,,10,metalurgia,2,inicial,,"Madeira aquecida com pouco ar, a cerca de 400 °C, vira carvão vegetal."
+fundir_cobre,Fundir cobre,fornalha,fundicao,malaquita:2;carvao_vegetal:1,lingote_cobre:1,1085,,8,metalurgia,5,inicial,,O cobre funde a 1.085 °C.
+fazer_picareta_cobre,Picareta de cobre,bancada,montagem,lingote_cobre:3;madeira:2,picareta_cobre:1,,,5,metalurgia,3,inicial,,
+cozer_tijolo,Cozer tijolo,fornalha,coccao,argila:2,tijolo:1,900,,8,construcao,3,inicial,,Argila cozida a cerca de 900 °C vira cerâmica.
+fazer_forno,Forno de tijolos,bancada,montagem,tijolo:8;argila:2,forno:1,,,8,construcao,5,inicial,,
+calcinar_calcario,Calcinar calcário,forno,calcinacao,calcario:2,cal_virgem:1,900,,10,quimica,6,inicial,,CaCO3 → CaO + CO2: a primeira reação química do jogo.
+reduzir_estanho,Reduzir estanho,fornalha,reducao,cassiterita:2;carvao_vegetal:1,lingote_estanho:1,1000,,8,metalurgia,5,xp,2,O carbono do carvão retira o oxigênio do óxido de estanho.
+ligar_bronze,Ligar bronze,fornalha,liga,lingote_cobre:3;lingote_estanho:1,bronze:4,1085,,10,metalurgia,8,experimentacao,,"Bronze real tem cerca de 10% de estanho; no jogo, 3 para 1."
+fazer_picareta_bronze,Picareta de bronze,bancada,montagem,bronze:3;madeira:2,picareta_bronze:1,,,5,metalurgia,4,inicial,,
+reduzir_limonita,Reduzir limonita,fornalha,reducao,limonita:3;carvao_vegetal:2,lingote_ferro:1,1200,,12,metalurgia,8,xp,2,"No forno de redução, o ferro vira uma esponja sem chegar a derreter."
+fazer_picareta_ferro,Picareta de ferro,bancada,montagem,lingote_ferro:3;madeira:2,picareta_ferro:1,,,5,metalurgia,5,inicial,,
+reduzir_hematita,Reduzir hematita,fornalha,reducao,hematita:2;carvao_vegetal:2,lingote_ferro:2,1200,,12,metalurgia,10,xp,3,
+coqueificar,Coqueificar carvão,forno,pirolise,carvao_mineral:2,coque:1,1000,,10,metalurgia,5,xp,3,Coque é carvão mineral aquecido sem ar.
+reduzir_hematita_coque,Reduzir hematita com coque,fornalha,reducao,hematita:2;coque:1,lingote_ferro:3,1200,,12,metalurgia,12,experimentacao,,O coque substituiu o carvão vegetal na Revolução Industrial.
+cementar_aco,Cementar aço,fornalha,cementacao,lingote_ferro:2;carvao_vegetal:1,aco:1,1100,,20,metalurgia,15,xp,4,O ferro absorve carbono do carvão em alta temperatura e vira aço.
+fazer_picareta_aco,Picareta de aço,bancada,montagem,aco:3;madeira:2,picareta_aco:1,,,5,metalurgia,8,inicial,,
+fundir_prata,Fundir prata,fornalha,fundicao,acantita:2;carvao_vegetal:1,lingote_prata:1,1000,,8,metalurgia,10,xp,3,
+fundir_ouro,Fundir ouro,fornalha,fundicao,ouro_aluvial:3,lingote_ouro:1,1064,,8,metalurgia,10,xp,2,O ouro funde a 1.064 °C.
+fazer_tijolo_refratario,Tijolo refratário,forno,coccao,argila:2;areia:1,tijolo_refratario:1,1200,,12,construcao,6,xp,2,Argila refratária com areia suporta o calor dos fornos.
+misturar_argamassa,Argamassa,bancada,mistura,cal_virgem:1;areia:2;agua:1,argamassa:3,,,4,quimica,3,experimentacao,,A cal reage com o CO2 do ar e endurece.
+fazer_forno_de_vidro,Forno de vidro,bancada,montagem,tijolo_refratario:8;argamassa:2,forno_de_vidro:1,,,8,construcao,8,xp,3,
+fundir_vidro,Fundir vidro,forno_de_vidro,fusao_vidro,areia:3;cal_virgem:1;cinzas:1,vidro:2,1100,,15,vidraria,10,experimentacao,,"Vidro medieval: areia, cal e potassa de cinzas."
+formar_fulgurito,Fulgurito,raio,descarga_eletrica,areia:4,fulgurito:1,1800,evento:tempestade|magia:tempestaria,1,arcano,20,experimentacao,,Fulguritos reais se formam quando raios atingem a areia.
+refinar_vidro_de_tempestade,Vidro de tempestade,forno_de_vidro,fusao_vidro,fulgurito:1;vidro:2,vidro_de_tempestade:1,1400,magia:tempestaria,30,arcano,40,xp,1,

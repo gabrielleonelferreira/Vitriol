@@ -35,6 +35,10 @@ SCHEMA = ROOT / "data" / "schema"
 MAOS = "mao"  # estação implícita: fazer à mão, sem bancada
 PODER_MAOS = 1.0
 
+# Rocha principal de cada camada. Para chegar à camada N, o jogador precisa
+# conseguir minerar a rocha principal de todas as camadas até N.
+ROCHA_DAS_CAMADAS = {1: "terra", 2: "calcario", 3: "xisto"}
+
 
 class Report:
     def __init__(self) -> None:
@@ -241,7 +245,8 @@ def validate_rules(materiais: list[dict], itens: list[dict], receitas: list[dict
 
     used = {p["id"] for r in receitas for p in r["entradas"]}
     for m in materiais:
-        if m["id"] not in used:
+        desperta_escola = m["tier"] == "mitico" and m["escola_afim"]
+        if m["id"] not in used and not desperta_escola:
             report.warn(f"material '{m['id']}' ainda não é usado em nenhuma receita")
 
 
@@ -249,9 +254,25 @@ def simulate_progression(materiais: list[dict], itens: list[dict], receitas: lis
     """Parte de mãos vazias e vê até onde o jogador chega. Devolve as etapas em texto."""
     mat = {m["id"]: m for m in materiais}
     itm = {i["id"]: i for i in itens}
-    have: set[str] = {MAOS}
+    fenomenos = {i["id"] for i in itens if i["tipo"] == "fenomeno"}
+    have: set[str] = {MAOS} | fenomenos
     power = PODER_MAOS
     steps: list[str] = []
+
+    for camada, rocha in ROCHA_DAS_CAMADAS.items():
+        if rocha not in mat or mat[rocha]["dureza_bloco"] is None:
+            report.error(f"progressão: rocha principal da camada {camada} ('{rocha}') não existe ou não é bloco")
+            return steps
+
+    def layer_reachable(camadas: list[int]) -> bool:
+        if not camadas:
+            return True
+        target = min(camadas)
+        return all(
+            mat[ROCHA_DAS_CAMADAS[c]]["dureza_bloco"] <= power
+            for c in ROCHA_DAS_CAMADAS
+            if c <= target
+        )
 
     def requirement_ok(r: dict) -> bool:
         if not r["requer"]:
@@ -282,9 +303,11 @@ def simulate_progression(materiais: list[dict], itens: list[dict], receitas: lis
                 continue
             if m["dureza_bloco"] is not None and m["dureza_bloco"] > power:
                 continue
+            if not layer_reachable(m["camadas"]):
+                continue
             novos.append(m["id"])
         for r in receitas:
-            if r["estacao"] not in have and r["estacao"] != MAOS and itm.get(r["estacao"], {}).get("tipo") != "fenomeno":
+            if r["estacao"] not in have:
                 continue
             if not all(p["id"] in have for p in r["entradas"]):
                 continue

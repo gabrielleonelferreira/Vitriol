@@ -1,0 +1,15 @@
+id,nome,tipo,material_base,poder_mineracao,durabilidade,temperatura_max_c,descricao
+mao,Mãos,estacao,,1,,,"Fazer à mão, sem estação. Minera blocos de dureza até 1."
+fogueira,Fogueira,estacao,madeira,,,600,Queima madeira. Luz e calor básicos.
+bancada,Bancada,estacao,madeira,,,,Montagem de ferramentas e misturas.
+fornalha,Fornalha de argila,estacao,argila,,,1250,"Forno de redução a carvão vegetal, com fole. Funde e reduz minérios."
+forno,Forno de tijolos,estacao,tijolo,,,1200,"Calcinação, coqueificação e cozimento de cerâmica."
+forno_de_vidro,Forno de vidro,estacao,tijolo_refratario,,,1400,Funde vidro. Revestido de tijolo refratário.
+raio,Raio,fenomeno,,,,30000,"Descarga de tempestade ou da Tempestária. Chega a cerca de 30.000 °C."
+picareta_silex,Picareta de sílex,ferramenta,silex,4,40,,"Dura, mas quebra fácil."
+picareta_cobre,Picareta de cobre,ferramenta,lingote_cobre,4,150,,Mesma força do sílex e muito mais durável.
+picareta_bronze,Picareta de bronze,ferramenta,bronze,5,300,,Abre caminho pela camada Metamórfica.
+picareta_ferro,Picareta de ferro,ferramenta,lingote_ferro,6,500,,Minera hematita.
+picareta_aco,Picareta de aço,ferramenta,aco,7.5,1000,,Minera quartzo.
+bateia,Bateia,ferramenta,madeira,,200,,Prato raso para garimpar cascalho de rio.
+balde,Balde,ferramenta,madeira,,300,,Carrega água.

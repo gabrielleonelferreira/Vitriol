@@ -1,0 +1,913 @@
+{
+  "versao": 1,
+  "receitas": [
+    {
+      "id": "fazer_fogueira",
+      "nome": "Fogueira",
+      "estacao": "mao",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 3
+        }
+      ],
+      "saidas": [
+        {
+          "id": "fogueira",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 3,
+      "maestria": "construcao",
+      "xp": 1,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "fazer_bancada",
+      "nome": "Bancada",
+      "estacao": "mao",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 4
+        }
+      ],
+      "saidas": [
+        {
+          "id": "bancada",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 4,
+      "maestria": "construcao",
+      "xp": 1,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "fazer_picareta_silex",
+      "nome": "Picareta de sílex",
+      "estacao": "mao",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "silex",
+          "qtd": 2
+        },
+        {
+          "id": "madeira",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "picareta_silex",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 3,
+      "maestria": "construcao",
+      "xp": 2,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "Ferramentas de pedra lascada."
+    },
+    {
+      "id": "fazer_bateia",
+      "nome": "Bateia",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "bateia",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 3,
+      "maestria": "construcao",
+      "xp": 1,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "Garimpo de aluvião."
+    },
+    {
+      "id": "fazer_balde",
+      "nome": "Balde",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 3
+        }
+      ],
+      "saidas": [
+        {
+          "id": "balde",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 3,
+      "maestria": "construcao",
+      "xp": 1,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "queimar_madeira",
+      "nome": "Queimar madeira",
+      "estacao": "fogueira",
+      "processo": "queima",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "cinzas",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 400,
+      "requer": [],
+      "tempo_s": 5,
+      "maestria": "quimica",
+      "xp": 1,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "Cinza de madeira é rica em potassa."
+    },
+    {
+      "id": "fazer_fornalha",
+      "nome": "Fornalha de argila",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "argila",
+          "qtd": 6
+        },
+        {
+          "id": "calcario",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "fornalha",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 6,
+      "maestria": "construcao",
+      "xp": 3,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "Fornos de redução antigos eram feitos de argila."
+    },
+    {
+      "id": "carvoaria",
+      "nome": "Carvoaria",
+      "estacao": "fornalha",
+      "processo": "pirolise",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "carvao_vegetal",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 400,
+      "requer": [],
+      "tempo_s": 10,
+      "maestria": "metalurgia",
+      "xp": 2,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "Madeira aquecida com pouco ar, a cerca de 400 °C, vira carvão vegetal."
+    },
+    {
+      "id": "fundir_cobre",
+      "nome": "Fundir cobre",
+      "estacao": "fornalha",
+      "processo": "fundicao",
+      "entradas": [
+        {
+          "id": "malaquita",
+          "qtd": 2
+        },
+        {
+          "id": "carvao_vegetal",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "lingote_cobre",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1085,
+      "requer": [],
+      "tempo_s": 8,
+      "maestria": "metalurgia",
+      "xp": 5,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "O cobre funde a 1.085 °C."
+    },
+    {
+      "id": "fazer_picareta_cobre",
+      "nome": "Picareta de cobre",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "lingote_cobre",
+          "qtd": 3
+        },
+        {
+          "id": "madeira",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "picareta_cobre",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 5,
+      "maestria": "metalurgia",
+      "xp": 3,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "cozer_tijolo",
+      "nome": "Cozer tijolo",
+      "estacao": "fornalha",
+      "processo": "coccao",
+      "entradas": [
+        {
+          "id": "argila",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "tijolo",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 900,
+      "requer": [],
+      "tempo_s": 8,
+      "maestria": "construcao",
+      "xp": 3,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "Argila cozida a cerca de 900 °C vira cerâmica."
+    },
+    {
+      "id": "fazer_forno",
+      "nome": "Forno de tijolos",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "tijolo",
+          "qtd": 8
+        },
+        {
+          "id": "argila",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "forno",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 8,
+      "maestria": "construcao",
+      "xp": 5,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "calcinar_calcario",
+      "nome": "Calcinar calcário",
+      "estacao": "forno",
+      "processo": "calcinacao",
+      "entradas": [
+        {
+          "id": "calcario",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "cal_virgem",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 900,
+      "requer": [],
+      "tempo_s": 10,
+      "maestria": "quimica",
+      "xp": 6,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "CaCO3 → CaO + CO2: a primeira reação química do jogo."
+    },
+    {
+      "id": "reduzir_estanho",
+      "nome": "Reduzir estanho",
+      "estacao": "fornalha",
+      "processo": "reducao",
+      "entradas": [
+        {
+          "id": "cassiterita",
+          "qtd": 2
+        },
+        {
+          "id": "carvao_vegetal",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "lingote_estanho",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1000,
+      "requer": [],
+      "tempo_s": 8,
+      "maestria": "metalurgia",
+      "xp": 5,
+      "desbloqueio": "xp",
+      "nivel_maestria": 2,
+      "base_real": "O carbono do carvão retira o oxigênio do óxido de estanho."
+    },
+    {
+      "id": "ligar_bronze",
+      "nome": "Ligar bronze",
+      "estacao": "fornalha",
+      "processo": "liga",
+      "entradas": [
+        {
+          "id": "lingote_cobre",
+          "qtd": 3
+        },
+        {
+          "id": "lingote_estanho",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "bronze",
+          "qtd": 4
+        }
+      ],
+      "temperatura_min_c": 1085,
+      "requer": [],
+      "tempo_s": 10,
+      "maestria": "metalurgia",
+      "xp": 8,
+      "desbloqueio": "experimentacao",
+      "nivel_maestria": null,
+      "base_real": "Bronze real tem cerca de 10% de estanho; no jogo, 3 para 1."
+    },
+    {
+      "id": "fazer_picareta_bronze",
+      "nome": "Picareta de bronze",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "bronze",
+          "qtd": 3
+        },
+        {
+          "id": "madeira",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "picareta_bronze",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 5,
+      "maestria": "metalurgia",
+      "xp": 4,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "reduzir_limonita",
+      "nome": "Reduzir limonita",
+      "estacao": "fornalha",
+      "processo": "reducao",
+      "entradas": [
+        {
+          "id": "limonita",
+          "qtd": 3
+        },
+        {
+          "id": "carvao_vegetal",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "lingote_ferro",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1200,
+      "requer": [],
+      "tempo_s": 12,
+      "maestria": "metalurgia",
+      "xp": 8,
+      "desbloqueio": "xp",
+      "nivel_maestria": 2,
+      "base_real": "No forno de redução, o ferro vira uma esponja sem chegar a derreter."
+    },
+    {
+      "id": "fazer_picareta_ferro",
+      "nome": "Picareta de ferro",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "lingote_ferro",
+          "qtd": 3
+        },
+        {
+          "id": "madeira",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "picareta_ferro",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 5,
+      "maestria": "metalurgia",
+      "xp": 5,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "reduzir_hematita",
+      "nome": "Reduzir hematita",
+      "estacao": "fornalha",
+      "processo": "reducao",
+      "entradas": [
+        {
+          "id": "hematita",
+          "qtd": 2
+        },
+        {
+          "id": "carvao_vegetal",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "lingote_ferro",
+          "qtd": 2
+        }
+      ],
+      "temperatura_min_c": 1200,
+      "requer": [],
+      "tempo_s": 12,
+      "maestria": "metalurgia",
+      "xp": 10,
+      "desbloqueio": "xp",
+      "nivel_maestria": 3,
+      "base_real": ""
+    },
+    {
+      "id": "coqueificar",
+      "nome": "Coqueificar carvão",
+      "estacao": "forno",
+      "processo": "pirolise",
+      "entradas": [
+        {
+          "id": "carvao_mineral",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "coque",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1000,
+      "requer": [],
+      "tempo_s": 10,
+      "maestria": "metalurgia",
+      "xp": 5,
+      "desbloqueio": "xp",
+      "nivel_maestria": 3,
+      "base_real": "Coque é carvão mineral aquecido sem ar."
+    },
+    {
+      "id": "reduzir_hematita_coque",
+      "nome": "Reduzir hematita com coque",
+      "estacao": "fornalha",
+      "processo": "reducao",
+      "entradas": [
+        {
+          "id": "hematita",
+          "qtd": 2
+        },
+        {
+          "id": "coque",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "lingote_ferro",
+          "qtd": 3
+        }
+      ],
+      "temperatura_min_c": 1200,
+      "requer": [],
+      "tempo_s": 12,
+      "maestria": "metalurgia",
+      "xp": 12,
+      "desbloqueio": "experimentacao",
+      "nivel_maestria": null,
+      "base_real": "O coque substituiu o carvão vegetal na Revolução Industrial."
+    },
+    {
+      "id": "cementar_aco",
+      "nome": "Cementar aço",
+      "estacao": "fornalha",
+      "processo": "cementacao",
+      "entradas": [
+        {
+          "id": "lingote_ferro",
+          "qtd": 2
+        },
+        {
+          "id": "carvao_vegetal",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "aco",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1100,
+      "requer": [],
+      "tempo_s": 20,
+      "maestria": "metalurgia",
+      "xp": 15,
+      "desbloqueio": "xp",
+      "nivel_maestria": 4,
+      "base_real": "O ferro absorve carbono do carvão em alta temperatura e vira aço."
+    },
+    {
+      "id": "fazer_picareta_aco",
+      "nome": "Picareta de aço",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "aco",
+          "qtd": 3
+        },
+        {
+          "id": "madeira",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "picareta_aco",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 5,
+      "maestria": "metalurgia",
+      "xp": 8,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "fundir_prata",
+      "nome": "Fundir prata",
+      "estacao": "fornalha",
+      "processo": "fundicao",
+      "entradas": [
+        {
+          "id": "acantita",
+          "qtd": 2
+        },
+        {
+          "id": "carvao_vegetal",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "lingote_prata",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1000,
+      "requer": [],
+      "tempo_s": 8,
+      "maestria": "metalurgia",
+      "xp": 10,
+      "desbloqueio": "xp",
+      "nivel_maestria": 3,
+      "base_real": ""
+    },
+    {
+      "id": "fundir_ouro",
+      "nome": "Fundir ouro",
+      "estacao": "fornalha",
+      "processo": "fundicao",
+      "entradas": [
+        {
+          "id": "ouro_aluvial",
+          "qtd": 3
+        }
+      ],
+      "saidas": [
+        {
+          "id": "lingote_ouro",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1064,
+      "requer": [],
+      "tempo_s": 8,
+      "maestria": "metalurgia",
+      "xp": 10,
+      "desbloqueio": "xp",
+      "nivel_maestria": 2,
+      "base_real": "O ouro funde a 1.064 °C."
+    },
+    {
+      "id": "fazer_tijolo_refratario",
+      "nome": "Tijolo refratário",
+      "estacao": "forno",
+      "processo": "coccao",
+      "entradas": [
+        {
+          "id": "argila",
+          "qtd": 2
+        },
+        {
+          "id": "areia",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "tijolo_refratario",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1200,
+      "requer": [],
+      "tempo_s": 12,
+      "maestria": "construcao",
+      "xp": 6,
+      "desbloqueio": "xp",
+      "nivel_maestria": 2,
+      "base_real": "Argila refratária com areia suporta o calor dos fornos."
+    },
+    {
+      "id": "misturar_argamassa",
+      "nome": "Argamassa",
+      "estacao": "bancada",
+      "processo": "mistura",
+      "entradas": [
+        {
+          "id": "cal_virgem",
+          "qtd": 1
+        },
+        {
+          "id": "areia",
+          "qtd": 2
+        },
+        {
+          "id": "agua",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "argamassa",
+          "qtd": 3
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 4,
+      "maestria": "quimica",
+      "xp": 3,
+      "desbloqueio": "experimentacao",
+      "nivel_maestria": null,
+      "base_real": "A cal reage com o CO2 do ar e endurece."
+    },
+    {
+      "id": "fazer_forno_de_vidro",
+      "nome": "Forno de vidro",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "tijolo_refratario",
+          "qtd": 8
+        },
+        {
+          "id": "argamassa",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "forno_de_vidro",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 8,
+      "maestria": "construcao",
+      "xp": 8,
+      "desbloqueio": "xp",
+      "nivel_maestria": 3,
+      "base_real": ""
+    },
+    {
+      "id": "fundir_vidro",
+      "nome": "Fundir vidro",
+      "estacao": "forno_de_vidro",
+      "processo": "fusao_vidro",
+      "entradas": [
+        {
+          "id": "areia",
+          "qtd": 3
+        },
+        {
+          "id": "cal_virgem",
+          "qtd": 1
+        },
+        {
+          "id": "cinzas",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "vidro",
+          "qtd": 2
+        }
+      ],
+      "temperatura_min_c": 1100,
+      "requer": [],
+      "tempo_s": 15,
+      "maestria": "vidraria",
+      "xp": 10,
+      "desbloqueio": "experimentacao",
+      "nivel_maestria": null,
+      "base_real": "Vidro medieval: areia, cal e potassa de cinzas."
+    },
+    {
+      "id": "formar_fulgurito",
+      "nome": "Fulgurito",
+      "estacao": "raio",
+      "processo": "descarga_eletrica",
+      "entradas": [
+        {
+          "id": "areia",
+          "qtd": 4
+        }
+      ],
+      "saidas": [
+        {
+          "id": "fulgurito",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1800,
+      "requer": [
+        {
+          "tipo": "evento",
+          "id": "tempestade"
+        },
+        {
+          "tipo": "magia",
+          "id": "tempestaria"
+        }
+      ],
+      "tempo_s": 1,
+      "maestria": "arcano",
+      "xp": 20,
+      "desbloqueio": "experimentacao",
+      "nivel_maestria": null,
+      "base_real": "Fulguritos reais se formam quando raios atingem a areia."
+    },
+    {
+      "id": "refinar_vidro_de_tempestade",
+      "nome": "Vidro de tempestade",
+      "estacao": "forno_de_vidro",
+      "processo": "fusao_vidro",
+      "entradas": [
+        {
+          "id": "fulgurito",
+          "qtd": 1
+        },
+        {
+          "id": "vidro",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "vidro_de_tempestade",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": 1400,
+      "requer": [
+        {
+          "tipo": "magia",
+          "id": "tempestaria"
+        }
+      ],
+      "tempo_s": 30,
+      "maestria": "arcano",
+      "xp": 40,
+      "desbloqueio": "xp",
+      "nivel_maestria": 1,
+      "base_real": ""
+    }
+  ]
+}

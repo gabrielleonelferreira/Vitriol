@@ -1,0 +1,35 @@
+id,nome,categoria,tier,dureza_bloco,dureza_mohs,densidade_g_cm3,ponto_fusao_c,condutividade,afinidade_arcana,escola_afim,fonte,fonte_detalhe,ferramenta_coleta,camadas,maestria,xp_descoberta,base_real,descricao
+terra,Terra,bloco,comum,1,,1.3,,1,0,,mineracao,Superfície e camada Solo,,1,construcao,1,"Solo de minerais e matéria orgânica.",Bloco básico da superfície.
+argila,Argila,mineral,comum,1,2,1.8,1750,1,0,,mineracao,Margens de rio e camada Solo,,1,construcao,3,"Argila de caulinita; vira cerâmica quando cozida.",Moldável quando úmida.
+areia,Areia,mineral,comum,1,7,1.6,1713,0,0,,mineracao,Margens de rio e camada Solo,,1,vidraria,2,"Grãos de quartzo (SiO2), matéria-prima do vidro.",Solta e fina.
+silex,Sílex,mineral,comum,1,7,2.6,1713,0,0,,mineracao,Nódulos soltos na camada Solo,,1,construcao,3,"Pederneira: quebra em lascas afiadas, usada em ferramentas desde a Pré-História.",A primeira ferramenta do alquimista.
+madeira,Madeira,organico,comum,,,0.6,,0,0,,coleta,Árvores das Planícies,,,construcao,1,"Madeira de lei das Planícies.",Combustível e material de construção.
+agua,Água,liquido,comum,,,1.0,0,1,0,,coleta,Rios e lagos,balde,,quimica,1,H2O.,Necessária em misturas.
+calcario,Calcário,mineral,comum,3,3,2.7,,0,0,,mineracao,Rocha principal da camada Sedimentar,,2,construcao,3,"Carbonato de cálcio (CaCO3), formado por conchas e corais antigos.",Base da cal.
+carvao_mineral,Carvão mineral,combustivel,comum,2.5,2,1.35,,1,0,,mineracao,Veios na camada Sedimentar,,2,metalurgia,5,"Rocha formada por plantas soterradas há milhões de anos.",Queima forte e longa.
+malaquita,Malaquita,minerio,comum,3.5,3.75,3.9,,1,0,,mineracao,Afloramentos verdes no Solo e veios na Sedimentar,,1;2,metalurgia,8,"Carbonato de cobre verde; minério de cobre usado desde cerca de 5000 a.C.",Minério de cobre.
+cassiterita,Cassiterita,minerio,comum,1,6.5,6.9,,0,0,,coleta,Cascalho de rio (estanho aluvial),bateia,1,metalurgia,10,"Óxido de estanho (SnO2); na Antiguidade vinha de depósitos aluviais em rios.",Minério de estanho garimpado em rios.
+limonita,Limonita,minerio,comum,2,4.5,3.8,,0,0,,mineracao,"Ferro de pântano, nas áreas alagadas das Planícies",,1,metalurgia,10,"Minério de ferro de pântano; primeira fonte de ferro de muitos povos.",Minério de ferro mole e terroso.
+xisto,Xisto,bloco,comum,5,,2.8,,0,0,,mineracao,Rocha principal da camada Metamórfica,,3,construcao,3,"Rocha metamórfica em lâminas, formada por calor e pressão.",Exige picareta de bronze.
+hematita,Hematita,minerio,comum,6,6,5.3,1565,1,0,,mineracao,Ferro em faixas na camada Metamórfica,,3,metalurgia,15,"Óxido de ferro (Fe2O3), principal minério de ferro do mundo.",Minério de ferro rico.
+quartzo,Quartzo,mineral,comum,7,7,2.65,1713,0,3,tempestaria,mineracao,Veios na camada Metamórfica,,3,vidraria,15,"Cristal de sílica; piezoelétrico: gera carga elétrica sob pressão.",Ressoa com raios.
+acantita,Acantita,minerio,raro,3,2.25,7.2,836,2,0,,mineracao,Veios raros na camada Metamórfica,,3,metalurgia,25,"Sulfeto de prata (Ag2S), principal minério de prata.",Minério de prata.
+ouro_aluvial,Ouro aluvial,minerio,raro,1,2.75,19.3,1064,7,0,,coleta,Pepitas no cascalho de rio,bateia,1,metalurgia,25,"Ouro de aluvião, garimpado em rios com bateia.",Pepitas de ouro.
+carvao_vegetal,Carvão vegetal,combustivel,comum,,,0.4,,1,0,,processo,Pirólise de madeira na fornalha,,,metalurgia,5,"Madeira aquecida com pouco ar; combustível das primeiras fundições.",Combustível da fornalha.
+cinzas,Cinzas,quimico,comum,,,0.6,,0,0,,processo,Queima de madeira na fogueira,,,quimica,3,"Cinza de madeira contém potassa (K2CO3), fundente do vidro antigo.",Fundente para vidro.
+coque,Coque,combustivel,comum,,,1.0,,2,0,,processo,Coqueificação de carvão mineral no forno,,,metalurgia,10,"Carvão mineral aquecido sem ar; combustível do alto-forno.",Combustível de alta temperatura.
+lingote_cobre,Lingote de cobre,metal,comum,,3,8.96,1085,9,4,tempestaria,processo,Fundição de malaquita,,,metalurgia,10,"Cobre: ótimo condutor, metal das primeiras ligas.",Conduz raios.
+lingote_estanho,Lingote de estanho,metal,comum,,1.5,7.31,232,2,0,,processo,Redução de cassiterita,,,metalurgia,10,"Estanho: metal mole, essencial para o bronze.",Metal mole.
+bronze,Bronze,metal,comum,,3.5,8.8,950,2,2,,processo,Liga de cobre e estanho,,,metalurgia,20,"Cobre com cerca de 10% de estanho; deu nome à Idade do Bronze.",Liga resistente.
+lingote_ferro,Lingote de ferro,metal,comum,,4,7.87,1538,2,0,,processo,Redução de minério de ferro com carvão,,,metalurgia,20,"Ferro de forno de redução (ferro-esponja), obtido sem derreter.",Metal forte e comum.
+aco,Aço,metal,comum,,6,7.85,1450,1,0,,processo,Cementação do ferro com carvão,,,metalurgia,30,"Ferro com 0,2% a 2% de carbono: mais duro e resistente.",O melhor metal comum.
+lingote_prata,Lingote de prata,metal,raro,,2.5,10.49,962,10,3,,processo,Fundição de acantita,,,metalurgia,25,"Prata: o melhor condutor elétrico entre os metais.",Metal precioso.
+lingote_ouro,Lingote de ouro,metal,raro,,2.75,19.3,1064,7,4,,processo,Fusão de ouro aluvial,,,metalurgia,25,"Ouro: não oxida e é muito maleável.",Metal precioso.
+cal_virgem,Cal virgem,quimico,comum,,,3.34,2613,0,0,,processo,Calcinação de calcário no forno,,,quimica,10,"Óxido de cálcio: CaCO3 → CaO + CO2, acima de cerca de 825 °C.",Base de argamassa e vidro.
+argamassa,Argamassa,bloco,comum,3,,1.9,,0,0,,processo,"Mistura de cal, areia e água",,,construcao,5,"Cal, areia e água; endurece absorvendo CO2 do ar.",Une blocos.
+tijolo,Tijolo,bloco,comum,4,,1.9,,0,0,,processo,Cozimento de argila,,,construcao,5,"Argila cozida a cerca de 900 °C.",Bloco de construção.
+tijolo_refratario,Tijolo refratário,bloco,comum,5,,2.2,1600,0,0,,processo,Argila com areia cozida em alta temperatura,,,construcao,10,"Tijolo de argila refratária; reveste fornos e resiste a temperaturas extremas.",Reveste fornos.
+vidro,Vidro,vidro,comum,1,5.5,2.5,1400,0,1,,processo,"Fusão de areia com cal e cinzas",,,vidraria,15,"Vidro de sílica, cal e potassa, como o vidro medieval.",Transparente e frágil.
+pena_ave_trovao,Pena de Ave-Trovão,magico,mitico,,,,,8,10,tempestaria,evento,"Cai durante tempestades (fonte provisória do MVP; na versão final, vem da Ave-Trovão)",,,arcano,100,Fantasia.,"Ao ser tocada, desperta a escola Tempestária."
+fulgurito,Fulgurito,mineral,raro,,6,1.5,1713,0,6,tempestaria,processo,Raio sobre areia,,,arcano,30,"Vidro natural formado quando um raio funde a areia, acima de 1.800 °C.",Guarda o eco do raio.
+vidro_de_tempestade,Vidro de tempestade,vidro,epico,1,6,2.4,1713,8,9,tempestaria,processo,Fulgurito refinado com magia Tempestária,,,arcano,60,"Parte do fulgurito real; o refino e a carga elétrica são fantasia.",Armazena e dispara raios.
