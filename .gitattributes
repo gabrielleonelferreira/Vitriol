@@ -1,0 +1,7 @@
+# Normaliza finais de linha para evitar conflitos entre Windows e Linux
+* text=auto eol=lf
+
+*.png binary
+*.aseprite binary
+*.wav binary
+*.ogg binary

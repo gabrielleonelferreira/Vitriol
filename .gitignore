@@ -1,0 +1,14 @@
+# Godot 4
+.godot/
+/android/
+*.translation
+export.cfg
+export_credentials.cfg
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Python (ferramentas)
+__pycache__/
+*.pyc
