@@ -37,6 +37,8 @@ var _station_chosen := false
 var _mix: Dictionary = {}
 var _have: Dictionary = {}
 var _known: Dictionary = {}
+var _context: Dictionary = {}
+var _schools_label: Label
 
 
 func setup(game_data: DataStore, owner_hud: Hud) -> void:
@@ -58,6 +60,10 @@ func setup(game_data: DataStore, owner_hud: Hud) -> void:
 		tab.pressed.connect(_show_tab.bind(i))
 		add_child(tab)
 		_tabs.append(tab)
+	_schools_label = hud.make_label("", 8)
+	_schools_label.position = Vector2(100, 2)
+	_schools_label.add_theme_color_override("font_color", Color("7ad8ff"))
+	add_child(_schools_label)
 	_mastery_label = hud.make_label("", 8)
 	_mastery_label.position = Vector2(6, 13)
 	_mastery_label.add_theme_color_override("font_color", Color("f2d36b"))
@@ -250,9 +256,15 @@ static func _clear(box: Node) -> void:
 
 ## Atualiza com o estado atual: espaços do inventário, XP, estações por perto e fila.
 func refresh(
-	slots: Array, mastery: Dictionary, stations: Dictionary, queue: Array, known: Dictionary = {}
+	slots: Array,
+	mastery: Dictionary,
+	stations: Dictionary,
+	queue: Array,
+	known: Dictionary = {},
+	schools: Dictionary = {}
 ) -> void:
 	_known = known
+	_context = {"escolas": schools}
 	var inventory := Inventory.new(data)
 	inventory.load_array(slots)
 	_have.clear()
@@ -264,6 +276,10 @@ func refresh(
 		var xp := int(mastery.get(area, 0))
 		levels.append("%s %d" % [Mastery.display_name(area), Mastery.level_for(xp)])
 	_mastery_label.text = "Maestria: " + "  ·  ".join(levels)
+	var awake: PackedStringArray = []
+	for school in schools:
+		awake.append(Mastery.display_name(school))
+	_schools_label.text = "Escola: " + ", ".join(awake) if not awake.is_empty() else ""
 	if queue.is_empty():
 		_queue_label.text = "Fila vazia"
 		_cancel_button.visible = false
@@ -362,7 +378,7 @@ func _paint_row(
 	row: Dictionary, inventory: Inventory, mastery: Dictionary, stations: Dictionary
 ) -> void:
 	var recipe: Dictionary = data.recipes[row["id"]]
-	var status := Crafting.status(recipe, data, inventory, mastery, _known, stations)
+	var status := Crafting.status(recipe, data, inventory, mastery, _known, stations, _context)
 	var xp := int(mastery.get(recipe["maestria"], 0))
 	row["time"].text = "%ss" % _fmt(Mastery.craft_seconds(float(recipe["tempo_s"]), xp))
 	var secret: bool = recipe["desbloqueio"] == "experimentacao"

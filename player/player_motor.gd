@@ -33,6 +33,8 @@ const CLIMB_SPEED := 90.0
 const CLIMB_SIDE_SPEED := 45.0
 ## Tempo ignorando plataformas depois de apertar para baixo (para cair através delas).
 const DROP_TIME := 0.22
+## Força do salto do vento em relação ao pulo normal.
+const AIR_JUMP_SCALE := 0.85
 
 var position: Vector2 = Vector2.ZERO
 var velocity: Vector2 = Vector2.ZERO
@@ -40,10 +42,15 @@ var on_floor: bool = false
 var in_water: bool = false
 var facing: int = 1
 var climbing: bool = false
+## Pulos extras no ar (salto do vento da Tempestária = 1).
+var air_jumps: int = 0
+## Acabou de dar um salto no ar (para o personagem mostrar o vento).
+var air_jumped: bool = false
 
 var _coyote: float = 0.0
 var _buffer: float = 0.0
 var _drop: float = 0.0
+var _air_left: int = 0
 
 
 ## Avança a física. `move` vai de -1 (esquerda) a 1 (direita); pular também sobe escadas e
@@ -63,6 +70,9 @@ func step(
 		_buffer = maxf(_buffer - delta, 0.0)
 	_coyote = COYOTE_TIME if on_floor else maxf(_coyote - delta, 0.0)
 	_drop = maxf(_drop - delta, 0.0)
+	air_jumped = false
+	if on_floor or climbing or in_water:
+		_air_left = air_jumps
 
 	var on_climbable := overlaps_climbable(grid, position)
 	if climbing and not on_climbable:
@@ -121,6 +131,11 @@ func _vertical(jump_held: bool, delta: float) -> void:
 		_buffer = 0.0
 		_coyote = 0.0
 		on_floor = false
+	elif _buffer > 0.0 and _air_left > 0 and not on_floor:
+		velocity.y = -JUMP_SPEED * AIR_JUMP_SCALE
+		_buffer = 0.0
+		_air_left -= 1
+		air_jumped = true
 	var gravity := GRAVITY
 	if velocity.y < 0.0 and not jump_held:
 		gravity *= RELEASE_GRAVITY_SCALE

@@ -49,20 +49,23 @@
     "vidro_de_tempestade": {
       "linha": 12
     },
-    "folhas": {
+    "fulgurito": {
       "linha": 13
     },
-    "tronco": {
+    "folhas": {
       "linha": 14
     },
-    "tronco_base": {
+    "tronco": {
       "linha": 15
     },
-    "agua": {
+    "tronco_base": {
       "linha": 16
     },
-    "agua_topo": {
+    "agua": {
       "linha": 17
+    },
+    "agua_topo": {
+      "linha": 18
     }
   },
   "paredes": {
@@ -89,6 +92,9 @@
     },
     "rocha_base": {
       "linha": 7
+    },
+    "fulgurito": {
+      "linha": 8
     }
   },
   "minerios": {

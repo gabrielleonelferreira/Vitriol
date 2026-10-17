@@ -57,6 +57,27 @@ func _initialize() -> void:
 		{"wait": 2, "do": _check_save},
 		{"wait": 2, "do": quit},
 	]
+	if script == "tempestade":
+		_steps = [
+			{"wait": 90, "do": _go_to_flat},
+			{"wait": 2, "do": _sand_patch},
+			{"wait": 4, "do": _storm_start},
+			{"wait": 240, "do": _shot.bind("30_tempestade_chegando")},
+			{"wait": 1, "do": _bolt_on_sand.bind(0)},
+			{"wait": 3, "do": _shot.bind("31_raio_na_areia")},
+			{"wait": 40, "do": _shot.bind("32_fulgurito_brilhando")},
+			{"wait": 2, "do": _feather},
+			{"wait": 30, "do": _shot.bind("33_pena_caida")},
+			{"wait": 2, "do": _awaken},
+			{"wait": 10, "do": _shot.bind("34_tempestaria_desperta")},
+			{"wait": 2, "do": _cast_on_sand},
+			{"wait": 3, "do": _shot.bind("35_raio_invocado")},
+			{"wait": 2, "do": _night_on_surface},
+			{"wait": 2, "do": _bolt_on_sand.bind(4)},
+			{"wait": 3, "do": _shot.bind("36_raio_a_noite")},
+			{"wait": 60, "do": _shot.bind("37_noite_tempestade")},
+			{"wait": 2, "do": quit},
+		]
 	if script == "experimento":
 		_steps = [
 			{"wait": 90, "do": _go_to_flat},
@@ -327,6 +348,41 @@ func _place_as(player: PlayerState, item: String, tile: Vector2i, stand: Vector2
 				]
 			)
 		)
+
+
+## Faixa de areia no chão, à esquerda do jogador.
+func _sand_patch() -> void:
+	var grid: WorldGrid = _server.world.grid
+	var changes: Array = []
+	var sand := grid.registry.id_of("areia")
+	for x in range(_hut_left + 1, _hut_left + 9):
+		for y in range(grid.surface[x], grid.surface[x] + 3):
+			changes.append(_server.world.set_tile(x, y, sand))
+	_server._emit(Events.BROADCAST, {"type": Events.TILE_CHANGED, "changes": changes})
+
+
+func _storm_start() -> void:
+	_server.weather.start_storm()
+	_server._on_storm_start()
+
+
+func _bolt_on_sand(dx: int) -> void:
+	_server._strike(_hut_left + 3 + dx, 0)
+
+
+func _feather() -> void:
+	_server._drop_feather()
+
+
+func _awaken() -> void:
+	_server._give(_state(), "pena_ave_trovao", 1)
+	_server._send_inventory(_state())
+
+
+func _cast_on_sand() -> void:
+	var grid: WorldGrid = _server.world.grid
+	var x := _hut_left + 7
+	_main._session.cast("raio", Vector2i(x, grid.surface[x]))
 
 
 func _lab_setup() -> void:

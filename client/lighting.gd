@@ -29,9 +29,8 @@ var _texture: ImageTexture
 var _origin := Vector2i(-9999, -9999)
 var _size := Vector2i.ZERO
 var _last_center := Vector2i(-9999, -9999)
-var _held_tile := Vector2i(-9999, -9999)
-var _held_intensity: float = 0.0
-var _held_color: Color = Color.WHITE
+## Luzes pontuais por nome (a tocha na mão, o clarão de um raio): [tile, intensidade, cor].
+var _points: Dictionary = {}
 var _dirty: bool = true
 var _last_daylight: float = -1.0
 
@@ -59,17 +58,27 @@ func tile_changed(x: int, _y: int) -> void:
 	_dirty = true
 
 
-## Luz que o jogador segura (tocha na mão). intensidade 0 = nenhuma.
+## Luz que o jogador segura (tocha na mão). raio 0 = nenhuma.
 func set_held_light(tile: Vector2i, radius: float, color: Color) -> void:
+	set_point_light("mao", tile, radius, color)
+
+
+## Luz pontual com nome (substitui a anterior de mesmo nome). raio 0 = apaga.
+func set_point_light(key: String, tile: Vector2i, radius: float, color: Color) -> void:
 	var intensity := radius * AIR_DECAY
+	var old: Array = _points.get(key, [])
+	if intensity <= 0.0:
+		if not old.is_empty():
+			_points.erase(key)
+			_dirty = true
+		return
 	if (
-		tile != _held_tile
-		or not is_equal_approx(intensity, _held_intensity)
-		or color != _held_color
+		old.is_empty()
+		or old[0] != tile
+		or not is_equal_approx(old[1], intensity)
+		or old[2] != color
 	):
-		_held_tile = tile
-		_held_intensity = intensity
-		_held_color = color
+		_points[key] = [tile, intensity, color]
 		_dirty = true
 
 
@@ -141,11 +150,13 @@ func _compute(origin: Vector2i, size: Vector2i) -> void:
 				g[i] = maxf(g[i], color.g * power)
 				b[i] = maxf(b[i], color.b * power)
 				lit = true
-			if Vector2i(x, y) == _held_tile and _held_intensity > 0.0:
-				r[i] = maxf(r[i], _held_color.r * _held_intensity)
-				g[i] = maxf(g[i], _held_color.g * _held_intensity)
-				b[i] = maxf(b[i], _held_color.b * _held_intensity)
-				lit = true
+			for point in _points.values():
+				if Vector2i(x, y) == point[0]:
+					var shade: Color = point[2]
+					r[i] = maxf(r[i], shade.r * point[1])
+					g[i] = maxf(g[i], shade.g * point[1])
+					b[i] = maxf(b[i], shade.b * point[1])
+					lit = true
 			if lit:
 				queue.append(i)
 

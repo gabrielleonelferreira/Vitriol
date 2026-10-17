@@ -126,6 +126,8 @@ def load_materiais() -> list[dict]:
             "xp_descoberta": _int(r["xp_descoberta"]) or 0,
             "base_real": _text(r["base_real"]),
             "descricao": _text(r["descricao"]),
+            "luz_raio": _num(r.get("luz_raio", "")),
+            "luz_cor": _opt_id(r.get("luz_cor", "")),
         })
     return rows
 

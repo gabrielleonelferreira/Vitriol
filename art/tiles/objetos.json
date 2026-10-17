@@ -56,6 +56,11 @@
       "linha": 10,
       "quadros": 1,
       "fps": 1
+    },
+    "pena_caida": {
+      "linha": 11,
+      "quadros": 2,
+      "fps": 4
     }
   }
 }

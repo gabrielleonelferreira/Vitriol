@@ -501,12 +501,26 @@ def fiber_icon() -> Image.Image:
     return outline(img)
 
 
+def feather_world(frame: int) -> Image.Image:
+    """Pena caída no chão, com brilho elétrico que pisca."""
+    img = new()
+    feather_icon = feather()
+    img.alpha_composite(feather_icon.rotate(-60, resample=Image.NEAREST), (0, 2))
+    d = ImageDraw.Draw(img)
+    sparks = [[(3, 4), (12, 7), (9, 2)], [(4, 8), (13, 3), (2, 2)]][frame]
+    for x, y in sparks:
+        d.point([x, y], fill=c("c8f0ff"))
+    d.point([sparks[0][0] + 1, sparks[0][1]], fill=c("7ad8ff"))
+    return img
+
+
 MOVEMENT_FRAMES = {
     "porta": ([door_half(False, False), door_half(False, True)], 0),
     "porta_alto": ([door_half(True, False), door_half(True, True)], 0),
     "plataforma": ([platform_tile()], 1),
     "escada": ([ladder_tile()], 1),
     "corda": ([rope_tile()], 1),
+    "pena_caida": ([feather_world(0), feather_world(1)], 4),
 }
 
 

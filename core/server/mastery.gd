@@ -11,6 +11,12 @@ const NAMES := {
 	"vidraria": "Vidraria",
 	"construcao": "Construção",
 	"arcano": "Arcano",
+	"ignarquia": "Ignárquia",
+	"tempestaria": "Tempestária",
+	"hibernia": "Hibérnia",
+	"teluria": "Telúria",
+	"verdancia": "Verdância",
+	"umbra": "Umbra",
 }
 ## XP total para chegar a cada nível: nível 1 = 0, nível 2 = 20, nível 3 = 60...
 const LEVEL_XP := [0, 20, 60, 130, 240, 400, 620, 900, 1250, 1700]

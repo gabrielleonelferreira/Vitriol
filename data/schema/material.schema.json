@@ -5,38 +5,155 @@
   "description": "Um material do jogo: bloco minerável, minério, metal, químico, orgânico ou mágico.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "nome", "categoria", "tier", "fonte", "maestria", "xp_descoberta", "condutividade", "afinidade_arcana", "camadas"],
+  "required": [
+    "id",
+    "nome",
+    "categoria",
+    "tier",
+    "fonte",
+    "maestria",
+    "xp_descoberta",
+    "condutividade",
+    "afinidade_arcana",
+    "camadas"
+  ],
   "properties": {
-    "id": {"$ref": "comum.schema.json#/$defs/id"},
-    "nome": {"type": "string", "minLength": 1},
-    "categoria": {"enum": ["bloco", "mineral", "minerio", "metal", "combustivel", "quimico", "organico", "liquido", "vidro", "magico"]},
-    "tier": {"$ref": "comum.schema.json#/$defs/tier"},
+    "id": {
+      "$ref": "comum.schema.json#/$defs/id"
+    },
+    "nome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "categoria": {
+      "enum": [
+        "bloco",
+        "mineral",
+        "minerio",
+        "metal",
+        "combustivel",
+        "quimico",
+        "organico",
+        "liquido",
+        "vidro",
+        "magico"
+      ]
+    },
+    "tier": {
+      "$ref": "comum.schema.json#/$defs/tier"
+    },
     "dureza_bloco": {
       "description": "Esforço para minerar o bloco, de 0 a 10. Rochas usam a dureza Mohs real; agregados soltos (areia, cascalho, aluvião) usam valores baixos. Nulo = não é um bloco do mundo.",
-      "type": ["number", "null"], "minimum": 0, "maximum": 10
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10
     },
     "dureza_mohs": {
       "description": "Dureza real na escala de Mohs, quando existe. Usada na qualidade de equipamentos.",
-      "type": ["number", "null"], "minimum": 0, "maximum": 10
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10
     },
-    "densidade_g_cm3": {"description": "Densidade real (g/cm³). Define o peso.", "type": ["number", "null"], "exclusiveMinimum": 0},
-    "ponto_fusao_c": {"description": "Ponto de fusão real (°C). Define a resistência ao calor.", "type": ["number", "null"]},
-    "condutividade": {"description": "Condutividade elétrica relativa, de 0 a 10 (prata = 10).", "type": "integer", "minimum": 0, "maximum": 10},
-    "afinidade_arcana": {"description": "Afinidade com magia, de 0 a 10.", "type": "integer", "minimum": 0, "maximum": 10},
-    "escola_afim": {"anyOf": [{"$ref": "comum.schema.json#/$defs/escola"}, {"type": "null"}]},
-    "fonte": {"$ref": "comum.schema.json#/$defs/fonte"},
-    "fonte_detalhe": {"type": "string"},
+    "densidade_g_cm3": {
+      "description": "Densidade real (g/cm³). Define o peso.",
+      "type": [
+        "number",
+        "null"
+      ],
+      "exclusiveMinimum": 0
+    },
+    "ponto_fusao_c": {
+      "description": "Ponto de fusão real (°C). Define a resistência ao calor.",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "condutividade": {
+      "description": "Condutividade elétrica relativa, de 0 a 10 (prata = 10).",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "afinidade_arcana": {
+      "description": "Afinidade com magia, de 0 a 10.",
+      "type": "integer",
+      "minimum": 0,
+      "maximum": 10
+    },
+    "escola_afim": {
+      "anyOf": [
+        {
+          "$ref": "comum.schema.json#/$defs/escola"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "fonte": {
+      "$ref": "comum.schema.json#/$defs/fonte"
+    },
+    "fonte_detalhe": {
+      "type": "string"
+    },
     "ferramenta_coleta": {
       "description": "Item necessário para coletar (ex.: bateia para ouro aluvial). Nulo = mãos ou picareta.",
-      "anyOf": [{"$ref": "comum.schema.json#/$defs/id"}, {"type": "null"}]
+      "anyOf": [
+        {
+          "$ref": "comum.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "camadas": {
       "description": "Camadas onde aparece: 1 Solo, 2 Rocha Sedimentar, 3 Rocha Metamórfica, 4 Cavernas de Magma, 5 Núcleo Cristalino, 6 Abismo Primordial.",
-      "type": "array", "items": {"type": "integer", "minimum": 1, "maximum": 6}, "uniqueItems": true
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "minimum": 1,
+        "maximum": 6
+      },
+      "uniqueItems": true
     },
-    "maestria": {"$ref": "comum.schema.json#/$defs/maestria"},
-    "xp_descoberta": {"description": "XP ganho ao descobrir o material pela primeira vez.", "type": "integer", "minimum": 0},
-    "base_real": {"type": "string"},
-    "descricao": {"type": "string"}
+    "maestria": {
+      "$ref": "comum.schema.json#/$defs/maestria"
+    },
+    "xp_descoberta": {
+      "description": "XP ganho ao descobrir o material pela primeira vez.",
+      "type": "integer",
+      "minimum": 0
+    },
+    "base_real": {
+      "type": "string"
+    },
+    "descricao": {
+      "type": "string"
+    },
+    "luz_raio": {
+      "description": "Alcance da luz em tiles quando o bloco está no mundo. Nulo = não emite.",
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 30
+    },
+    "luz_cor": {
+      "description": "Cor da luz (hex da paleta, sem #).",
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{6}$"
+    }
   }
 }

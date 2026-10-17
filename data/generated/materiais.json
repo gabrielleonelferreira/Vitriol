@@ -22,7 +22,9 @@
       "maestria": "construcao",
       "xp_descoberta": 1,
       "base_real": "Solo de minerais e matéria orgânica.",
-      "descricao": "Bloco básico da superfície."
+      "descricao": "Bloco básico da superfície.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "argila",
@@ -45,7 +47,9 @@
       "maestria": "construcao",
       "xp_descoberta": 3,
       "base_real": "Argila de caulinita; vira cerâmica quando cozida.",
-      "descricao": "Moldável quando úmida."
+      "descricao": "Moldável quando úmida.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "areia",
@@ -68,7 +72,9 @@
       "maestria": "vidraria",
       "xp_descoberta": 2,
       "base_real": "Grãos de quartzo (SiO2), matéria-prima do vidro.",
-      "descricao": "Solta e fina."
+      "descricao": "Solta e fina.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "cascalho",
@@ -91,7 +97,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 3,
       "base_real": "Cascalho de aluvião; garimpado com bateia, rende cassiterita e ouro.",
-      "descricao": "Fundo de lagos e rios."
+      "descricao": "Fundo de lagos e rios.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "silex",
@@ -114,7 +122,9 @@
       "maestria": "construcao",
       "xp_descoberta": 3,
       "base_real": "Pederneira: quebra em lascas afiadas, usada em ferramentas desde a Pré-História.",
-      "descricao": "A primeira ferramenta do alquimista."
+      "descricao": "A primeira ferramenta do alquimista.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "madeira",
@@ -135,7 +145,9 @@
       "maestria": "construcao",
       "xp_descoberta": 1,
       "base_real": "Madeira de lei das Planícies.",
-      "descricao": "Combustível e material de construção."
+      "descricao": "Combustível e material de construção.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "agua",
@@ -156,7 +168,9 @@
       "maestria": "quimica",
       "xp_descoberta": 1,
       "base_real": "H2O.",
-      "descricao": "Necessária em misturas."
+      "descricao": "Necessária em misturas.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "calcario",
@@ -179,7 +193,9 @@
       "maestria": "construcao",
       "xp_descoberta": 3,
       "base_real": "Carbonato de cálcio (CaCO3), formado por conchas e corais antigos.",
-      "descricao": "Base da cal."
+      "descricao": "Base da cal.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "carvao_mineral",
@@ -202,7 +218,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 5,
       "base_real": "Rocha formada por plantas soterradas há milhões de anos.",
-      "descricao": "Queima forte e longa."
+      "descricao": "Queima forte e longa.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "malaquita",
@@ -226,7 +244,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 8,
       "base_real": "Carbonato de cobre verde; minério de cobre usado desde cerca de 5000 a.C.",
-      "descricao": "Minério de cobre."
+      "descricao": "Minério de cobre.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "cassiterita",
@@ -249,7 +269,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 10,
       "base_real": "Óxido de estanho (SnO2); na Antiguidade vinha de depósitos aluviais em rios.",
-      "descricao": "Minério de estanho garimpado em rios."
+      "descricao": "Minério de estanho garimpado em rios.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "limonita",
@@ -272,7 +294,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 10,
       "base_real": "Minério de ferro de pântano; primeira fonte de ferro de muitos povos.",
-      "descricao": "Minério de ferro mole e terroso."
+      "descricao": "Minério de ferro mole e terroso.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "xisto",
@@ -295,7 +319,9 @@
       "maestria": "construcao",
       "xp_descoberta": 3,
       "base_real": "Rocha metamórfica em lâminas, formada por calor e pressão.",
-      "descricao": "Exige picareta de bronze."
+      "descricao": "Exige picareta de bronze.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "hematita",
@@ -318,7 +344,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 15,
       "base_real": "Óxido de ferro (Fe2O3), principal minério de ferro do mundo.",
-      "descricao": "Minério de ferro rico."
+      "descricao": "Minério de ferro rico.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "quartzo",
@@ -341,7 +369,9 @@
       "maestria": "vidraria",
       "xp_descoberta": 15,
       "base_real": "Cristal de sílica; piezoelétrico: gera carga elétrica sob pressão.",
-      "descricao": "Ressoa com raios."
+      "descricao": "Ressoa com raios.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "acantita",
@@ -364,7 +394,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 25,
       "base_real": "Sulfeto de prata (Ag2S), principal minério de prata.",
-      "descricao": "Minério de prata."
+      "descricao": "Minério de prata.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "ouro_aluvial",
@@ -387,7 +419,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 25,
       "base_real": "Ouro de aluvião, garimpado em rios com bateia.",
-      "descricao": "Pepitas de ouro."
+      "descricao": "Pepitas de ouro.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "carvao_vegetal",
@@ -408,7 +442,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 5,
       "base_real": "Madeira aquecida com pouco ar; combustível das primeiras fundições.",
-      "descricao": "Combustível da fornalha."
+      "descricao": "Combustível da fornalha.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "cinzas",
@@ -429,7 +465,9 @@
       "maestria": "quimica",
       "xp_descoberta": 3,
       "base_real": "Cinza de madeira contém potassa (K2CO3), fundente do vidro antigo.",
-      "descricao": "Fundente para vidro."
+      "descricao": "Fundente para vidro.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "coque",
@@ -450,7 +488,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 10,
       "base_real": "Carvão mineral aquecido sem ar; combustível do alto-forno.",
-      "descricao": "Combustível de alta temperatura."
+      "descricao": "Combustível de alta temperatura.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "lingote_cobre",
@@ -471,7 +511,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 10,
       "base_real": "Cobre: ótimo condutor, metal das primeiras ligas.",
-      "descricao": "Conduz raios."
+      "descricao": "Conduz raios.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "lingote_estanho",
@@ -492,7 +534,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 10,
       "base_real": "Estanho: metal mole, essencial para o bronze.",
-      "descricao": "Metal mole."
+      "descricao": "Metal mole.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "bronze",
@@ -513,7 +557,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 20,
       "base_real": "Cobre com cerca de 10% de estanho; deu nome à Idade do Bronze.",
-      "descricao": "Liga resistente."
+      "descricao": "Liga resistente.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "lingote_ferro",
@@ -534,7 +580,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 20,
       "base_real": "Ferro de forno de redução (ferro-esponja), obtido sem derreter.",
-      "descricao": "Metal forte e comum."
+      "descricao": "Metal forte e comum.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "aco",
@@ -555,7 +603,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 30,
       "base_real": "Ferro com 0,2% a 2% de carbono: mais duro e resistente.",
-      "descricao": "O melhor metal comum."
+      "descricao": "O melhor metal comum.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "lingote_prata",
@@ -576,7 +626,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 25,
       "base_real": "Prata: o melhor condutor elétrico entre os metais.",
-      "descricao": "Metal precioso."
+      "descricao": "Metal precioso.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "lingote_ouro",
@@ -597,7 +649,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 25,
       "base_real": "Ouro: não oxida e é muito maleável.",
-      "descricao": "Metal precioso."
+      "descricao": "Metal precioso.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "cal_virgem",
@@ -618,7 +672,9 @@
       "maestria": "quimica",
       "xp_descoberta": 10,
       "base_real": "Óxido de cálcio: CaCO3 → CaO + CO2, acima de cerca de 825 °C.",
-      "descricao": "Base de argamassa e vidro."
+      "descricao": "Base de argamassa e vidro.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "argamassa",
@@ -639,7 +695,9 @@
       "maestria": "construcao",
       "xp_descoberta": 5,
       "base_real": "Cal, areia e água; endurece absorvendo CO2 do ar.",
-      "descricao": "Une blocos."
+      "descricao": "Une blocos.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "tijolo",
@@ -660,7 +718,9 @@
       "maestria": "construcao",
       "xp_descoberta": 5,
       "base_real": "Argila cozida a cerca de 900 °C.",
-      "descricao": "Bloco de construção."
+      "descricao": "Bloco de construção.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "tijolo_refratario",
@@ -681,7 +741,9 @@
       "maestria": "construcao",
       "xp_descoberta": 10,
       "base_real": "Tijolo de argila refratária; reveste fornos e resiste a temperaturas extremas.",
-      "descricao": "Reveste fornos."
+      "descricao": "Reveste fornos.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "vidro",
@@ -702,7 +764,9 @@
       "maestria": "vidraria",
       "xp_descoberta": 15,
       "base_real": "Vidro de sílica, cal e potassa, como o vidro medieval.",
-      "descricao": "Transparente e frágil."
+      "descricao": "Transparente e frágil.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "pena_ave_trovao",
@@ -723,14 +787,16 @@
       "maestria": "arcano",
       "xp_descoberta": 100,
       "base_real": "Fantasia.",
-      "descricao": "Ao ser tocada, desperta a escola Tempestária."
+      "descricao": "Ao ser tocada, desperta a escola Tempestária.",
+      "luz_raio": 4,
+      "luz_cor": "c8f0ff"
     },
     {
       "id": "fulgurito",
       "nome": "Fulgurito",
       "categoria": "mineral",
       "tier": "raro",
-      "dureza_bloco": null,
+      "dureza_bloco": 2,
       "dureza_mohs": 6,
       "densidade_g_cm3": 1.5,
       "ponto_fusao_c": 1713,
@@ -738,13 +804,15 @@
       "afinidade_arcana": 6,
       "escola_afim": "tempestaria",
       "fonte": "processo",
-      "fonte_detalhe": "Raio sobre areia",
+      "fonte_detalhe": "Raio sobre areia durante tempestades (ou invocado pela Tempestária)",
       "ferramenta_coleta": null,
       "camadas": [],
       "maestria": "arcano",
       "xp_descoberta": 30,
       "base_real": "Vidro natural formado quando um raio funde a areia, acima de 1.800 °C.",
-      "descricao": "Guarda o eco do raio."
+      "descricao": "Guarda o eco do raio.",
+      "luz_raio": 2,
+      "luz_cor": "7ad8ff"
     },
     {
       "id": "vidro_de_tempestade",
@@ -765,7 +833,9 @@
       "maestria": "arcano",
       "xp_descoberta": 60,
       "base_real": "Parte do fulgurito real; o refino e a carga elétrica são fantasia.",
-      "descricao": "Armazena e dispara raios."
+      "descricao": "Armazena e dispara raios.",
+      "luz_raio": 3,
+      "luz_cor": "7ad8ff"
     },
     {
       "id": "fibra",
@@ -786,7 +856,9 @@
       "maestria": "construcao",
       "xp_descoberta": 1,
       "base_real": "Fibras de folhas e cascas eram torcidas em cordas há mais de 40 mil anos.",
-      "descricao": "Torcida vira corda."
+      "descricao": "Torcida vira corda.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "electro",
@@ -807,7 +879,9 @@
       "maestria": "metalurgia",
       "xp_descoberta": 25,
       "base_real": "Liga natural de ouro e prata; os lídios cunharam com ela as primeiras moedas, por volta de 600 a.C.",
-      "descricao": "Brilho de ouro pálido. Base das moedas antigas."
+      "descricao": "Brilho de ouro pálido. Base das moedas antigas.",
+      "luz_raio": null,
+      "luz_cor": null
     }
   ]
 }

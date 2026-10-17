@@ -26,5 +26,9 @@ const CRAFT_CANCEL := "craft_cancel"
 ## Experimenta uma mistura sem receita: {"estacao": id, "itens": {material: qtd}}.
 ## Acertou: revela a receita e faz uma unidade. Errou: gasta 1 de cada e devolve uma pista.
 const EXPERIMENT := "experiment"
+## Magia: {"magia": "raio", "x", "y"} (Tempestária: raio no tile apontado).
+const CAST := "cast"
+## Só em versão de desenvolvimento: começa uma tempestade agora (F7).
+const DEBUG_STORM := "debug_storm"
 ## Só em versão de desenvolvimento: dá um kit de teste (picaretas e tochas).
 const DEBUG_KIT := "debug_kit"

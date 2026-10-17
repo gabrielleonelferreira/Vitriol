@@ -23,7 +23,9 @@ materiais por processos com base real e usa magia para criar o que a ciência so
 | 1 a 0 ou rodinha do mouse | Escolher o espaço da barra |
 | E ou I | Abrir o inventário (clique em dois espaços para trocar) |
 | F3 | Mostrar ou esconder as informações de depuração |
+| Q | Tempestária desperta: invoca um raio onde o mouse aponta (espera de 5 s) |
 | F4 | Kit de teste: picaretas, bateia e tochas (só na versão de desenvolvimento) |
+| F7 | Começa uma tempestade agora (só na versão de desenvolvimento) |
 
 Primeiros passos: derrube uma árvore (madeira), faça uma **Bancada** à mão e coloque-a no chão; na
 bancada, faça a **Fornalha de argila** (argila + calcário). Perto da fornalha dá para fazer carvão,
@@ -33,6 +35,12 @@ Receitas secretas (como o bronze) só aparecem experimentando: escolha a estaç�
 materiais para montar a mistura e em **Misturar**. Errar gasta 1 de cada material e dá uma pista
 (proporção errada, estação errada, falta ingrediente, material demais). Cada nível de maestria deixa as
 receitas da área 6% mais rápidas e as ferramentas feitas nela 5% mais duráveis.
+
+**Tempestades** chegam de tempos em tempos (a primeira, uns 5 a 8 minutos depois de entrar). Raios
+que caem na areia viram **fulgurito**, um vidro natural que brilha; minere com picareta. Uma vez por
+tempestade cai uma **Pena de Ave-Trovão**, brilhando no chão: pegá-la desperta a **Tempestária**. Com
+ela, Q invoca raios, um segundo pulo no ar dá o salto do vento, e no forno de vidro o fulgurito com
+vidro vira **vidro de tempestade**, que brilha.
 
 Para construir e explorar: **porta** (bancada, 6 madeiras) abre sozinha quando você encosta;
 **plataforma** e **escada de mão** saem de 1 madeira, à mão. Com a escada na mão, segure W e ela se

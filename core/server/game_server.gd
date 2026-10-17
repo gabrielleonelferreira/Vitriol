@@ -25,11 +25,18 @@ const AUTOSAVE_SECONDS := 60.0
 const LEAF_FIBER_CHANCE := 0.34
 ## Itens com que todo jogador novo começa.
 const STARTER_KIT := [["tocha", 10]]
+## Tempestária: espera entre raios invocados (s) e alcance (tiles do corpo até o alvo).
+const CAST_COOLDOWN := 5.0
+const CAST_RANGE := 12.0
+## Raios naturais caem perto de um jogador, até esta distância (tiles), preferindo areia.
+const BOLT_SPREAD := 28
+const BOLT_SAND_WEIGHT := 6.0
 const DEBUG_KIT_ITEMS := [
 	["picareta_silex", 1], ["picareta_bronze", 1], ["picareta_aco", 1], ["bateia", 1], ["tocha", 40]
 ]
 
 var world: WorldState = WorldState.new()
+var weather: Weather = Weather.new()
 var data: DataStore
 var players: Dictionary = {}
 var tick: int = 0
@@ -94,6 +101,7 @@ func start(
 				% [width, height, Time.get_ticks_msec() - started, world_seed]
 			)
 		)
+	weather = Weather.new(world.world_seed)
 
 
 ## Grava o mundo e todos os jogadores. Devolve OK ou o erro.
@@ -157,6 +165,7 @@ func step_once() -> void:
 			_advance_crafting(player)
 	if world.is_ready():
 		world.step(TICK_INTERVAL)
+		_step_weather()
 		if tick % TICK_RATE == 0:
 			_emit(Events.BROADCAST, {"type": Events.TIME, "time": world.time_of_day})
 	if not save_name.is_empty():
@@ -211,6 +220,13 @@ func _handle(peer_id: int, command: Dictionary) -> void:
 		Commands.EXPERIMENT:
 			if player:
 				_experiment(player, command)
+		Commands.CAST:
+			if player:
+				_cast(player, command)
+		Commands.DEBUG_STORM:
+			if OS.is_debug_build() and not weather.storm:
+				weather.start_storm()
+				_on_storm_start()
 		Commands.CRAFT_CANCEL:
 			if player:
 				_cancel_craft(player, int(command.get("index", -1)))
@@ -260,6 +276,7 @@ func _join(peer_id: int, display_name: String) -> void:
 	)
 	_send_inventory(player)
 	_send_mastery(player)
+	_emit(peer_id, {"type": Events.WEATHER, "tempestade": weather.storm})
 	_send_queue(player)
 
 
@@ -477,6 +494,10 @@ func _give(player: PlayerState, id: String, qtd: int, durability: int = -1) -> v
 		)
 		if xp > 0:
 			_add_xp(player, str(material.get("maestria", "")), xp)
+		# Material mítico desperta a escola ligada a ele (Pena de Ave-Trovão → Tempestária).
+		var school := str(material.get("escola_afim", ""))
+		if material.get("tier") == "mitico" and not school.is_empty():
+			_awaken(player, school)
 		# Cascata: um material raro revela as receitas secretas que dependem só dele.
 		var revealed := Experiment.cascade(data, id, player.discoveries, player.known_recipes)
 		for recipe_id in revealed:
@@ -507,7 +528,13 @@ func _craft(player: PlayerState, recipe_id: String, qtd: int) -> void:
 			_message(player, "A fila de produção está cheia.", "aviso")
 			break
 		var check := Crafting.status(
-			recipe, data, player.inventory, player.mastery, player.known_recipes, stations
+			recipe,
+			data,
+			player.inventory,
+			player.mastery,
+			player.known_recipes,
+			stations,
+			_context(player)
 		)
 		if not check["ok"]:
 			if made == 0:
@@ -601,8 +628,160 @@ func _send_mastery(player: PlayerState) -> void:
 			"type": Events.MASTERY,
 			"xp": player.mastery.duplicate(),
 			"receitas": player.known_recipes.keys(),
+			"escolas": player.schools.keys(),
 		}
 	)
+
+
+## Contexto para receitas com condição (`requer`): escolas do jogador e eventos ativos.
+func _context(player: PlayerState) -> Dictionary:
+	var events := {}
+	if weather.storm:
+		events["tempestade"] = true
+	return {"escolas": player.schools, "eventos": events}
+
+
+# ---------------------------------------------------------------- clima e Tempestária
+
+
+func _step_weather() -> void:
+	for happening in weather.step(TICK_INTERVAL):
+		match happening:
+			Weather.START:
+				_on_storm_start()
+			Weather.END:
+				_emit(Events.BROADCAST, {"type": Events.WEATHER, "tempestade": false})
+				_broadcast_message("A tempestade passou.", "info")
+			Weather.BOLT:
+				var column := _bolt_column()
+				if column >= 0:
+					_strike(column, 0)
+			Weather.FEATHER:
+				_drop_feather()
+
+
+func _on_storm_start() -> void:
+	_emit(Events.BROADCAST, {"type": Events.WEATHER, "tempestade": true})
+	_broadcast_message("Uma tempestade se aproxima. Raios fundem a areia!", "aviso")
+
+
+## Coluna para um raio natural: perto de um jogador, com preferência pela areia exposta.
+func _bolt_column() -> int:
+	if players.is_empty():
+		return -1
+	var grid := world.grid
+	var list: Array = players.values()
+	var center := WorldGrid.to_tile(list[weather.randi_range(0, list.size() - 1)].position)
+	var best := -1
+	var best_score := -1.0
+	for i in 8:
+		var x := clampi(
+			center.x + weather.randi_range(-BOLT_SPREAD, BOLT_SPREAD), 1, grid.width - 2
+		)
+		var hit := _first_hit(x, 0)
+		if hit < 0:
+			continue
+		var weight := BOLT_SAND_WEIGHT if grid.tile_name(x, hit) == "areia" else 1.0
+		var score: float = weight * weather.randf()
+		if score > best_score:
+			best_score = score
+			best = x
+	return best
+
+
+## Primeiro tile que não é ar nem água, descendo a partir de `from_y` na coluna x (-1 = nenhum).
+func _first_hit(x: int, from_y: int) -> int:
+	var grid := world.grid
+	for y in range(maxi(from_y, 0), grid.height):
+		var id := grid.get_tile(x, y)
+		if id != 0 and not grid.registry.is_liquid(id):
+			return y
+	return -1
+
+
+## Raio na coluna x a partir de from_y: funde areia em fulgurito (até 3 blocos para baixo).
+func _strike(x: int, from_y: int) -> void:
+	var grid := world.grid
+	var hit := _first_hit(x, from_y)
+	if hit < 0:
+		return
+	var changes: Array = []
+	var fulgurite := grid.registry.id_of("fulgurito")
+	var y := hit
+	while y < hit + 3 and grid.tile_name(x, y) == "areia" and fulgurite >= 0:
+		changes.append(world.set_tile(x, y, fulgurite))
+		y += 1
+	_emit(Events.BROADCAST, {"type": Events.LIGHTNING, "x": x, "y": hit, "de": from_y})
+	if not changes.is_empty():
+		_dirty = true
+		_emit(Events.BROADCAST, {"type": Events.TILE_CHANGED, "changes": changes})
+
+
+## Cai uma Pena de Ave-Trovão no chão, a alguns blocos de um jogador.
+func _drop_feather() -> void:
+	if players.is_empty():
+		return
+	var grid := world.grid
+	var feather := grid.registry.id_of(TileRegistry.FEATHER)
+	var list: Array = players.values()
+	var center := WorldGrid.to_tile(list[weather.randi_range(0, list.size() - 1)].position)
+	for i in 30:
+		var side := 1 if weather.randf() < 0.5 else -1
+		var x := clampi(center.x + side * weather.randi_range(5, 14), 1, grid.width - 2)
+		var hit := _first_hit(x, 0)
+		if hit <= 0 or not grid.is_solid(x, hit) or grid.get_tile(x, hit - 1) != 0:
+			continue
+		var change := world.set_tile(x, hit - 1, feather)
+		_dirty = true
+		_emit(Events.BROADCAST, {"type": Events.TILE_CHANGED, "changes": [change]})
+		_emit(Events.BROADCAST, {"type": Events.LIGHTNING, "x": x, "y": hit - 1, "de": 0})
+		_broadcast_message("Uma pena brilhante caiu do céu junto com um raio!", "descoberta")
+		return
+
+
+func _awaken(player: PlayerState, school: String) -> void:
+	if player.schools.has(school):
+		return
+	player.schools[school] = true
+	_dirty = true
+	var name := Mastery.display_name(school)
+	_message(player, "A %s despertou em você!" % name, "descoberta")
+	if school == "tempestaria":
+		_message(
+			player,
+			"Q invoca um raio onde você aponta. No ar, pule de novo: salto do vento.",
+			"info"
+		)
+	_send_mastery(player)
+
+
+## Magia: {"magia": "raio", "x", "y"}. Só quem despertou a Tempestária.
+func _cast(player: PlayerState, command: Dictionary) -> void:
+	if str(command.get("magia", "")) != "raio":
+		return
+	if not player.schools.has("tempestaria"):
+		_message(player, "Você ainda não despertou a Tempestária.", "aviso")
+		return
+	if tick < player.cast_ready_tick:
+		var wait := (player.cast_ready_tick - tick) * TICK_INTERVAL
+		_message(player, "O raio ainda está carregando (%.1f s)." % wait, "aviso")
+		return
+	var target := Vector2i(int(command.get("x", -1)), int(command.get("y", -1)))
+	if not world.grid.in_bounds(target.x, target.y):
+		return
+	var body := MiningRules.body_center(player.position)
+	var aim := (Vector2(target) + Vector2(0.5, 0.5)) * WorldGrid.TILE_SIZE
+	if body.distance_to(aim) > CAST_RANGE * WorldGrid.TILE_SIZE:
+		_message(player, "Longe demais para o raio.", "aviso")
+		return
+	player.cast_ready_tick = tick + int(CAST_COOLDOWN * TICK_RATE)
+	_strike(target.x, maxi(target.y - 1, 0))
+	_add_xp(player, "arcano", 1)
+	_emit(player.player_id, {"type": Events.CAST_COOLDOWN, "segundos": CAST_COOLDOWN})
+
+
+func _broadcast_message(text: String, kind: String) -> void:
+	_emit(Events.BROADCAST, {"type": Events.MESSAGE, "text": text, "kind": kind})
 
 
 ## Mistura sem receita: acerta (revela e faz 1), quase acerta (pista) ou erra (gasta 1 de cada).
@@ -622,7 +801,9 @@ func _experiment(player: PlayerState, command: Dictionary) -> void:
 		if player.inventory.count(id) < mix[id]:
 			_experiment_result(player, false, "Você não tem %s suficiente." % data.display_name(id))
 			return
-	var result := Experiment.evaluate(data, mix, station, player.mastery, player.known_recipes)
+	var result := Experiment.evaluate(
+		data, mix, station, player.mastery, player.known_recipes, _context(player)
+	)
 	match result["tipo"]:
 		"invalida":
 			_experiment_result(player, false, result["texto"])

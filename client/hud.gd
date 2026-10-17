@@ -26,6 +26,7 @@ var selected: int = 0
 var data: DataStore
 var mastery: Dictionary = {}
 var known_recipes: Dictionary = {}
+var schools: Dictionary = {}
 var queue: Array = []
 var stations: Dictionary = {"mao": true}
 var crafting: CraftingPanel
@@ -47,6 +48,11 @@ var _queue_icon := TextureRect.new()
 var _queue_bar := ColorRect.new()
 var _queue_count := Label.new()
 var _panel_timer: float = 0.0
+## Raio da Tempestária (Q): ícone ao lado da barra, escurecido enquanto recarrega.
+var _cast_box := Control.new()
+var _cast_shade := ColorRect.new()
+var _cast_left: float = 0.0
+var _cast_total: float = 1.0
 
 
 func setup(game_data: DataStore) -> void:
@@ -121,6 +127,25 @@ func setup(game_data: DataStore) -> void:
 	_queue_count.position = Vector2(18, 4)
 	_queue_box.add_child(_queue_count)
 
+	_cast_box.position = Vector2(_hotbar.position.x - 24, _hotbar.position.y + 1)
+	_cast_box.visible = false
+	add_child(_cast_box)
+	var cast_back := ColorRect.new()
+	cast_back.color = Color("1b2a4a")
+	cast_back.size = Vector2(18, 18)
+	_cast_box.add_child(cast_back)
+	var cast_icon := TextureRect.new()
+	cast_icon.texture = _icon("raio")
+	cast_icon.position = Vector2(1, 1)
+	cast_icon.size = Vector2(16, 16)
+	_cast_box.add_child(cast_icon)
+	_cast_shade.color = Color(0.06, 0.05, 0.05, 0.75)
+	_cast_shade.size = Vector2(18, 0)
+	_cast_box.add_child(_cast_shade)
+	var cast_key := _label("Q", 8)
+	cast_key.position = Vector2(-1, 8)
+	_cast_box.add_child(cast_key)
+
 	_toasts.position = Vector2(6, 236)
 	_toasts.size = Vector2(300, 100)
 	_toasts.alignment = BoxContainer.ALIGNMENT_END
@@ -169,6 +194,17 @@ func set_stations(near: Dictionary) -> void:
 		_refresh_crafting()
 
 
+func set_schools(awake: Dictionary) -> void:
+	schools = awake.duplicate()
+	_cast_box.visible = schools.has("tempestaria")
+	_refresh_crafting()
+
+
+func set_cast_cooldown(seconds: float) -> void:
+	_cast_total = maxf(seconds, 0.01)
+	_cast_left = seconds
+
+
 func toggle_crafting() -> void:
 	crafting.visible = not crafting.visible
 	_refresh_crafting()
@@ -180,7 +216,7 @@ func crafting_open() -> bool:
 
 func _refresh_crafting() -> void:
 	if crafting and crafting.visible:
-		crafting.refresh(slots, mastery, stations, queue, known_recipes)
+		crafting.refresh(slots, mastery, stations, queue, known_recipes, schools)
 
 
 func selected_item() -> Dictionary:
@@ -232,6 +268,9 @@ func _process(delta: float) -> void:
 		_item_label_timer -= delta
 		if _item_label_timer <= 0.6:
 			_item_label.modulate.a = maxf(_item_label_timer / 0.6, 0.0)
+	if _cast_left > 0.0:
+		_cast_left = maxf(_cast_left - delta, 0.0)
+		_cast_shade.size.y = 18.0 * _cast_left / _cast_total
 	# O servidor manda a fila só quando muda; a contagem regressiva corre aqui.
 	if not queue.is_empty():
 		var job: Dictionary = queue[0]

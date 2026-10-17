@@ -18,6 +18,10 @@ var discoveries: Dictionary = {}
 var mastery: Dictionary = {}
 ## Receitas secretas já descobertas (id -> true). Preenchido na Onda 5 (tentativa e erro).
 var known_recipes: Dictionary = {}
+## Escolas arcanas despertas (id -> true), ex.: "tempestaria".
+var schools: Dictionary = {}
+## Tick a partir do qual pode invocar outro raio.
+var cast_ready_tick: int = 0
 ## Fila de fabricação: [{"receita": id, "restante": s, "total": s, "avisado": bool}]
 var craft_queue: Array[Dictionary] = []
 ## Mineração em andamento.
@@ -59,6 +63,7 @@ func to_save() -> Dictionary:
 		"descobertas": discoveries.keys(),
 		"maestria": mastery.duplicate(),
 		"receitas_conhecidas": known_recipes.keys(),
+		"escolas": schools.keys(),
 		"fila": _queue_for_save(),
 	}
 
@@ -85,6 +90,9 @@ func load_save(saved: Dictionary) -> void:
 	known_recipes.clear()
 	for id in saved.get("receitas_conhecidas", []):
 		known_recipes[str(id)] = true
+	schools.clear()
+	for id in saved.get("escolas", []):
+		schools[str(id)] = true
 	craft_queue.clear()
 	for job in saved.get("fila", []):
 		(

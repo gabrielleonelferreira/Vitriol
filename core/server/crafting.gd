@@ -45,7 +45,8 @@ static func status(
 	inventory: Inventory,
 	mastery: Dictionary,
 	known: Dictionary,
-	stations: Dictionary
+	stations: Dictionary,
+	context: Dictionary = {}
 ) -> Dictionary:
 	if not is_unlocked(recipe, mastery, known):
 		if recipe["desbloqueio"] == "xp":
@@ -56,7 +57,7 @@ static func status(
 				)
 			)
 		return _fail("Receita secreta: descubra experimentando")
-	if not recipe["requer"].is_empty():
+	if not recipe["requer"].is_empty() and not requirement_met(recipe["requer"], context):
 		return _fail(_requirement_text(recipe["requer"]))
 	var station: String = recipe["estacao"]
 	if data.items.get(station, {}).get("tipo") == "fenomeno":
@@ -73,11 +74,22 @@ static func status(
 	return {"ok": true, "motivo": "", "faltando": {}}
 
 
+## Alguma das condições alternativas vale?
+## `context`: {"escolas": {id: true}, "eventos": {id: true}}.
+static func requirement_met(alternatives: Array, context: Dictionary) -> bool:
+	for alt in alternatives:
+		if alt["tipo"] == "magia" and context.get("escolas", {}).has(alt["id"]):
+			return true
+		if alt["tipo"] == "evento" and context.get("eventos", {}).has(alt["id"]):
+			return true
+	return false
+
+
 static func _requirement_text(alternatives: Array) -> String:
 	var parts: PackedStringArray = []
 	for alt in alternatives:
 		if alt["tipo"] == "magia":
-			parts.append("magia %s" % Mastery.display_name(alt["id"]).capitalize())
+			parts.append("a magia %s" % Mastery.display_name(alt["id"]))
 		else:
 			parts.append("evento: %s" % str(alt["id"]).replace("_", " "))
 	return "Requer " + " ou ".join(parts)

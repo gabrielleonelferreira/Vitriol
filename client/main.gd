@@ -21,6 +21,9 @@ var _mine_timer: float = 0.0
 var _time_of_day: float = WorldState.START_TIME
 var _station_timer: float = 0.0
 var _ladder_timer: float = 0.0
+var _storm: StormView
+var _schools: Dictionary = {}
+var _bolt_light_timer: float = 0.0
 
 @onready var _info: Label = $HUD/Info
 
@@ -75,6 +78,14 @@ func _on_event(event: Dictionary) -> void:
 			_hud.toast("Descoberta: %s%s" % [event["nome"], suffix], "descoberta")
 		Events.MASTERY:
 			_hud.set_mastery(event["xp"], event.get("receitas", []))
+			_set_schools(event.get("escolas", []))
+		Events.WEATHER:
+			if _storm:
+				_storm.set_storm(bool(event["tempestade"]))
+		Events.LIGHTNING:
+			_on_lightning(event)
+		Events.CAST_COOLDOWN:
+			_hud.set_cast_cooldown(float(event["segundos"]))
 		Events.EXPERIMENT_RESULT:
 			_hud.crafting.show_result(bool(event["ok"]), str(event["texto"]))
 			if not _hud.crafting_open():
@@ -106,6 +117,9 @@ func _build_world(snapshot: Dictionary) -> void:
 	_lighting.name = "Luz"
 	add_child(_lighting)
 	_lighting.setup(_grid)
+	_storm = StormView.new()
+	_storm.name = "Tempestade"
+	add_child(_storm)
 
 
 func _apply_changes(changes: Array) -> void:
@@ -123,6 +137,7 @@ func _spawn_local(info: Dictionary) -> void:
 	add_child(_local)
 	_local.setup(_grid, _vec(info["position"]), true)
 	_local.moved.connect(_on_local_moved)
+	_local.motor.air_jumps = 1 if _schools.has("tempestaria") else 0
 
 
 func _on_local_moved(position: Vector2, velocity: Vector2, facing: int) -> void:
@@ -175,9 +190,17 @@ func _process(delta: float) -> void:
 
 
 func _update_light() -> void:
-	var daylight := WorldState.daylight(_time_of_day)
+	var camera := get_viewport().get_camera_2d().get_screen_center_position()
+	var feet_tile := WorldGrid.to_tile(_local.position)
+	var underground := feet_tile.y > _grid.surface[clampi(feet_tile.x, 0, _grid.width - 1)] + 3
+	_storm.update(get_process_delta_time(), camera, underground)
+	var daylight := _storm.adjust_daylight(WorldState.daylight(_time_of_day))
 	_lighting.set_daylight(daylight)
 	_background.set_daylight(daylight)
+	if _bolt_light_timer > 0.0:
+		_bolt_light_timer -= get_process_delta_time()
+		if _bolt_light_timer <= 0.0:
+			_lighting.set_point_light("raio", Vector2i.ZERO, 0.0, Color.WHITE)
 	var held: Dictionary = GameData.get_item(_hud.selected_item().get("id", ""))
 	var body := WorldGrid.to_tile(MiningRules.body_center(_local.position))
 	if held.get("luz_raio") != null:
@@ -263,6 +286,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		_hud.toggle_inventory()
 	elif event.is_action_pressed("fabricar"):
 		_hud.toggle_crafting()
+	elif event.is_action_pressed("magia") and _local and not _hud.inventory_open():
+		if _schools.has("tempestaria"):
+			_session.cast("raio", WorldGrid.to_tile(get_global_mouse_position()))
+		else:
+			_hud.toast("Nenhuma escola desperta ainda. Tempestades trazem algo raro...", "aviso")
+	elif event.is_action_pressed("tempestade_teste"):
+		_session.debug_storm()
 	elif event.is_action_pressed("kit_teste"):
 		_session.debug_kit()
 	elif (
@@ -281,6 +311,30 @@ func _unhandled_input(event: InputEvent) -> void:
 		for i in Inventory.HOTBAR:
 			if event.is_action_pressed("slot_%d" % (i + 1)):
 				_session.select_slot(i)
+
+
+func _set_schools(list: Array) -> void:
+	_schools.clear()
+	for id in list:
+		_schools[str(id)] = true
+	_hud.set_schools(_schools)
+	if _local:
+		_local.motor.air_jumps = 1 if _schools.has("tempestaria") else 0
+
+
+func _on_lightning(event: Dictionary) -> void:
+	if _storm == null:
+		return
+	var x := int(event["x"])
+	var y := int(event["y"])
+	var from := int(event.get("de", 0))
+	var top := get_viewport().get_camera_2d().get_screen_center_position().y - 220.0
+	# Céu aberto acima do alvo: o raio vem lá de cima; numa caverna, nasce perto do alvo.
+	var open_sky := from <= _grid.surface[clampi(x, 0, _grid.width - 1)]
+	var start := top if open_sky else from * float(WorldGrid.TILE_SIZE)
+	_storm.bolt(x, y, minf(start, y * WorldGrid.TILE_SIZE - 32.0))
+	_lighting.set_point_light("raio", Vector2i(x, y - 1), 18.0, StormView.BOLT_COLOR)
+	_bolt_light_timer = 0.2
 
 
 func _over_crafting() -> bool:

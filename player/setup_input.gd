@@ -9,6 +9,8 @@ const ACTIONS := {
 	"descer": [KEY_S, KEY_DOWN],
 	"depurar": [KEY_F3],
 	"kit_teste": [KEY_F4],
+	"tempestade_teste": [KEY_F7],
+	"magia": [KEY_Q],
 	"inventario": [KEY_E, KEY_I],
 	"fabricar": [KEY_C],
 	"slot_1": [KEY_1],

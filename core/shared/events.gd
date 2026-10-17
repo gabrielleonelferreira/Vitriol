@@ -23,10 +23,17 @@ const MESSAGE := "message"
 const DISCOVERED := "discovered"
 ## Fila de fabricação do próprio jogador: {"jobs": [{"receita", "restante", "total"}]}
 const CRAFT_QUEUE := "craft_queue"
-## XP de maestria e receitas descobertas do próprio jogador: {"xp": {area: int}, "receitas": [id]}
+## XP de maestria, receitas descobertas e escolas despertas do próprio jogador:
+## {"xp": {area: int}, "receitas": [id], "escolas": [id]}
 const MASTERY := "mastery"
 ## Resultado de um experimento: {"ok": bool, "texto": String, "receita"?: id}
 const EXPERIMENT_RESULT := "experiment_result"
+## Clima: {"tempestade": bool}
+const WEATHER := "weather"
+## Raio caiu: {"x", "y" (tile atingido), "de" (linha de onde saiu; 0 = céu)}
+const LIGHTNING := "lightning"
+## Magia usada; espera até a próxima: {"segundos": float}
+const CAST_COOLDOWN := "cast_cooldown"
 ## Hora do dia: {"time": 0..1}
 const TIME := "time"
 

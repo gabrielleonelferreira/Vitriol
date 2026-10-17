@@ -2,7 +2,7 @@
 
 ## Onda atual
 
-Onda 5 — Progressão e magia: **em andamento**. 5D e 5A concluídas; próximas: 5B, 5C.
+Onda 5 — Progressão e magia: **em andamento**. 5D, 5A e 5B concluídas; falta a 5C.
 
 ## Tarefas da Onda 5
 
@@ -12,7 +12,9 @@ Onda 5 — Progressão e magia: **em andamento**. 5D e 5A concluídas; próximas
 - [x] 5A Descoberta e maestria — aba Experimentar (mistura sem receita, 5 tipos de pista, errar gasta
       1 de cada); cascata de raros (electro = ouro + prata, novo); nível de maestria: +6% de velocidade
       e +5% de durabilidade por nível; 7 testes novos
-- [ ] 5B Tempestária — tempestades, raio na areia forma fulgurito, vidro de tempestade
+- [x] 5B Tempestária — tempestades com chuva e raios; raio funde areia em fulgurito (brilha); Pena de
+      Ave-Trovão cai uma vez por tempestade e desperta a Tempestária: Q invoca raio (5 s), salto do
+      vento (pulo duplo), vidro de tempestade liberado; F7 testa; 6 testes novos
 - [ ] 5C Áudio e partículas
 
 ## Portão da Onda 5 (marco MVP)
@@ -63,6 +65,8 @@ Fabricação com fila e painel (C), maestria básica, construção com o mouse, 
   Território (Onda 10)
 - Porta não bloqueia a física (só a luz); abre e fecha só no desenho, sem estado no servidor
 - Experimentar errado custa 1 de cada material (tentativa e erro tem preço, mas a pista ajuda)
+- Fulgurito virou bloco (dureza 2, precisa de picareta); a receita "formar fulgurito" do raio fica
+  como referência de processo, quem faz é a tempestade
 - Electro (ouro + prata, liga real das primeiras moedas) entrou como receita secreta de cascata
 - Escada automática: segurar W com a escada na mão constrói para cima até soltar (dá para fazer torre)
 - Fundir vidro é receita inicial (precisa do forno de vidro, que já pede nível 3 de construção)
@@ -70,7 +74,8 @@ Fabricação com fila e painel (C), maestria básica, construção com o mouse, 
 ## Pendências e observações
 
 - Balanceamento (Onda 5): a picareta de ferro (limonita do Solo) pode chegar antes da de bronze
-- Fulgurito (secreto) só se forma com raio: entra na 5B
+- Raios ainda não machucam (não há vida no MVP); para-raio é da Onda 6
+- Tempestade não fica salva: ao recarregar o mundo, o céu volta limpo
 - Itens que caem no chão não existem: com o inventário cheio, o bloco não quebra e o item fabricado
   espera na fila
 - Estações não mudam de aparência quando estão trabalhando (a brasa anima sempre)
@@ -80,7 +85,8 @@ Fabricação com fila e painel (C), maestria básica, construção com o mouse, 
 
 ## Próximo passo
 
-5B Tempestária (tempestades, raio na areia forma fulgurito, vidro de tempestade); depois 5C.
+5C Áudio e partículas (sons de mineração, forja, passos, chuva e raio; faíscas e fumaça); depois o
+portão da Onda 5.
 
 Decidido para depois: fachada das casas e guincho de mina (Onda 6), Poção de Retorno e círculos de
 transmutação (Onda 7), defesa em camadas, portas com selo e Carta do Território (Onda 10). O jogo fica

@@ -26,9 +26,31 @@ var _frame: int = 0
 var _send_timer: float = 0.0
 var _remote_target: Vector2 = Vector2.ZERO
 var _camera: Camera2D
+## Lufada de vento do salto da Tempestária.
+var _wind := CPUParticles2D.new()
+
+
+func _make_wind() -> void:
+	var dot := Image.create(2, 1, false, Image.FORMAT_RGBA8)
+	dot.fill(Color("c8f0ff"))
+	_wind.texture = ImageTexture.create_from_image(dot)
+	_wind.one_shot = true
+	_wind.emitting = false
+	_wind.amount = 14
+	_wind.lifetime = 0.35
+	_wind.explosiveness = 0.9
+	_wind.direction = Vector2(0, 1)
+	_wind.spread = 70.0
+	_wind.initial_velocity_min = 30.0
+	_wind.initial_velocity_max = 70.0
+	_wind.gravity = Vector2.ZERO
+	_wind.local_coords = false
+	_wind.z_index = 5
+	add_child(_wind)
 
 
 func setup(new_grid: WorldGrid, start: Vector2, local: bool) -> void:
+	_make_wind()
 	grid = new_grid
 	is_local = local
 	motor.position = start
@@ -90,6 +112,8 @@ func _physics_process(delta: float) -> void:
 			Input.is_action_pressed("descer")
 		)
 		position = motor.position
+		if motor.air_jumped:
+			_wind.restart()
 		_send_timer -= delta
 		if _send_timer <= 0.0:
 			_send_timer = 1.0 / SEND_RATE

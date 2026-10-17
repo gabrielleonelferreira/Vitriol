@@ -42,6 +42,9 @@ O script valida tudo e só gera o JSON se não houver erro. Os esquemas formais 
 | base_real | O fundo de verdade | Cobre, metal das primeiras ligas |
 | descricao | Texto do jogo | — |
 
+Colunas novas na Onda 5B: `luz_raio` e `luz_cor` (como em itens.csv) para blocos que brilham no
+mundo, como o fulgurito e o vidro de tempestade.
+
 ## itens.csv
 
 Ferramentas, estações de trabalho e fenômenos que funcionam como estação (o raio).

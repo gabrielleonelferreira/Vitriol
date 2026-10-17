@@ -35,7 +35,12 @@ const HINT_ORDER := ["proporcao", "estacao", "falta", "demais", "nada"]
 ## {"tipo": "falhou", "pista": chave de HINTS, "texto": String};
 ## {"tipo": "invalida", "texto": String} — mistura vazia, grande demais ou com não-materiais.
 static func evaluate(
-	data: DataStore, mix: Dictionary, station: String, mastery: Dictionary, known: Dictionary
+	data: DataStore,
+	mix: Dictionary,
+	station: String,
+	mastery: Dictionary,
+	known: Dictionary,
+	context: Dictionary = {}
 ) -> Dictionary:
 	if mix.is_empty() or mix.size() > MAX_PARTS:
 		return {"tipo": "invalida", "texto": "Escolha de 1 a %d materiais." % MAX_PARTS}
@@ -52,11 +57,14 @@ static func evaluate(
 			if not _enough(recipe, mix):
 				best = _closer(best, "proporcao")
 				continue
-			if not recipe["requer"].is_empty():
+			if (
+				not recipe["requer"].is_empty()
+				and not Crafting.requirement_met(recipe["requer"], context)
+			):
 				return {
 					"tipo": "bloqueada",
 					"receita": recipe_id,
-					"motivo": "Precisa de " + Crafting._requirement_text(recipe["requer"]),
+					"motivo": Crafting._requirement_text(recipe["requer"]),
 				}
 			var secret: bool = recipe["desbloqueio"] == "experimentacao"
 			if secret or Crafting.is_unlocked(recipe, mastery, known):

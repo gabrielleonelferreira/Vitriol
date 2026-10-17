@@ -14,6 +14,8 @@ const WATER := "agua"
 const BEDROCK := "rocha_base"
 ## Metade de cima da porta (a de baixo é o próprio item "porta").
 const DOOR_TOP := "porta_alto"
+## Pena de Ave-Trovão caída no chão durante uma tempestade (pegar = minerar, rende a pena).
+const FEATHER := "pena_caida"
 
 ## Como o tile age sobre quem anda (coluna `forma` dos itens).
 const SHAPE_NONE := 0
@@ -31,6 +33,7 @@ const WORLD_TILES := [
 	[TRUNK, false, "madeira", 1.0],
 	[LEAVES, false, "", 0.5],
 	[BEDROCK, true, "", INF],
+	[FEATHER, false, "pena_ave_trovao", 0.05],
 ]
 
 var names: PackedStringArray = []
@@ -83,10 +86,13 @@ static func from_data(data: DataStore) -> TileRegistry:
 		registry._add(DOOR_TOP, false, false, 0.5, "porta")
 		registry.shape[registry.size() - 1] = SHAPE_DOOR
 	for id in registry.names.size():
-		var item: Dictionary = data.items.get(registry.names[id], {})
-		if item.get("luz_raio") != null and item.get("luz_cor") != null:
-			registry.light_radius[id] = float(item["luz_raio"])
-			registry.light_color[id] = Color(str(item["luz_cor"]))
+		var name := registry.names[id]
+		var source: Dictionary = data.items.get(name, data.materials.get(name, {}))
+		if name == FEATHER:
+			source = data.materials.get("pena_ave_trovao", {})
+		if source.get("luz_raio") != null and source.get("luz_cor") != null:
+			registry.light_radius[id] = float(source["luz_raio"])
+			registry.light_color[id] = Color(str(source["luz_cor"]))
 	return registry
 
 

@@ -161,6 +161,10 @@ uma com 2 quadros **escolhidos pelo jogo** (`"estatico": true` em `objetos.json`
 mostrando só a borda da dobradiça); plataforma de tábua com mão-francesa; escada de dois montantes e três
 degraus; corda torcida com brilho a cada 4 px.
 
+Tempestade (Onda 5B): fulgurito é areia com tubos de vidro escuro ramificados e pontos azuis por
+dentro; a pena caída tem 2 quadros de faísca. Chuva e raio são desenhados pelo jogo (gotas de 1 × 5 px
+em azul-céu; raio em 2 linhas, `#c8f0ff` por fora e `#f7f6f0` no miolo).
+
 Blocos feitos pelo jogador (tijolo, tijolo refratário, argamassa, vidro, vidro de tempestade) não têm
 parede de fundo natural: aparecem com junta de argamassa (tijolos) ou reflexo diagonal (vidro). O vidro
 deixa ver a parede e o céu atrás e não segura a luz.

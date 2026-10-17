@@ -238,6 +238,27 @@ def vidro_de_tempestade(rng):
     return vidro(rng, ("2d4f80", "7ad8ff", "c8f0ff"), storm=True)
 
 
+def fulgurito(rng):
+    """Areia fundida pelo raio: tubos de vidro escuro e ramificados, com brilho azul por dentro."""
+    img = areia(rng)
+    d = ImageDraw.Draw(img)
+    x = 6 + rng.randrange(4)
+    pts = [(x, 0)]
+    y = 0
+    while y < T - 1:
+        y = min(T - 1, y + rng.randrange(2, 5))
+        x = max(2, min(T - 3, x + rng.choice((-2, -1, 1, 2))))
+        pts.append((x, y))
+    d.line(pts, fill=c("2b231d"), width=3)
+    d.line(pts, fill=c("4a5058"), width=1)
+    for px_, py_ in pts[1:-1:2]:  # ramos
+        side = rng.choice((-1, 1))
+        d.line([px_, py_, px_ + side * 3, py_ + 2], fill=c("3d3128"))
+    for px_, py_ in pts[::2]:
+        d.point([px_, py_], fill=c("7ad8ff"))
+    return img
+
+
 # ================================================================ máscara e bordas
 
 
@@ -610,6 +631,7 @@ SOLIDS = {
     "argamassa": (argamassa, "4a5058", "f7f6f0", "6b737c"),
     "vidro": (vidro, "4f86c0", "f7f6f0", "2d4f80"),
     "vidro_de_tempestade": (vidro_de_tempestade, "2d4f80", "c8f0ff", "1b2a4a"),
+    "fulgurito": (fulgurito, "57432f", "c8f0ff", "74593d"),
 }
 ## Blocos construídos não viram parede de fundo (só as rochas naturais).
 BUILT = {"tijolo", "tijolo_refratario", "argamassa", "vidro", "vidro_de_tempestade"}

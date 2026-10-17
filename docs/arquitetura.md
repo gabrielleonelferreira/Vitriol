@@ -95,6 +95,24 @@ PlayerMotor.step() a 60 Hz
 - Bônus por nível acima do 1: receitas da área 6% mais rápidas (`Mastery.craft_seconds`) e ferramentas
   feitas nela 5% mais duráveis (`durability_for`; o espaço guarda `durabilidade_max`).
 
+## Tempestades e Tempestária (Onda 5B)
+
+- `Weather` (`core/server/weather.gd`) decide quando: tempestade a cada 9–18 min (a primeira em 5–8),
+  de 2,5 a 4 min, raio a cada 2,5–7 s, pena aos 40% da tempestade. O `GameServer` decide onde.
+- Raio natural: 8 colunas sorteadas a até 28 tiles de um jogador, areia exposta pesa 6×. O raio atinge
+  o primeiro tile que não é ar nem água; areia vira fulgurito (até 3 blocos para baixo). Evento
+  `lightning {x, y, de}`.
+- Pena: tile `pena_caida` (não sólido, brilha) em cima do chão, a 5–14 tiles de um jogador. Pegar dá a
+  pena (mítica); material mítico com `escola_afim` desperta a escola (`PlayerState.schools`, salva).
+- Receitas com `requer` agora valem quando alguma alternativa está ativa (`Crafting.requirement_met`):
+  escola desperta ou evento em andamento (a tempestade). O contexto vai em `Crafting.status`.
+- `cast {magia: "raio", x, y}`: Tempestária, alcance 12 tiles, espera de 5 s (`cast_cooldown`), 1 XP de
+  Arcano. Salto do vento: `PlayerMotor.air_jumps` = 1 (85% do pulo), recarrega no chão, na escada ou
+  na água.
+- Cliente: `StormView` escurece o céu em 45%, chuva atrás dos blocos (some no chão e escurece à noite;
+  some no subsolo), raio em zigue-zague por 0,22 s, clarão no céu e luz pontual de raio 18 por 0,2 s.
+  Blocos com `luz_raio` em materiais.csv (fulgurito, vidro de tempestade) brilham.
+
 ## Movimento na construção (Onda 5D)
 
 O jogo é sempre de lado: a casa é um corte e se atravessa por dentro. Cada objeto tem uma `forma`

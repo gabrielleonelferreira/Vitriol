@@ -44,6 +44,14 @@ func mine_stop() -> void:
 	transport.send({"type": Commands.MINE_STOP})
 
 
+func cast(spell: String, tile: Vector2i) -> void:
+	transport.send({"type": Commands.CAST, "magia": spell, "x": tile.x, "y": tile.y})
+
+
+func debug_storm() -> void:
+	transport.send({"type": Commands.DEBUG_STORM})
+
+
 func experiment(station: String, mix: Dictionary) -> void:
 	transport.send({"type": Commands.EXPERIMENT, "estacao": station, "itens": mix})
 
