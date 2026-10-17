@@ -1,17 +1,35 @@
 extends Node2D
 ## Ponto de entrada do cliente.
-## Abre uma sessão com o servidor local, desenha o mundo recebido e coloca o personagem.
+## Abre uma sessão com o servidor local, desenha o mundo recebido, coloca o personagem e
+## traduz mouse e teclado em comandos (minerar, colocar, escolher item).
+
+## Envios de "continuar minerando" por segundo enquanto o botão está apertado.
+const MINE_RATE := 20.0
+const LAYER_NAMES := ["Planícies", "Solo", "Rocha Sedimentar", "Rocha Metamórfica"]
 
 var _session: ClientSession
 var _grid: WorldGrid
+var _background: Background
 var _world_view: WorldView
+var _lighting: Lighting
+var _mining_view: MiningView
+var _hud: Hud
 var _local: Player
 var _remotes: Dictionary = {}
+var _mining_tile := Vector2i(-1, -1)
+var _mine_timer: float = 0.0
+var _time_of_day: float = WorldState.START_TIME
 
-@onready var _hud: Label = $HUD/Info
+@onready var _info: Label = $HUD/Info
 
 
 func _ready() -> void:
+	_hud = Hud.new()
+	_hud.name = "Interface"
+	add_child(_hud)
+	_hud.setup(GameData)
+	_hud.slot_selected.connect(func(index: int) -> void: _session.select_slot(index))
+	_hud.slots_swapped.connect(func(a: int, b: int) -> void: _session.swap_slots(a, b))
 	_session = ClientSession.new()
 	_session.name = "ClientSession"
 	add_child(_session)
@@ -23,6 +41,7 @@ func _ready() -> void:
 func _on_event(event: Dictionary) -> void:
 	match event.get("type", ""):
 		Events.WORLD_SNAPSHOT:
+			_time_of_day = float(event.get("time", _time_of_day))
 			_build_world(event["grid"])
 		Events.JOINED:
 			_spawn_local(event["player"])
@@ -33,22 +52,54 @@ func _on_event(event: Dictionary) -> void:
 		Events.CORRECTION:
 			if _local:
 				_local.apply_correction(_vec(event["position"]))
+		Events.TILE_CHANGED:
+			_apply_changes(event["changes"])
+		Events.INVENTORY:
+			_hud.set_inventory(event["slots"], int(event["selected"]))
+		Events.MINE_PROGRESS:
+			_mining_view.show_progress(
+				Vector2i(int(event["x"]), int(event["y"])), float(event["progress"])
+			)
+		Events.MESSAGE:
+			_hud.toast(event["text"], event.get("kind", "info"))
+		Events.DISCOVERED:
+			var xp := int(event.get("xp", 0))
+			var suffix := "  +%d XP" % xp if xp > 0 else ""
+			_hud.toast("Descoberta: %s%s" % [event["nome"], suffix], "descoberta")
+		Events.TIME:
+			_time_of_day = float(event["time"])
 		Events.ERROR:
-			_hud.text = "Erro do servidor: %s" % event.get("reason", "?")
+			_info.text = "Erro do servidor: %s" % event.get("reason", "?")
 
 
 func _build_world(snapshot: Dictionary) -> void:
 	_grid = WorldGrid.from_snapshot(snapshot, GameData)
-	var background := Background.new()
-	background.name = "Fundo"
-	add_child(background)
-	move_child(background, 0)
-	background.build(_grid)
+	_background = Background.new()
+	_background.name = "Fundo"
+	add_child(_background)
+	move_child(_background, 0)
+	_background.build(_grid)
 	_world_view = WorldView.new()
 	_world_view.name = "Mundo"
 	add_child(_world_view)
 	move_child(_world_view, 1)
 	_world_view.build(_grid, GameData)
+	_mining_view = MiningView.new()
+	_mining_view.name = "Mineracao"
+	add_child(_mining_view)
+	_lighting = Lighting.new()
+	_lighting.name = "Luz"
+	add_child(_lighting)
+	_lighting.setup(_grid)
+
+
+func _apply_changes(changes: Array) -> void:
+	for change in changes:
+		var x := int(change[0])
+		var y := int(change[1])
+		_grid.set_tile(x, y, maxi(_grid.registry.id_of(str(change[2])), 0))
+		_world_view.refresh(x, y)
+		_lighting.tile_changed(x, y)
 
 
 func _spawn_local(info: Dictionary) -> void:
@@ -84,21 +135,93 @@ func _remove_remote(id: int) -> void:
 		_remotes.erase(id)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if _local == null or _grid == null:
 		return
+	_update_pointer(delta)
+	_update_light()
 	var tile := WorldGrid.to_tile(_local.position)
-	var layer_names := ["Planícies", "Solo", "Rocha Sedimentar", "Rocha Metamórfica"]
-	var layer := clampi(_grid.layer_at(tile.x, tile.y - 1), 0, layer_names.size() - 1)
-	_hud.text = (
-		"Vitriol — %s   ·   tile %d, %d   ·   %d FPS   ·   A/D anda, Espaço pula"
-		% [layer_names[layer], tile.x, tile.y, Engine.get_frames_per_second()]
+	var layer := clampi(_grid.layer_at(tile.x, tile.y - 1), 0, LAYER_NAMES.size() - 1)
+	var hour := int(_time_of_day * 24.0)
+	var minute := int(fposmod(_time_of_day * 24.0 * 60.0, 60.0))
+	_info.text = (
+		"%s   ·   %02d:%02d   ·   tile %d, %d   ·   %d FPS"
+		% [LAYER_NAMES[layer], hour, minute, tile.x, tile.y, Engine.get_frames_per_second()]
 	)
+
+
+func _update_light() -> void:
+	var daylight := WorldState.daylight(_time_of_day)
+	_lighting.set_daylight(daylight)
+	_background.set_daylight(daylight)
+	var held: Dictionary = GameData.get_item(_hud.selected_item().get("id", ""))
+	var body := WorldGrid.to_tile(MiningRules.body_center(_local.position))
+	if held.get("luz_raio") != null:
+		_lighting.set_held_light(body, float(held["luz_raio"]) * 0.8, Color(str(held["luz_cor"])))
+	else:
+		_lighting.set_held_light(body, 0.0, Color.WHITE)
+	var view := Vector2i(ceili(640.0 / WorldGrid.TILE_SIZE), ceili(360.0 / WorldGrid.TILE_SIZE))
+	_lighting.update_view(
+		WorldGrid.to_tile(get_viewport().get_camera_2d().get_screen_center_position()), view
+	)
+
+
+## Moldura sob o mouse, minerar segurando o botão esquerdo, colocar com o direito.
+func _update_pointer(delta: float) -> void:
+	if _hud.inventory_open():
+		_mining_view.hide_cursor()
+		_stop_mining()
+		return
+	var tile := WorldGrid.to_tile(get_global_mouse_position())
+	var in_reach := MiningRules.in_reach(_local.position, tile) and _grid.in_bounds(tile.x, tile.y)
+	var id := _grid.get_tile(tile.x, tile.y)
+	var held_id: String = _hud.selected_item().get("id", "")
+	var placing: bool = GameData.get_item(held_id).get("tipo") == "objeto"
+	var can_mine: bool = id > 0 and not _grid.registry.is_liquid(id) and _breakable(id, held_id)
+	_mining_view.show_cursor(tile, in_reach and (can_mine or (placing and id == 0)))
+
+	if Input.is_action_pressed("minerar") and in_reach and id > 0:
+		if tile != _mining_tile:
+			_mining_tile = tile
+			_mine_timer = 0.0
+		_mine_timer -= delta
+		if _mine_timer <= 0.0:
+			_mine_timer = 1.0 / MINE_RATE
+			_session.mine(tile)
+	elif _mining_tile.x >= 0:
+		_stop_mining()
+
+
+func _breakable(id: int, held_id: String) -> bool:
+	var power: Variant = GameData.get_item(held_id).get("poder_mineracao")
+	var tool_power := float(power) if power != null else MiningRules.HAND_POWER
+	return _grid.registry.hardness[id] <= tool_power
+
+
+func _stop_mining() -> void:
+	if _mining_tile.x >= 0:
+		_mining_tile = Vector2i(-1, -1)
+		_session.mine_stop()
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("depurar"):
-		_hud.visible = not _hud.visible
+		_info.visible = not _info.visible
+	elif event.is_action_pressed("inventario"):
+		_hud.toggle_inventory()
+	elif event.is_action_pressed("kit_teste"):
+		_session.debug_kit()
+	elif event.is_action_pressed("colocar") and _local and not _hud.inventory_open():
+		_session.place(WorldGrid.to_tile(get_global_mouse_position()))
+	elif event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_session.select_slot((_hud.selected + 1) % Inventory.HOTBAR)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			_session.select_slot((_hud.selected + Inventory.HOTBAR - 1) % Inventory.HOTBAR)
+	else:
+		for i in Inventory.HOTBAR:
+			if event.is_action_pressed("slot_%d" % (i + 1)):
+				_session.select_slot(i)
 
 
 static func _vec(value: Array) -> Vector2:

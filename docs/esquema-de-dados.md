@@ -49,12 +49,14 @@ Ferramentas, estações de trabalho e fenômenos que funcionam como estação (o
 | Coluna | O que é |
 | --- | --- |
 | id, nome | Como em materiais |
-| tipo | ferramenta, estacao, fenomeno |
+| tipo | ferramenta, estacao, objeto (colocável no mundo, ex.: tocha), fenomeno |
 | material_base | Material principal (define a aparência e a qualidade) |
 | poder_mineracao | Minera blocos com dureza_bloco até este valor. Mãos = 1 |
 | durabilidade | Usos até quebrar |
 | temperatura_max_c | Temperatura máxima da estação |
 | descricao | Texto do jogo |
+| luz_raio | Alcance da luz em blocos quando colocado ou segurado (vazio = não ilumina) |
+| luz_cor | Cor da luz, hex da paleta sem # (ex.: `e2b33c`) |
 
 O item `mao` representa fazer algo à mão, sem estação.
 

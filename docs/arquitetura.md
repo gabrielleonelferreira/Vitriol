@@ -38,8 +38,17 @@ quando o multiplayer chegar (Onda 10).
 - **O servidor confere cada posição** com o mesmo `PlayerMotor`: fora do mundo, dentro de um bloco ou
   rápida demais → manda `correction` com a última posição válida. Aceita → repassa `player_moved` aos
   outros jogadores.
-- **Ações que mudam o mundo** (minerar, construir, fabricar) serão sempre decididas pelo servidor
-  (Ondas 3 e 4).
+- **Ações que mudam o mundo** são decididas pelo servidor. Minerar: o cliente manda `mine` enquanto o
+  botão está apertado; o servidor confere alcance, dureza e ferramenta, conta o tempo, quebra o bloco,
+  entrega o item (`inventory`) e avisa todos (`tile_changed`).
+
+## Salvar e carregar (Onda 3)
+
+`core/server/save_game.gd` grava `user://mundos/<nome>/mundo.json`: a grade inteira compactada (tiles e
+paredes em zstd + base64, ~80 KB), a paleta de nomes, a hora do dia e os jogadores por nome (posição,
+inventário, item selecionado, descobertas). Grava num `.tmp`, mantém a versão anterior como `.bak` e lê o
+`.bak` se o principal estiver corrompido. Ao carregar, os tiles são lidos pelo nome: se os dados do jogo
+mudarem de ordem, o mundo continua certo. Salva a cada 60 s e ao fechar.
 
 ```
 Cliente                         Servidor

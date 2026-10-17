@@ -16,7 +16,16 @@ materiais por processos com base real e usa magia para criar o que a ciência so
 | --- | --- |
 | A / D ou ← / → | Andar |
 | Espaço, W ou ↑ | Pular (segure para pular mais alto; na água, nada) |
+| Botão esquerdo (segurar) | Minerar o bloco sob o mouse (alcance de 5 blocos) |
+| Botão direito | Colocar o item selecionado (tocha) |
+| 1 a 0 ou rodinha do mouse | Escolher o espaço da barra |
+| E ou I | Abrir o inventário (clique em dois espaços para trocar) |
 | F3 | Mostrar ou esconder as informações de depuração |
+| F4 | Kit de teste: picaretas, bateia e tochas (só na versão de desenvolvimento) |
+
+O jogo salva sozinho a cada minuto e ao fechar a janela. No Windows os saves ficam em
+`%APPDATA%\Vitriol\mundos\`. Para começar um mundo novo, apague a pasta `mundo_1` ou rode com
+`-- --novo`.
 
 ## Comandos úteis
 

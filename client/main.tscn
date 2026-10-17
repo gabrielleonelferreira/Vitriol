@@ -16,4 +16,4 @@ theme_override_colors/font_color = Color(0.968627, 0.964706, 0.941176, 1)
 theme_override_colors/font_outline_color = Color(0.105882, 0.0901961, 0.0784314, 1)
 theme_override_constants/outline_size = 4
 theme_override_font_sizes/font_size = 8
-text = "Vitriol — gerando o mundo..."
+text = "Vitriol — carregando o mundo..."

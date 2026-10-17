@@ -950,8 +950,13 @@ def main() -> None:
     bg = build_background()
     t.update(bg)
     composite = build_character()
-    check_palette(t["atlas"], t["walls"], t["ores"], t["shadows"], composite, *bg.values())
+    import gerar_itens  # depois dos tiles: os ícones de bloco e minério saem do atlas
+
+    items = gerar_itens.build(t)
+    check_palette(t["atlas"], t["walls"], t["ores"], t["shadows"], composite, *bg.values(),
+                  items["icons"], items["objects"], items["cracks"], items["cursor"], items["slot"])
     board(t, composite)
+    print(f"OK: {items['count']} ícones de itens, tocha animada, rachaduras e interface")
     print(f"OK: {len(t['rows'])} tiles x {MASKS} máscaras, {len(ORES)} minérios, fundo em 4 planos, "
           f"personagem com {len(PARTS)} partes")
 

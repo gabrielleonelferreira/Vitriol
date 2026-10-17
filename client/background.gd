@@ -14,6 +14,7 @@ const PLANES := [
 ]
 
 var _sky_layer := CanvasLayer.new()
+var _sky: TextureRect
 
 
 func build(_grid: WorldGrid) -> void:
@@ -21,6 +22,7 @@ func build(_grid: WorldGrid) -> void:
 	_sky_layer.name = "Ceu"
 	add_child(_sky_layer)
 	var sky := TextureRect.new()
+	_sky = sky
 	sky.texture = load(SKY_PATH)
 	sky.stretch_mode = TextureRect.STRETCH_SCALE
 	sky.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -43,3 +45,9 @@ func build(_grid: WorldGrid) -> void:
 		sprite.position = Vector2(0, surface_y - plane[2])
 		parallax.add_child(sprite)
 		add_child(parallax)
+
+
+## Escurece o céu à noite (0 = noite, 1 = dia). Os planos de paralaxe já escurecem com a luz.
+func set_daylight(value: float) -> void:
+	if _sky:
+		_sky.modulate = Color(0.2, 0.24, 0.42).lerp(Color.WHITE, value)
