@@ -61,6 +61,7 @@ python3 tools/art/gerar_arte.py  # gera de novo a arte base (tiles e personagem)
 python3 tools/audio/gerar_sons.py # gera de novo os sons (síntese, sem arquivos de terceiros)
 godot --headless --path . --import
 godot --headless --path . -s res://tests/run_tests.gd
+godot --headless --path . -s res://tests/maratona.gd -- 45   # robô joga 45 min acelerados
 ```
 
 ## Documentos
@@ -72,5 +73,6 @@ godot --headless --path . -s res://tests/run_tests.gd
 | [docs/esquema-de-dados.md](docs/esquema-de-dados.md) | Materiais, itens e receitas em CSV |
 | [docs/guia-de-arte.md](docs/guia-de-arte.md) | Paleta, grade, personagem em partes, iluminação |
 | [docs/marca.md](docs/marca.md) | Verificação preliminar do nome |
+| [docs/teste-de-jogo.md](docs/teste-de-jogo.md) | Roteiro da partida de teste e modelo da lista de bugs |
 
 O documento de design completo e o plano em ondas estão nos documentos do projeto no Claude.

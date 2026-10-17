@@ -13,6 +13,8 @@ var _server: Node
 var _steps: Array[Dictionary] = []
 var _wait := 0
 var _hut_left := 0
+var _soak := false
+var _fps: PackedFloat32Array = []
 
 
 func _initialize() -> void:
@@ -57,6 +59,14 @@ func _initialize() -> void:
 		{"wait": 2, "do": _check_save},
 		{"wait": 2, "do": quit},
 	]
+	if script == "resistencia":
+		# 4 minutos reais: anda, pula, minera, tempestade com raios; mede o FPS.
+		_soak = true
+		_steps = [
+			{"wait": 90, "do": _storm_start},
+			{"wait": 60 * 60 * 4, "do": _soak_report},
+			{"wait": 2, "do": quit},
+		]
 	if script == "tempestade":
 		_steps = [
 			{"wait": 90, "do": _go_to_flat},
@@ -117,6 +127,8 @@ func _initialize() -> void:
 
 func _process(_delta: float) -> bool:
 	_frame += 1
+	if _soak and _frame > 100:
+		_soak_tick()
 	if _steps.is_empty():
 		return false
 	_wait += 1
@@ -348,6 +360,38 @@ func _place_as(player: PlayerState, item: String, tile: Vector2i, stand: Vector2
 				]
 			)
 		)
+
+
+func _soak_tick() -> void:
+	if _frame % 30 == 0:
+		_fps.append(Engine.get_frames_per_second())
+	var phase := (_frame / 240) % 4
+	Input.action_release("mover_esquerda")
+	Input.action_release("mover_direita")
+	if phase == 0:
+		Input.action_press("mover_direita")
+	elif phase == 2:
+		Input.action_press("mover_esquerda")
+	if _frame % 70 == 0:
+		Input.action_press("pular")
+	elif _frame % 70 == 12:
+		Input.action_release("pular")
+	if phase == 1 or phase == 3:
+		if _frame % 240 == 1:
+			_press_on_tile(Vector2i(1, 0))
+		elif _frame % 240 == 200:
+			_release()
+
+
+func _soak_report() -> void:
+	var total := 0.0
+	var low := 9999.0
+	for value in _fps:
+		total += value
+		low = minf(low, value)
+	var average := total / maxf(_fps.size(), 1.0)
+	print("resistência: %d amostras, FPS médio %.0f, mínimo %.0f" % [_fps.size(), average, low])
+	print("tempestade: %s; jogador em %s" % [str(_server.weather.storm), str(_player_tile())])
 
 
 ## Faixa de areia no chão, à esquerda do jogador.

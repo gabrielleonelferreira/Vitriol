@@ -2,8 +2,8 @@
 
 ## Onda atual
 
-Onda 5 — Progressão e magia: **em andamento**. 5D, 5A, 5B e 5C concluídas; falta o portão (teste
-de jogo).
+Onda 5 — Progressão e magia: **tarefas concluídas**; falta só a partida de teste com o Gabriel para
+fechar o portão (marco MVP).
 
 ## Tarefas da Onda 5
 
@@ -22,8 +22,15 @@ de jogo).
 
 ## Portão da Onda 5 (marco MVP)
 
-- [ ] Partida de 30 a 60 minutos do primeiro bloco ao primeiro raio, atravessando uma casa pelas portas
-      e saindo de um poço fundo pela escada ou corda, sem travar, com a lista de bugs registrada
+- [x] Maratona automática (`tests/maratona.gd`): um robô joga do primeiro bloco ao primeiro raio num
+      mundo 1200 × 260 — madeira, sílex, picareta, bancada, argila, calcário, fornalha, carvão, cobre,
+      tijolo, escada, salvar e voltar, tempestade, pena, Tempestária, raio invocado. 45 min de jogo em
+      57 s, 4 tempestades, 127 raios, tick mais lento 8,5 ms, **0 bugs**
+- [x] Resistência com tela (4 min reais andando, pulando, minerando, com tempestade): FPS médio 61 e
+      mínimo 43 no renderizador por software do ambiente de desenvolvimento, sem erros
+- [x] 90 testes passando no Godot 4.7.2 headless
+- [ ] **Partida de 30 a 60 minutos com o Gabriel** seguindo `docs/teste-de-jogo.md`, com a lista de bugs
+- [ ] Marco `marco/onda-5` no GitHub (depois da partida)
 
 ## Onda 4 (concluída, marco `marco/onda-4`)
 
@@ -88,7 +95,8 @@ Fabricação com fila e painel (C), maestria básica, construção com o mouse, 
 
 ## Próximo passo
 
-Portão da Onda 5: partida de teste de 30 a 60 minutos (com o Gabriel) e lista de bugs.
+Partida de teste do Gabriel (`docs/teste-de-jogo.md`) → corrigir a lista de bugs → marco
+`marco/onda-5` → Onda 6 (mundo completo).
 
 Decidido para depois: fachada das casas e guincho de mina (Onda 6), Poção de Retorno e círculos de
 transmutação (Onda 7), defesa em camadas, portas com selo e Carta do Território (Onda 10). O jogo fica
@@ -96,4 +104,5 @@ sempre de lado; a vista de cima é só a Carta do Território (administrar e via
 
 ## Última sessão
 
-17/10/2026 — Onda 4 completa; Onda 5 começada pela 5D (movimento na construção).
+17/10/2026 — Onda 4 completa; Onda 5 completa (5D, 5A, 5B, 5C) e maratona automática sem bugs. Falta a
+partida de teste com gente.
