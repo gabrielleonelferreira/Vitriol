@@ -83,10 +83,12 @@ de luz. Valores iniciais, a ajustar no teste de jogo:
 | Lugar | Luz ambiente |
 | --- | --- |
 | Superfície de dia | 100% |
-| Superfície à noite | 35%, azulada (`#1b2a4a`) |
-| Camada Solo | 45% |
-| Camada Sedimentar | 20% |
-| Camada Metamórfica | 8% |
+| Superfície à noite | ~16–36%, azulada |
+| Camada Solo | 24% |
+| Camada Sedimentar | 13% |
+| Camada Metamórfica | 6% |
+
+Ajustado no teste da Onda 3: com 45% no Solo, a terra ficava mais clara que o céu à noite.
 
 | Fonte de luz | Cor | Alcance | Comportamento |
 | --- | --- | --- | --- |
@@ -97,8 +99,9 @@ de luz. Valores iniciais, a ajustar no teste de jogo:
 | Raio | `#c8f0ff` | 20 tiles | Clarão de 0,15 s |
 | Fulgurito e vidro de tempestade | `#7ad8ff` | 2 tiles | Pulso lento |
 
-No Godot: `CanvasModulate` para a luz ambiente de cada camada e `PointLight2D` para cada fonte, com sombras
-2D ligadas nos tiles sólidos.
+Como funciona no jogo (`client/lighting.gd`): um mapa de luz com 1 valor RGB por bloco, calculado só em
+volta da câmera. A luz se espalha pelo ar perdendo 1/9 por bloco e entra pouco na rocha (perde 1/3 por
+bloco). O mapa é desenhado por cima do mundo, multiplicando as cores, com suavização entre blocos.
 
 ## Arte gerada por código (Onda 2)
 

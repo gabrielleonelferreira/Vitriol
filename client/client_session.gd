@@ -36,6 +36,30 @@ func move(position: Vector2, velocity: Vector2, facing: int) -> void:
 	)
 
 
+func mine(tile: Vector2i) -> void:
+	transport.send({"type": Commands.MINE, "x": tile.x, "y": tile.y})
+
+
+func mine_stop() -> void:
+	transport.send({"type": Commands.MINE_STOP})
+
+
+func place(tile: Vector2i) -> void:
+	transport.send({"type": Commands.PLACE, "x": tile.x, "y": tile.y})
+
+
+func select_slot(index: int) -> void:
+	transport.send({"type": Commands.SELECT_SLOT, "index": index})
+
+
+func swap_slots(a: int, b: int) -> void:
+	transport.send({"type": Commands.SWAP_SLOTS, "a": a, "b": b})
+
+
+func debug_kit() -> void:
+	transport.send({"type": Commands.DEBUG_KIT})
+
+
 func _on_event(event: Dictionary) -> void:
 	if event.get("type", "") == Events.JOINED:
 		player_id = int(event["player_id"])

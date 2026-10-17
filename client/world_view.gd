@@ -12,11 +12,14 @@ const ORES_PATH := "res://art/tiles/minerios.png"
 const WALLS_PATH := "res://art/tiles/paredes.png"
 const SHADOWS_PATH := "res://art/tiles/sombras.png"
 const META_PATH := "res://art/tiles/tiles.json"
+const OBJECTS_PATH := "res://art/tiles/objetos.png"
+const OBJECTS_META := "res://art/tiles/objetos.json"
 
 const SOURCE_TILES := 0
 const SOURCE_ORES := 1
 const SOURCE_WALLS := 2
 const SOURCE_SHADOWS := 3
+const SOURCE_OBJECTS := 4
 
 const TOP := 1
 const RIGHT := 2
@@ -41,6 +44,10 @@ var _walls: TileMapLayer
 var _shadows: TileMapLayer
 var _tiles: TileMapLayer
 var _ores: TileMapLayer
+var _objects: TileMapLayer
+## Por id de tile: linha em objetos.png (-1 = não é objeto).
+var _object_row_by_id: PackedInt32Array = []
+var _object_rows: Dictionary = {}
 
 
 func build(new_grid: WorldGrid, data: DataStore) -> void:
@@ -53,10 +60,12 @@ func build(new_grid: WorldGrid, data: DataStore) -> void:
 	_add_source(tile_set, SOURCE_ORES, ORES_PATH)
 	_add_source(tile_set, SOURCE_WALLS, WALLS_PATH)
 	_add_source(tile_set, SOURCE_SHADOWS, SHADOWS_PATH)
+	_add_objects(tile_set)
 	_walls = _make_layer("Paredes", tile_set, -3)
 	_shadows = _make_layer("Sombras", tile_set, -2)
 	_tiles = _make_layer("Blocos", tile_set, 0)
 	_ores = _make_layer("Minerios", tile_set, 1)
+	_objects = _make_layer("Objetos", tile_set, 2)
 	_index_tiles()
 	var started := Time.get_ticks_msec()
 	for y in grid.height:
@@ -103,6 +112,24 @@ func _add_source(tile_set: TileSet, id: int, path: String) -> void:
 	tile_set.add_source(source, id)
 
 
+## Objetos animados (tocha): cada linha é um objeto, as colunas são os quadros.
+func _add_objects(tile_set: TileSet) -> void:
+	var meta: Variant = JSON.parse_string(FileAccess.get_file_as_string(OBJECTS_META))
+	if typeof(meta) != TYPE_DICTIONARY:
+		return
+	var source := TileSetAtlasSource.new()
+	source.texture = load(OBJECTS_PATH)
+	source.texture_region_size = Vector2i(WorldGrid.TILE_SIZE, WorldGrid.TILE_SIZE)
+	for name in meta["objetos"]:
+		var info: Dictionary = meta["objetos"][name]
+		var coords := Vector2i(0, int(info["linha"]))
+		source.create_tile(coords)
+		source.set_tile_animation_frames_count(coords, int(info["quadros"]))
+		source.set_tile_animation_speed(coords, float(info["fps"]))
+		_object_rows[name] = int(info["linha"])
+	tile_set.add_source(source, SOURCE_OBJECTS)
+
+
 func _make_layer(layer_name: String, tile_set: TileSet, z: int) -> TileMapLayer:
 	var layer := TileMapLayer.new()
 	layer.name = layer_name
@@ -118,13 +145,16 @@ func _index_tiles() -> void:
 	_row_by_id.resize(count)
 	_ore_row_by_id.resize(count)
 	_wall_row_by_id.resize(count)
+	_object_row_by_id.resize(count)
 	var missing: PackedStringArray = []
 	for id in count:
 		var name := grid.registry.name_of(id)
 		_row_by_id[id] = _rows.get(name, -1)
 		_ore_row_by_id[id] = _ore_rows.get(name, -1)
 		_wall_row_by_id[id] = _wall_rows.get(name, -1)
-		if _row_by_id[id] < 0 and _ore_row_by_id[id] < 0 and name != TileRegistry.AIR:
+		_object_row_by_id[id] = _object_rows.get(name, -1)
+		var has_art := _row_by_id[id] >= 0 or _ore_row_by_id[id] >= 0 or _object_row_by_id[id] >= 0
+		if not has_art and name != TileRegistry.AIR:
 			missing.append(name)
 	_leaves_id = grid.registry.id_of(TileRegistry.LEAVES)
 	_trunk_id = grid.registry.id_of(TileRegistry.TRUNK)
@@ -199,10 +229,15 @@ func _draw_cell(x: int, y: int) -> void:
 		_walls.erase_cell(cell)
 		_shadows.erase_cell(cell)
 
-	if id == 0:
+	if id == 0 or _object_row_by_id[id] >= 0:
 		_tiles.erase_cell(cell)
 		_ores.erase_cell(cell)
+		if id != 0:
+			_objects.set_cell(cell, SOURCE_OBJECTS, Vector2i(0, _object_row_by_id[id]))
+		else:
+			_objects.erase_cell(cell)
 		return
+	_objects.erase_cell(cell)
 
 	var row := _row_by_id[id]
 	var ore_row := _ore_row_by_id[id]
