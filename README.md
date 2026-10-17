@@ -15,7 +15,8 @@ materiais por processos com base real e usa magia para criar o que a ciência so
 | Tecla | Ação |
 | --- | --- |
 | A / D ou ← / → | Andar |
-| Espaço, W ou ↑ | Pular (segure para pular mais alto; na água, nada) |
+| Espaço, W ou ↑ | Pular (segure para pular mais alto; na água, nada). Na escada ou corda, sobe |
+| S ou ↓ | Descer escada e corda; em cima de uma plataforma, cai através dela |
 | Botão esquerdo (segurar) | Minerar o bloco sob o mouse (alcance de 5 blocos) |
 | Botão direito | Colocar o item selecionado: blocos (tijolo, vidro, terra…), tochas e estações. Moldura branca = pode, vermelha = não |
 | C | Abrir a fabricação: clique em **Fazer** (Shift + clique faz 5). Precisa da estação por perto |
@@ -27,6 +28,11 @@ materiais por processos com base real e usa magia para criar o que a ciência so
 Primeiros passos: derrube uma árvore (madeira), faça uma **Bancada** à mão e coloque-a no chão; na
 bancada, faça a **Fornalha de argila** (argila + calcário). Perto da fornalha dá para fazer carvão,
 fundir cobre e cozer tijolos.
+
+Para construir e explorar: **porta** (bancada, 6 madeiras) abre sozinha quando você encosta;
+**plataforma** e **escada de mão** saem de 1 madeira, à mão. Com a escada na mão, segure W e ela se
+coloca sozinha enquanto você sobe — é assim que se sai de um buraco fundo. O **rolo de corda** (3 fibras,
+que caem das folhas ao derrubar árvores) desenrola até 20 blocos para baixo.
 
 O jogo salva sozinho a cada minuto e ao fechar a janela. No Windows os saves ficam em
 `%APPDATA%\Vitriol\mundos\`. Para começar um mundo novo, apague a pasta `mundo_1` ou rode com

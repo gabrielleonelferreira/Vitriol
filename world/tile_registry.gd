@@ -12,6 +12,17 @@ const TRUNK := "tronco"
 const LEAVES := "folhas"
 const WATER := "agua"
 const BEDROCK := "rocha_base"
+## Metade de cima da porta (a de baixo é o próprio item "porta").
+const DOOR_TOP := "porta_alto"
+
+## Como o tile age sobre quem anda (coluna `forma` dos itens).
+const SHAPE_NONE := 0
+const SHAPE_DOOR := 1
+const SHAPE_PLATFORM := 2
+const SHAPE_CLIMB := 3
+const SHAPES := {
+	"porta": SHAPE_DOOR, "plataforma": SHAPE_PLATFORM, "escada": SHAPE_CLIMB, "corda": SHAPE_CLIMB
+}
 
 ## Tiles que não são materiais: [nome, sólido, quebra em, dureza].
 const WORLD_TILES := [
@@ -32,6 +43,8 @@ var light_radius: PackedFloat32Array = []
 var light_color: Array[Color] = []
 ## Sólido mas deixa ver e passar luz (vidro).
 var transparent: PackedByteArray = []
+## SHAPE_*: porta (fecha a passagem da luz, abre para quem passa), plataforma, escada/corda.
+var shape: PackedByteArray = []
 var _ids: Dictionary = {}
 
 
@@ -61,7 +74,14 @@ static func from_data(data: DataStore) -> TileRegistry:
 	object_ids.sort()
 	for id in object_ids:
 		var hard := 0.1 if data.items[id]["tipo"] == "objeto" else 0.8
+		var form: Variant = data.items[id].get("forma")
+		if form == "porta":
+			hard = 0.5
 		registry._add(id, false, false, hard, id)
+		registry.shape[registry.size() - 1] = SHAPES.get(form, SHAPE_NONE)
+	if data.items.has("porta"):
+		registry._add(DOOR_TOP, false, false, 0.5, "porta")
+		registry.shape[registry.size() - 1] = SHAPE_DOOR
 	for id in registry.names.size():
 		var item: Dictionary = data.items.get(registry.names[id], {})
 		if item.get("luz_raio") != null and item.get("luz_cor") != null:
@@ -89,6 +109,7 @@ static func from_names(tile_names: PackedStringArray, data: DataStore) -> TileRe
 			registry.light_radius[registry.size() - 1] = reference.light_radius[source]
 			registry.transparent[registry.size() - 1] = reference.transparent[source]
 			registry.light_color[registry.size() - 1] = reference.light_color[source]
+			registry.shape[registry.size() - 1] = reference.shape[source]
 	return registry
 
 
@@ -104,9 +125,26 @@ func is_solid(id: int) -> bool:
 	return id >= 0 and id < solid.size() and solid[id] == 1
 
 
-## Bloqueia a visão e a luz (sólido e não transparente).
+## Bloqueia a visão e a luz (sólido e não transparente, ou porta).
 func is_opaque(id: int) -> bool:
-	return is_solid(id) and transparent[id] == 0
+	return (is_solid(id) and transparent[id] == 0) or is_door(id)
+
+
+func shape_of(id: int) -> int:
+	return shape[id] if id >= 0 and id < shape.size() else SHAPE_NONE
+
+
+func is_door(id: int) -> bool:
+	return shape_of(id) == SHAPE_DOOR
+
+
+func is_platform(id: int) -> bool:
+	return shape_of(id) == SHAPE_PLATFORM
+
+
+## Escada ou corda: dá para subir e descer.
+func is_climbable(id: int) -> bool:
+	return shape_of(id) == SHAPE_CLIMB
 
 
 func is_liquid(id: int) -> bool:
@@ -128,4 +166,5 @@ func _add(
 	drops.append(drop)
 	light_radius.append(0.0)
 	transparent.append(0)
+	shape.append(SHAPE_NONE)
 	light_color.append(Color.WHITE)

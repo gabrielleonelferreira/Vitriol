@@ -144,6 +144,7 @@ def load_itens() -> list[dict]:
             "descricao": _text(r["descricao"]),
             "luz_raio": _num(r.get("luz_raio", "")),
             "luz_cor": _opt_id(r.get("luz_cor", "")),
+            "forma": _opt_id(r.get("forma", "")),
         })
     return rows
 
@@ -235,6 +236,8 @@ def validate_rules(materiais: list[dict], itens: list[dict], receitas: list[dict
     for i in itens:
         if i["material_base"] and i["material_base"] not in mat:
             report.error(f"item '{i['id']}': material_base '{i['material_base']}' não existe")
+        if i.get("forma") and i["tipo"] != "objeto":
+            report.error(f"item '{i['id']}': forma '{i['forma']}' só vale para objetos")
         if i["tipo"] == "ferramenta" and i["durabilidade"] is None:
             report.warn(f"ferramenta '{i['id']}' sem durabilidade")
 

@@ -79,6 +79,16 @@
         "null"
       ],
       "pattern": "^[0-9a-f]{6}$"
+    },
+    "forma": {
+      "description": "Como o objeto age no mundo: porta (abre ao encostar), plataforma (atravessa por baixo), escada e corda (escaláveis). Nulo = objeto comum (tocha).",
+      "enum": [
+        "porta",
+        "plataforma",
+        "escada",
+        "corda",
+        null
+      ]
     }
   }
 }

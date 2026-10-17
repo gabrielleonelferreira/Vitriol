@@ -32,3 +32,7 @@ formar_fulgurito,Fulgurito,raio,descarga_eletrica,areia:4,fulgurito:1,1800,event
 refinar_vidro_de_tempestade,Vidro de tempestade,forno_de_vidro,fusao_vidro,fulgurito:1;vidro:2,vidro_de_tempestade:1,1400,magia:tempestaria,30,arcano,40,xp,1,
 fazer_tocha_galho,Tocha de galho,mao,montagem,madeira:2,tocha:1,,,2,construcao,1,inicial,,Galho seco aceso: a tocha mais antiga.
 fazer_tocha,Tocha,mao,montagem,madeira:1;carvao_vegetal:1,tocha:4,,,2,construcao,2,inicial,,Carvão queima mais forte e por mais tempo.
+fazer_porta,Porta de madeira,bancada,montagem,madeira:6,porta:1,,,4,construcao,2,inicial,,
+fazer_plataforma,Plataforma de madeira,mao,montagem,madeira:1,plataforma:2,,,1,construcao,1,inicial,,
+fazer_escada,Escada de mão,mao,montagem,madeira:1,escada:2,,,1,construcao,1,inicial,,
+torcer_corda,Rolo de corda,mao,montagem,fibra:3,corda:1,,,3,construcao,1,inicial,,"Fibra torcida em dois sentidos não desenrola: é o princípio de toda corda."

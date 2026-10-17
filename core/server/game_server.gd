@@ -21,6 +21,8 @@ const MOVE_SLACK := 24.0
 ## Tolerância (px) ao conferir se o personagem está dentro de um bloco.
 const SOLID_TOLERANCE := 2.0
 const AUTOSAVE_SECONDS := 60.0
+## Chance de uma folha render fibra vegetal (para corda).
+const LEAF_FIBER_CHANCE := 0.34
 ## Itens com que todo jogador novo começa.
 const STARTER_KIT := [["tocha", 10]]
 const DEBUG_KIT_ITEMS := [
@@ -191,7 +193,8 @@ func _handle(peer_id: int, command: Dictionary) -> void:
 				_stop_mining(player)
 		Commands.PLACE:
 			if player:
-				_place(player, Vector2i(int(command.get("x", -1)), int(command.get("y", -1))))
+				var spot := Vector2i(int(command.get("x", -1)), int(command.get("y", -1)))
+				_place(player, spot, bool(command.get("auto", false)))
 		Commands.SELECT_SLOT:
 			if player:
 				player.selected = clampi(int(command.get("index", 0)), 0, Inventory.HOTBAR - 1)
@@ -362,13 +365,18 @@ func _advance_mining(player: PlayerState) -> void:
 func _break_block(player: PlayerState, target: Vector2i, id: int, is_hand: bool) -> void:
 	var grid := world.grid
 	var cells: Array[Vector2i] = [target]
+	var drops := {}
+	var shape := grid.registry.shape_of(id)
 	if grid.registry.name_of(id) == TileRegistry.TRUNK:
 		cells = world.tree_from(target.x, target.y)
-	var drops := {}
-	for cell in cells:
-		var drop := _drop_for(player, grid.get_tile(cell.x, cell.y))
-		if not drop.is_empty():
-			drops[drop] = drops.get(drop, 0) + 1
+	elif shape == TileRegistry.SHAPE_DOOR or grid.registry.name_of(id) == "corda":
+		cells = Building.piece_from(grid, target)
+		drops = Building.refund_for(grid, cells)
+	if drops.is_empty():
+		for cell in cells:
+			var drop := _drop_for(player, grid.get_tile(cell.x, cell.y))
+			if not drop.is_empty():
+				drops[drop] = drops.get(drop, 0) + 1
 	for drop in drops:
 		if not player.inventory.can_add(drop, drops[drop]):
 			_stop_mining(player)
@@ -391,6 +399,8 @@ func _break_block(player: PlayerState, target: Vector2i, id: int, is_hand: bool)
 ## O que um tile rende ao quebrar. Cascalho com bateia vira garimpo.
 func _drop_for(player: PlayerState, id: int) -> String:
 	var name := world.grid.registry.name_of(id)
+	if name == TileRegistry.LEAVES:
+		return "fibra" if randf() < LEAF_FIBER_CHANCE else ""
 	if name == "cascalho" and player.selected_item().get("id") == "bateia":
 		var roll := randf()
 		for entry in MiningRules.PANNING:
@@ -409,7 +419,8 @@ func _tool_name(player: PlayerState, is_hand: bool) -> String:
 
 
 ## Coloca no mundo o item selecionado: objeto (tocha), estação (bancada, fornalha...) ou bloco.
-func _place(player: PlayerState, target: Vector2i) -> void:
+## `quiet`: colocação automática (escada subindo) não manda aviso quando não dá.
+func _place(player: PlayerState, target: Vector2i, quiet: bool = false) -> void:
 	var held: Dictionary = player.selected_item()
 	var item_id: String = held.get("id", "")
 	var kind := Building.kind_for(data, item_id)
@@ -426,13 +437,18 @@ func _place(player: PlayerState, target: Vector2i) -> void:
 		return
 	var problem := Building.placement_problem(grid, target, kind, _player_positions())
 	if not problem.is_empty():
-		_message(player, problem, "aviso")
+		if not quiet:
+			_message(player, problem, "aviso")
 		return
 	if not player.inventory.take_from(player.selected):
 		return
-	var change := world.set_tile(target.x, target.y, tile_id)
+	var changes: Array = []
+	var door_top := grid.registry.id_of(TileRegistry.DOOR_TOP)
+	for cell in Building.cells_for(grid, target, kind):
+		var id := door_top if kind == Building.DOOR and cell != target else tile_id
+		changes.append(world.set_tile(cell.x, cell.y, id))
 	_dirty = true
-	_emit(Events.BROADCAST, {"type": Events.TILE_CHANGED, "changes": [change]})
+	_emit(Events.BROADCAST, {"type": Events.TILE_CHANGED, "changes": changes})
 	_send_inventory(player)
 
 

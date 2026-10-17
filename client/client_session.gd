@@ -44,8 +44,9 @@ func mine_stop() -> void:
 	transport.send({"type": Commands.MINE_STOP})
 
 
-func place(tile: Vector2i) -> void:
-	transport.send({"type": Commands.PLACE, "x": tile.x, "y": tile.y})
+## `auto`: colocação automática (escada subindo); o servidor não avisa quando não dá.
+func place(tile: Vector2i, auto: bool = false) -> void:
+	transport.send({"type": Commands.PLACE, "x": tile.x, "y": tile.y, "auto": auto})
 
 
 func select_slot(index: int) -> void:

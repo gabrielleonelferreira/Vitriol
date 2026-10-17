@@ -34,3 +34,4 @@ vidro,Vidro,vidro,comum,1,5.5,2.5,1400,0,1,,processo,"Fusão de areia com cal e 
 pena_ave_trovao,Pena de Ave-Trovão,magico,mitico,,,,,8,10,tempestaria,evento,"Cai durante tempestades (fonte provisória do MVP; na versão final, vem da Ave-Trovão)",,,arcano,100,Fantasia.,"Ao ser tocada, desperta a escola Tempestária."
 fulgurito,Fulgurito,mineral,raro,,6,1.5,1713,0,6,tempestaria,processo,Raio sobre areia,,,arcano,30,"Vidro natural formado quando um raio funde a areia, acima de 1.800 °C.",Guarda o eco do raio.
 vidro_de_tempestade,Vidro de tempestade,vidro,epico,1,6,2.4,1713,8,9,tempestaria,processo,Fulgurito refinado com magia Tempestária,,,arcano,60,"Parte do fulgurito real; o refino e a carga elétrica são fantasia.",Armazena e dispara raios.
+fibra,Fibra vegetal,organico,comum,,,0.5,,0,0,,coleta,Folhas das árvores (uma em cada três),,,construcao,1,"Fibras de folhas e cascas eram torcidas em cordas há mais de 40 mil anos.",Torcida vira corda.

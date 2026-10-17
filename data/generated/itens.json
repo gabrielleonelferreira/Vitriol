@@ -11,7 +11,8 @@
       "temperatura_max_c": null,
       "descricao": "Fazer à mão, sem estação. Minera blocos de dureza até 1.",
       "luz_raio": null,
-      "luz_cor": null
+      "luz_cor": null,
+      "forma": null
     },
     {
       "id": "fogueira",
@@ -23,7 +24,8 @@
       "temperatura_max_c": 600,
       "descricao": "Queima madeira. Luz e calor básicos.",
       "luz_raio": 7,
-      "luz_cor": "f28a5c"
+      "luz_cor": "f28a5c",
+      "forma": null
     },
     {
       "id": "bancada",
@@ -35,7 +37,8 @@
       "temperatura_max_c": null,
       "descricao": "Montagem de ferramentas e misturas. Coloque com o botão direito.",
       "luz_raio": null,
-      "luz_cor": null
+      "luz_cor": null,
+      "forma": null
     },
     {
       "id": "fornalha",
@@ -47,7 +50,8 @@
       "temperatura_max_c": 1250,
       "descricao": "Forno de redução a carvão vegetal, com fole. Funde e reduz minérios.",
       "luz_raio": 6,
-      "luz_cor": "e0503a"
+      "luz_cor": "e0503a",
+      "forma": null
     },
     {
       "id": "forno",
@@ -59,7 +63,8 @@
       "temperatura_max_c": 1200,
       "descricao": "Calcinação, coqueificação e cozimento de cerâmica.",
       "luz_raio": 6,
-      "luz_cor": "e2b33c"
+      "luz_cor": "e2b33c",
+      "forma": null
     },
     {
       "id": "forno_de_vidro",
@@ -71,7 +76,8 @@
       "temperatura_max_c": 1400,
       "descricao": "Funde vidro. Revestido de tijolo refratário.",
       "luz_raio": 6,
-      "luz_cor": "f28a5c"
+      "luz_cor": "f28a5c",
+      "forma": null
     },
     {
       "id": "raio",
@@ -83,7 +89,8 @@
       "temperatura_max_c": 30000,
       "descricao": "Descarga de tempestade ou da Tempestária. Chega a cerca de 30.000 °C.",
       "luz_raio": 20,
-      "luz_cor": "c8f0ff"
+      "luz_cor": "c8f0ff",
+      "forma": null
     },
     {
       "id": "picareta_silex",
@@ -95,7 +102,8 @@
       "temperatura_max_c": null,
       "descricao": "Dura, mas quebra fácil.",
       "luz_raio": null,
-      "luz_cor": null
+      "luz_cor": null,
+      "forma": null
     },
     {
       "id": "picareta_cobre",
@@ -107,7 +115,8 @@
       "temperatura_max_c": null,
       "descricao": "Mesma força do sílex e muito mais durável.",
       "luz_raio": null,
-      "luz_cor": null
+      "luz_cor": null,
+      "forma": null
     },
     {
       "id": "picareta_bronze",
@@ -119,7 +128,8 @@
       "temperatura_max_c": null,
       "descricao": "Abre caminho pela camada Metamórfica.",
       "luz_raio": null,
-      "luz_cor": null
+      "luz_cor": null,
+      "forma": null
     },
     {
       "id": "picareta_ferro",
@@ -131,7 +141,8 @@
       "temperatura_max_c": null,
       "descricao": "Minera hematita.",
       "luz_raio": null,
-      "luz_cor": null
+      "luz_cor": null,
+      "forma": null
     },
     {
       "id": "picareta_aco",
@@ -143,7 +154,8 @@
       "temperatura_max_c": null,
       "descricao": "Minera quartzo.",
       "luz_raio": null,
-      "luz_cor": null
+      "luz_cor": null,
+      "forma": null
     },
     {
       "id": "bateia",
@@ -155,7 +167,8 @@
       "temperatura_max_c": null,
       "descricao": "Prato raso para garimpar cascalho de rio.",
       "luz_raio": null,
-      "luz_cor": null
+      "luz_cor": null,
+      "forma": null
     },
     {
       "id": "balde",
@@ -167,7 +180,8 @@
       "temperatura_max_c": null,
       "descricao": "Carrega água.",
       "luz_raio": null,
-      "luz_cor": null
+      "luz_cor": null,
+      "forma": null
     },
     {
       "id": "tocha",
@@ -179,7 +193,60 @@
       "temperatura_max_c": null,
       "descricao": "Ilumina cavernas. Coloque com o botão direito.",
       "luz_raio": 9,
-      "luz_cor": "e2b33c"
+      "luz_cor": "e2b33c",
+      "forma": null
+    },
+    {
+      "id": "porta",
+      "nome": "Porta de madeira",
+      "tipo": "objeto",
+      "material_base": "madeira",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": null,
+      "descricao": "Abre sozinha quando alguém encosta. Ocupa 2 blocos de altura.",
+      "luz_raio": null,
+      "luz_cor": null,
+      "forma": "porta"
+    },
+    {
+      "id": "plataforma",
+      "nome": "Plataforma de madeira",
+      "tipo": "objeto",
+      "material_base": "madeira",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": null,
+      "descricao": "Atravesse por baixo pulando; desça com S ou seta para baixo.",
+      "luz_raio": null,
+      "luz_cor": null,
+      "forma": "plataforma"
+    },
+    {
+      "id": "escada",
+      "nome": "Escada de mão",
+      "tipo": "objeto",
+      "material_base": "madeira",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": null,
+      "descricao": "Suba com W ou espaço. Segurando a escada na mão, ela se coloca sozinha enquanto você sobe.",
+      "luz_raio": null,
+      "luz_cor": null,
+      "forma": "escada"
+    },
+    {
+      "id": "corda",
+      "nome": "Rolo de corda",
+      "tipo": "objeto",
+      "material_base": "fibra",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": null,
+      "descricao": "Coloque presa no teto ou na beirada: desenrola até 20 blocos para baixo.",
+      "luz_raio": null,
+      "luz_cor": null,
+      "forma": "corda"
     }
   ]
 }

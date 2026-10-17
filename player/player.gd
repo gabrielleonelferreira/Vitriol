@@ -86,7 +86,8 @@ func _physics_process(delta: float) -> void:
 			Input.is_action_just_pressed("pular"),
 			Input.is_action_pressed("pular"),
 			delta,
-			grid
+			grid,
+			Input.is_action_pressed("descer")
 		)
 		position = motor.position
 		_send_timer -= delta
@@ -121,7 +122,9 @@ func _update_animation(delta: float) -> void:
 		return
 	var anim := "parado"
 	var fps := 4.0
-	if not motor.on_floor and not motor.in_water:
+	if motor.climbing:
+		anim = "pular"
+	elif not motor.on_floor and not motor.in_water:
 		anim = "pular"
 	elif absf(motor.velocity.x) > 8.0:
 		anim = "andar"
@@ -131,7 +134,14 @@ func _update_animation(delta: float) -> void:
 		_frame = 0
 		_frame_time = 0.0
 	var info: Dictionary = _meta["animacoes"][_anim]
-	if _anim == "pular":
+	if motor.climbing:
+		# Pendurado: alterna os dois quadros do pulo enquanto sobe ou desce.
+		if absf(motor.velocity.y) > 1.0:
+			_frame_time += delta
+			if _frame_time >= 0.16:
+				_frame_time = 0.0
+				_frame = 1 - _frame
+	elif _anim == "pular":
 		_frame = 0 if motor.velocity.y < 0.0 else 1
 	else:
 		_frame_time += delta

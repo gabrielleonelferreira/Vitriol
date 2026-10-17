@@ -28,28 +28,64 @@ const WATER_SPEED_SCALE := 0.6
 const SWIM_SPEED := 150.0
 ## Maior deslocamento por sub-passo, para nunca atravessar um tile.
 const MAX_SUBSTEP := 6.0
+## Escada e corda: velocidade de subida/descida e de lado enquanto pendurado.
+const CLIMB_SPEED := 90.0
+const CLIMB_SIDE_SPEED := 45.0
+## Tempo ignorando plataformas depois de apertar para baixo (para cair através delas).
+const DROP_TIME := 0.22
 
 var position: Vector2 = Vector2.ZERO
 var velocity: Vector2 = Vector2.ZERO
 var on_floor: bool = false
 var in_water: bool = false
 var facing: int = 1
+var climbing: bool = false
 
 var _coyote: float = 0.0
 var _buffer: float = 0.0
+var _drop: float = 0.0
 
 
-## Avança a física. `move` vai de -1 (esquerda) a 1 (direita).
-func step(move: float, jump_pressed: bool, jump_held: bool, delta: float, grid: WorldGrid) -> void:
+## Avança a física. `move` vai de -1 (esquerda) a 1 (direita); pular também sobe escadas e
+## `down_held` (S ou ↓) desce escadas e atravessa plataformas.
+func step(
+	move: float,
+	jump_pressed: bool,
+	jump_held: bool,
+	delta: float,
+	grid: WorldGrid,
+	down_held: bool = false
+) -> void:
 	in_water = _overlaps_liquid(grid)
 	if jump_pressed:
 		_buffer = JUMP_BUFFER
 	else:
 		_buffer = maxf(_buffer - delta, 0.0)
 	_coyote = COYOTE_TIME if on_floor else maxf(_coyote - delta, 0.0)
+	_drop = maxf(_drop - delta, 0.0)
 
-	_horizontal(move, delta)
-	_vertical(jump_held, delta)
+	var on_climbable := overlaps_climbable(grid, position)
+	if climbing and not on_climbable:
+		climbing = false
+	if not climbing and on_climbable and (jump_held or down_held):
+		climbing = true
+		_buffer = 0.0
+	if down_held and on_floor and not climbing:
+		if _standing_on_climb_top(grid):
+			climbing = true
+			position.y += 1.0
+		elif _standing_on_one_way(grid):
+			_drop = DROP_TIME
+			on_floor = false
+
+	if climbing:
+		velocity.x = clampf(move, -1.0, 1.0) * CLIMB_SIDE_SPEED
+		if absf(move) > 0.01:
+			facing = 1 if move > 0 else -1
+		velocity.y = -CLIMB_SPEED if jump_held else (CLIMB_SPEED if down_held else 0.0)
+	else:
+		_horizontal(move, delta)
+		_vertical(jump_held, delta)
 
 	var motion := velocity * delta
 	var steps := maxi(1, ceili(motion.length() / MAX_SUBSTEP))
@@ -116,8 +152,16 @@ func _move_x(dx: float, grid: WorldGrid) -> void:
 func _move_y(dy: float, grid: WorldGrid) -> void:
 	if dy == 0.0:
 		return
+	var before := position.y
 	position.y += dy
 	if not overlaps_solid(grid, position):
+		# Plataforma e topo de escada seguram só quem cai de cima.
+		if dy > 0.0 and not climbing and _drop <= 0.0:
+			var row := floori((position.y - 0.001) / TILE)
+			if before <= row * TILE + 0.001 and _one_way_under(grid, position.x, row):
+				position.y = row * TILE
+				on_floor = true
+				velocity.y = 0.0
 		return
 	if dy > 0.0:
 		var row := floori((position.y - 0.001) / TILE)
@@ -130,7 +174,58 @@ func _move_y(dy: float, grid: WorldGrid) -> void:
 
 
 func _touching_floor(grid: WorldGrid) -> bool:
-	return overlaps_solid(grid, position + Vector2(0, 1))
+	if climbing:
+		return false
+	if overlaps_solid(grid, position + Vector2(0, 1)):
+		return true
+	return _drop <= 0.0 and _standing_on_one_way(grid)
+
+
+## Os pés estão exatamente no topo de uma plataforma (ou do topo de uma escada)?
+func _standing_on_one_way(grid: WorldGrid) -> bool:
+	var row := roundi(position.y / TILE)
+	if absf(position.y - row * TILE) > 0.01:
+		return false
+	return _one_way_under(grid, position.x, row)
+
+
+func _standing_on_climb_top(grid: WorldGrid) -> bool:
+	var row := roundi(position.y / TILE)
+	if absf(position.y - row * TILE) > 0.01:
+		return false
+	return grid.registry.is_climbable(grid.get_tile(floori(position.x / TILE), row))
+
+
+## Algum tile embaixo dos pés, na linha `row`, segura por cima?
+static func _one_way_under(grid: WorldGrid, feet_x: float, row: int) -> bool:
+	var half := HITBOX.x / 2.0
+	var left := floori((feet_x - half) / TILE)
+	var right := floori((feet_x + half - 0.001) / TILE)
+	for tx in range(left, right + 1):
+		if is_one_way(grid, tx, row):
+			return true
+	return false
+
+
+## Plataforma, ou o degrau mais alto de uma escada/corda (o que tem algo não escalável em cima).
+static func is_one_way(grid: WorldGrid, x: int, y: int) -> bool:
+	var id := grid.get_tile(x, y)
+	if grid.registry.is_platform(id):
+		return true
+	return (
+		grid.registry.is_climbable(id) and not grid.registry.is_climbable(grid.get_tile(x, y - 1))
+	)
+
+
+## O meio do corpo encosta numa escada ou corda?
+static func overlaps_climbable(grid: WorldGrid, feet: Vector2) -> bool:
+	var column := floori(feet.x / TILE)
+	var top := floori((feet.y - HITBOX.y + 2.0) / TILE)
+	var bottom := floori((feet.y - 0.001) / TILE)
+	for ty in range(top, bottom + 1):
+		if grid.registry.is_climbable(grid.get_tile(column, ty)):
+			return true
+	return false
 
 
 func _overlaps_liquid(grid: WorldGrid) -> bool:

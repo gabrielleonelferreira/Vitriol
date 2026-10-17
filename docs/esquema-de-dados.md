@@ -55,6 +55,7 @@ Ferramentas, estações de trabalho e fenômenos que funcionam como estação (o
 | durabilidade | Usos até quebrar |
 | temperatura_max_c | Temperatura máxima da estação |
 | descricao | Texto do jogo |
+| forma | Só para objetos: porta, plataforma, escada ou corda (como age no mundo); vazio = objeto comum | escada |
 | luz_raio | Alcance da luz em blocos quando colocado ou segurado (vazio = não ilumina). Vale também para estações (fornalha, fornos) |
 | luz_cor | Cor da luz, hex da paleta sem # (ex.: `e2b33c`) |
 

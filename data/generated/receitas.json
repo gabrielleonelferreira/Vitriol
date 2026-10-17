@@ -964,6 +964,110 @@
       "desbloqueio": "inicial",
       "nivel_maestria": null,
       "base_real": "Carvão queima mais forte e por mais tempo."
+    },
+    {
+      "id": "fazer_porta",
+      "nome": "Porta de madeira",
+      "estacao": "bancada",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 6
+        }
+      ],
+      "saidas": [
+        {
+          "id": "porta",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 4,
+      "maestria": "construcao",
+      "xp": 2,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "fazer_plataforma",
+      "nome": "Plataforma de madeira",
+      "estacao": "mao",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "plataforma",
+          "qtd": 2
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 1,
+      "maestria": "construcao",
+      "xp": 1,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "fazer_escada",
+      "nome": "Escada de mão",
+      "estacao": "mao",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "escada",
+          "qtd": 2
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 1,
+      "maestria": "construcao",
+      "xp": 1,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": ""
+    },
+    {
+      "id": "torcer_corda",
+      "nome": "Rolo de corda",
+      "estacao": "mao",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "fibra",
+          "qtd": 3
+        }
+      ],
+      "saidas": [
+        {
+          "id": "corda",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 3,
+      "maestria": "construcao",
+      "xp": 1,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "Fibra torcida em dois sentidos não desenrola: é o princípio de toda corda."
     }
   ]
 }

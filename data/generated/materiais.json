@@ -766,6 +766,27 @@
       "xp_descoberta": 60,
       "base_real": "Parte do fulgurito real; o refino e a carga elétrica são fantasia.",
       "descricao": "Armazena e dispara raios."
+    },
+    {
+      "id": "fibra",
+      "nome": "Fibra vegetal",
+      "categoria": "organico",
+      "tier": "comum",
+      "dureza_bloco": null,
+      "dureza_mohs": null,
+      "densidade_g_cm3": 0.5,
+      "ponto_fusao_c": null,
+      "condutividade": 0,
+      "afinidade_arcana": 0,
+      "escola_afim": null,
+      "fonte": "coleta",
+      "fonte_detalhe": "Folhas das árvores (uma em cada três)",
+      "ferramenta_coleta": null,
+      "camadas": [],
+      "maestria": "construcao",
+      "xp_descoberta": 1,
+      "base_real": "Fibras de folhas e cascas eram torcidas em cordas há mais de 40 mil anos.",
+      "descricao": "Torcida vira corda."
     }
   ]
 }

@@ -20,6 +20,7 @@ var _mining_tile := Vector2i(-1, -1)
 var _mine_timer: float = 0.0
 var _time_of_day: float = WorldState.START_TIME
 var _station_timer: float = 0.0
+var _ladder_timer: float = 0.0
 
 @onready var _info: Label = $HUD/Info
 
@@ -147,6 +148,11 @@ func _process(delta: float) -> void:
 		return
 	_update_pointer(delta)
 	_update_light()
+	_auto_ladder(delta)
+	var feet: Array[Vector2] = [_local.position]
+	for remote in _remotes.values():
+		feet.append(remote.position)
+	_world_view.update_doors(feet)
 	_station_timer -= delta
 	if _station_timer <= 0.0:
 		_station_timer = 0.25
@@ -207,6 +213,28 @@ func _update_pointer(delta: float) -> void:
 			_session.mine(tile)
 	elif _mining_tile.x >= 0:
 		_stop_mining()
+
+
+## Com a escada na mão e o botão de subir apertado, coloca o próximo degrau acima do corpo.
+func _auto_ladder(delta: float) -> void:
+	_ladder_timer -= delta
+	if _ladder_timer > 0.0 or _hud.inventory_open():
+		return
+	if _hud.selected_item().get("id", "") != "escada" or not Input.is_action_pressed("pular"):
+		return
+	var feet := _local.position
+	var column := floori(feet.x / WorldGrid.TILE_SIZE)
+	var bottom := floori((feet.y - 0.001) / WorldGrid.TILE_SIZE)
+	var top := floori((feet.y - PlayerMotor.HITBOX.y) / WorldGrid.TILE_SIZE) - 1
+	for row in range(bottom, top - 1, -1):
+		var id := _grid.get_tile(column, row)
+		if _grid.registry.is_climbable(id):
+			continue
+		if id != 0 and not _grid.registry.is_liquid(id):
+			return
+		_session.place(Vector2i(column, row), true)
+		_ladder_timer = 0.12
+		return
 
 
 func _breakable(id: int, held_id: String) -> bool:

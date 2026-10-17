@@ -80,6 +80,28 @@ PlayerMotor.step() a 60 Hz
 - Vidro é sólido mas **não opaco**: a luz e a parede de fundo aparecem através dele
   (`TileRegistry.is_opaque`).
 
+## Movimento na construção (Onda 5D)
+
+O jogo é sempre de lado: a casa é um corte e se atravessa por dentro. Cada objeto tem uma `forma`
+(itens.csv) que vira `TileRegistry.shape`:
+
+| Forma | Física (`PlayerMotor`) | Luz | Colocação (`Building`) |
+| --- | --- | --- | --- |
+| porta | não bloqueia quem anda; 2 tiles (`porta` + `porta_alto`) | bloqueia | chão firme e 2 de altura livre |
+| plataforma | segura só quem cai de cima; S/↓ atravessa (0,22 s) | passa | ao lado de bloco, porta, escada ou plataforma |
+| escada | sobe com pular, desce com S/↓, pendurado não cai; o degrau de cima segura como plataforma | passa | chão, bloco, porta ou outra escada |
+| corda | igual à escada | passa | presa em cima ou na beirada; desenrola até 20 tiles |
+
+- A porta abre só no desenho (`WorldView.update_doors`): fica aberta enquanto um jogador encosta. Para
+  a física ela nunca bloqueia; as portas com selo do multiplayer (Onda 10) vão bloquear para quem não é
+  dono.
+- Quebrar qualquer parte da porta ou da corda tira a peça inteira (`Building.piece_from`) e devolve o
+  item (`refund_for`: corda = 1 rolo a cada 20 tiles).
+- Escada automática: com a escada na mão e pular apertado, o cliente manda `place` com `auto: true`
+  para o próximo tile livre no corpo ou logo acima, a cada 0,12 s; o servidor decide e não avisa
+  quando não dá.
+- Folhas rendem fibra vegetal (34% por folha) ao derrubar a árvore: é o material da corda.
+
 ## Pastas por módulo
 
 | Pasta | Conteúdo | Onda |

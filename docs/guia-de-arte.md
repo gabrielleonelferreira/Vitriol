@@ -156,6 +156,11 @@ objeto, quadros na horizontal; `objetos.json` diz quantos quadros e a velocidade
 quadros de chama, bancada, fornalha de argila, forno de tijolos e forno de vidro com 2 quadros de
 brasa. Fornalha, forno e forno de vidro emitem luz (raio 6) nas cores da tabela acima.
 
+Movimento (Onda 5D), na mesma folha de objetos: porta em duas metades (`porta`, `porta_alto`), cada
+uma com 2 quadros **escolhidos pelo jogo** (`"estatico": true` em `objetos.json`: 0 fechada, 1 aberta
+mostrando só a borda da dobradiça); plataforma de tábua com mão-francesa; escada de dois montantes e três
+degraus; corda torcida com brilho a cada 4 px.
+
 Blocos feitos pelo jogador (tijolo, tijolo refratário, argamassa, vidro, vidro de tempestade) não têm
 parede de fundo natural: aparecem com junta de argamassa (tijolos) ou reflexo diagonal (vidro). O vidro
 deixa ver a parede e o céu atrás e não segura a luz.

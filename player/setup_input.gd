@@ -6,6 +6,7 @@ const ACTIONS := {
 	"mover_esquerda": [KEY_A, KEY_LEFT],
 	"mover_direita": [KEY_D, KEY_RIGHT],
 	"pular": [KEY_SPACE, KEY_W, KEY_UP],
+	"descer": [KEY_S, KEY_DOWN],
 	"depurar": [KEY_F3],
 	"kit_teste": [KEY_F4],
 	"inventario": [KEY_E, KEY_I],

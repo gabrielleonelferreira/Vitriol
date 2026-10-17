@@ -29,6 +29,33 @@
       "linha": 5,
       "quadros": 2,
       "fps": 3
+    },
+    "porta": {
+      "linha": 6,
+      "quadros": 2,
+      "fps": 0,
+      "estatico": true
+    },
+    "porta_alto": {
+      "linha": 7,
+      "quadros": 2,
+      "fps": 0,
+      "estatico": true
+    },
+    "plataforma": {
+      "linha": 8,
+      "quadros": 1,
+      "fps": 1
+    },
+    "escada": {
+      "linha": 9,
+      "quadros": 1,
+      "fps": 1
+    },
+    "corda": {
+      "linha": 10,
+      "quadros": 1,
+      "fps": 1
     }
   }
 }

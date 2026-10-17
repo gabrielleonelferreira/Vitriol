@@ -16,9 +16,12 @@ var _hut_left := 0
 
 
 func _initialize() -> void:
+	var script := "producao"
 	for arg in OS.get_cmdline_user_args():
 		if not arg.begins_with("--"):
 			_out = arg
+		elif arg.begins_with("--roteiro="):
+			script = arg.trim_prefix("--roteiro=")
 	DirAccess.make_dir_recursive_absolute(_out)
 	_main = load("res://client/main.tscn").instantiate()
 	root.add_child(_main)
@@ -54,6 +57,24 @@ func _initialize() -> void:
 		{"wait": 2, "do": _check_save},
 		{"wait": 2, "do": quit},
 	]
+	if script == "movimento":
+		_steps = [
+			{"wait": 90, "do": _go_to_flat},
+			{"wait": 4, "do": _build_movement_scene},
+			{"wait": 30, "do": _shot.bind("10_casa_portas_poco")},
+			{"wait": 2, "do": _stand.bind(8, 0, false)},
+			{"wait": 12, "do": _shot.bind("11_porta_aberta")},
+			{"wait": 2, "do": _stand.bind(6, -3, false)},
+			{"wait": 12, "do": _shot.bind("12_em_cima_da_plataforma")},
+			{"wait": 2, "do": _stand.bind(13, 6, true)},
+			{"wait": 12, "do": _shot.bind("13_escada_no_poco")},
+			{"wait": 2, "do": _ladder_trial_start},
+			{"wait": 75, "do": _shot.bind("15_escada_se_colocando")},
+			{"wait": 150, "do": _ladder_trial_check},
+			{"wait": 2, "do": _night_on_surface},
+			{"wait": 30, "do": _shot.bind("14_noite_casa")},
+			{"wait": 2, "do": quit},
+		]
 
 
 func _process(_delta: float) -> bool:
@@ -208,7 +229,8 @@ func _put_in_hand(item: String) -> void:
 			break
 	if player.inventory.slots[0].get("id") != item:
 		# Só para montar a cena da construção (tijolo, vidro, terra): o resto vem da fabricação.
-		assert(item in ["tijolo", "vidro", "tocha"], "faltou fabricar: " + item)
+		var scenery := ["tijolo", "vidro", "tocha", "porta", "plataforma", "escada", "corda"]
+		assert(item in scenery, "faltou fabricar: " + item)
 		player.inventory.slots[0] = {"id": item, "qtd": 20}
 	player.selected = 0
 
@@ -286,6 +308,83 @@ func _place_as(player: PlayerState, item: String, tile: Vector2i, stand: Vector2
 				]
 			)
 		)
+
+
+## Casinha com porta dos dois lados e um andar de plataforma; poço com escada e corda ao lado.
+func _build_movement_scene() -> void:
+	var player := _state()
+	var grid: WorldGrid = _server.world.grid
+	var left := _hut_left
+	var floor_y: int = grid.surface[left]
+	var keep := player.position
+	var inside := Vector2i(left + 5, floor_y)
+	for x in [left + 2, left + 8]:
+		_place_as(player, "porta", Vector2i(x, floor_y - 1), inside)
+		for h in range(3, 6):
+			_place_as(player, "tijolo", Vector2i(x, floor_y - h), inside)
+	for x in range(left + 2, left + 9):
+		_place_as(player, "tijolo", Vector2i(x, floor_y - 6), inside)
+	for h in range(1, 4):
+		_place_as(player, "escada", Vector2i(left + 4, floor_y - h), inside)
+	for x in range(left + 3, left + 8):
+		if x != left + 4:
+			_place_as(player, "plataforma", Vector2i(x, floor_y - 3), inside)
+	_place_as(player, "tocha", Vector2i(left + 7, floor_y - 4), inside)
+	# Poço de 2 de largura e 9 de fundo, à direita da casa.
+	var changes: Array = []
+	for y in range(floor_y, floor_y + 9):
+		for x in [left + 13, left + 14]:
+			changes.append(_server.world.set_tile(x, y, 0))
+	_server._emit(Events.BROADCAST, {"type": Events.TILE_CHANGED, "changes": changes})
+	var shaft_stand := Vector2i(left + 11, floor_y)
+	for y in range(floor_y + 8, floor_y - 1, -1):
+		_place_as(player, "escada", Vector2i(left + 13, y), Vector2i(left + 13, y + 1))
+	_place_as(player, "corda", Vector2i(left + 14, floor_y), shaft_stand)
+	player.position = keep
+
+
+## Tira a escada do poço, põe o jogador no fundo com escadas na mão e segura "pular".
+func _ladder_trial_start() -> void:
+	var grid: WorldGrid = _server.world.grid
+	var floor_y: int = grid.surface[_hut_left]
+	var changes: Array = []
+	for y in range(floor_y, floor_y + 9):
+		changes.append(_server.world.set_tile(_hut_left + 13, y, 0))
+	_server._emit(Events.BROADCAST, {"type": Events.TILE_CHANGED, "changes": changes})
+	_put_in_hand("escada")
+	_server._send_inventory(_state())
+	_main._session.select_slot(0)
+	_stand(13, 9, false)
+	Input.action_press("pular")
+
+
+func _ladder_trial_check() -> void:
+	Input.action_release("pular")
+	var grid: WorldGrid = _server.world.grid
+	var floor_y: int = grid.surface[_hut_left]
+	var rungs := 0
+	for y in range(floor_y - 3, floor_y + 9):
+		if grid.tile_name(_hut_left + 13, y) == "escada":
+			rungs += 1
+	var feet_row := int(_player().position.y / 16)
+	print(
+		(
+			"escada automática: %d degraus, pés na linha %d (superfície %d)"
+			% [rungs, feet_row, floor_y]
+		)
+	)
+	_shot("16_saiu_do_poco")
+
+
+## Põe o jogador em (dx, dy) tiles do começo do trecho plano; `climb` = pendurado na escada.
+func _stand(dx: int, dy: int, climb: bool) -> void:
+	var grid: WorldGrid = _server.world.grid
+	var feet := Vector2((_hut_left + dx + 0.5) * 16, (grid.surface[_hut_left] + dy) * 16)
+	for player in _server.players.values():
+		player.position = feet
+	_player().apply_correction(feet)
+	_player().motor.climbing = climb
+	_player().motor.on_floor = not climb
 
 
 func _night_on_surface() -> void:

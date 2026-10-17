@@ -12,7 +12,8 @@ const MOVE := "move"
 const MINE := "mine"
 ## Soltou o botão de minerar.
 const MINE_STOP := "mine_stop"
-## Coloca o item selecionado num tile: {"x", "y"}
+## Coloca o item selecionado num tile: {"x", "y", "auto"?}. Porta ocupa 2 tiles; corda desenrola
+## para baixo. `auto` = colocação automática da escada (sem aviso quando não dá).
 const PLACE := "place"
 ## Escolhe o espaço da barra de atalhos: {"index": 0..9}
 const SELECT_SLOT := "select_slot"

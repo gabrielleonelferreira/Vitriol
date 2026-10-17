@@ -48,6 +48,10 @@ var _objects: TileMapLayer
 ## Por id de tile: linha em objetos.png (-1 = não é objeto).
 var _object_row_by_id: PackedInt32Array = []
 var _object_rows: Dictionary = {}
+## Objetos com quadros escolhidos pelo jogo, não animados (porta: 0 fechada, 1 aberta).
+var _static_rows: Dictionary = {}
+## Portas abertas agora (alguém encostado), por célula.
+var _open_doors: Dictionary = {}
 
 
 func build(new_grid: WorldGrid, data: DataStore) -> void:
@@ -87,6 +91,40 @@ func refresh(x: int, y: int) -> void:
 				_draw_cell(x + dx, y + dy)
 
 
+## Abre as portas em que alguém encosta e fecha as outras. `feet`: pés de cada jogador.
+func update_doors(feet: Array[Vector2]) -> void:
+	if grid == null:
+		return
+	var now := {}
+	var size := WorldGrid.TILE_SIZE
+	var half := PlayerMotor.HITBOX.x / 2.0
+	for f in feet:
+		var left := floori((f.x - half - 6.0) / size)
+		var right := floori((f.x + half + 6.0) / size)
+		var top := floori((f.y - PlayerMotor.HITBOX.y) / size)
+		var bottom := floori((f.y - 0.001) / size)
+		for ty in range(top, bottom + 1):
+			for tx in range(left, right + 1):
+				if grid.registry.is_door(grid.get_tile(tx, ty)):
+					now[Vector2i(tx, ty)] = true
+	# As duas metades abrem juntas.
+	for cell in now.keys():
+		for dy in [-1, 1]:
+			var other: Vector2i = cell + Vector2i(0, dy)
+			if grid.registry.is_door(grid.get_tile(other.x, other.y)):
+				now[other] = true
+	var changed: Array = []
+	for cell in now:
+		if not _open_doors.has(cell):
+			changed.append(cell)
+	for cell in _open_doors:
+		if not now.has(cell):
+			changed.append(cell)
+	_open_doors = now
+	for cell in changed:
+		_draw_cell(cell.x, cell.y)
+
+
 func _load_meta() -> void:
 	var parsed: Variant = JSON.parse_string(FileAccess.get_file_as_string(META_PATH))
 	if typeof(parsed) != TYPE_DICTIONARY:
@@ -123,10 +161,15 @@ func _add_objects(tile_set: TileSet) -> void:
 	for name in meta["objetos"]:
 		var info: Dictionary = meta["objetos"][name]
 		var coords := Vector2i(0, int(info["linha"]))
+		_object_rows[name] = int(info["linha"])
+		if info.get("estatico", false):
+			for frame in int(info["quadros"]):
+				source.create_tile(Vector2i(frame, coords.y))
+			_static_rows[name] = true
+			continue
 		source.create_tile(coords)
 		source.set_tile_animation_frames_count(coords, int(info["quadros"]))
 		source.set_tile_animation_speed(coords, float(info["fps"]))
-		_object_rows[name] = int(info["linha"])
 	tile_set.add_source(source, SOURCE_OBJECTS)
 
 
@@ -233,7 +276,10 @@ func _draw_cell(x: int, y: int) -> void:
 		_tiles.erase_cell(cell)
 		_ores.erase_cell(cell)
 		if id != 0:
-			_objects.set_cell(cell, SOURCE_OBJECTS, Vector2i(0, _object_row_by_id[id]))
+			var frame := 1 if _open_doors.has(cell) else 0
+			if not _static_rows.has(grid.registry.name_of(id)):
+				frame = 0
+			_objects.set_cell(cell, SOURCE_OBJECTS, Vector2i(frame, _object_row_by_id[id]))
 		else:
 			_objects.erase_cell(cell)
 		return

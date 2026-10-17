@@ -390,6 +390,126 @@ def oven_world(icon_painter, frame: int, glow_a: str, glow_b: str) -> Image.Imag
     return img
 
 
+# ================================================================ movimento (Onda 5)
+
+WOOD = ("3d3128", "57432f", "74593d", "94744f", "b8956a")
+
+
+def door_half(top: bool, open_: bool) -> Image.Image:
+    """Porta de tábuas verticais com travessas; aberta mostra só a borda presa à dobradiça."""
+    img = new()
+    d = ImageDraw.Draw(img)
+    dark, deep, mid, light, pale = WOOD
+    if open_:
+        d.rectangle([2, 0, 4, 15], fill=c(mid))
+        d.line([2, 0, 2, 15], fill=c(light))
+        d.line([4, 0, 4, 15], fill=c(deep))
+        d.point([3, 3 if top else 12], fill=c("6b737c"))
+        if top:
+            d.line([2, 0, 4, 0], fill=c(dark))
+        return img
+    d.rectangle([3, 0, 12, 15], fill=c(mid))
+    for x in (5, 8, 11):
+        d.line([x, 0, x, 15], fill=c(deep))
+    d.line([3, 0, 3, 15], fill=c(light))
+    d.line([12, 0, 12, 15], fill=c(dark))
+    if top:
+        d.line([3, 0, 12, 0], fill=c(pale))
+        d.rectangle([3, 4, 12, 5], fill=c(light))
+        d.line([3, 5, 12, 5], fill=c(deep))
+        d.rectangle([6, 8, 9, 11], fill=c(dark))  # postigo
+        d.point([7, 9], fill=c("4f86c0"))
+    else:
+        d.rectangle([3, 9, 12, 10], fill=c(light))
+        d.line([3, 10, 12, 10], fill=c(deep))
+        d.line([3, 15, 12, 15], fill=c(dark))
+        d.rectangle([10, 3, 11, 4], fill=c("b8801a"))  # maçaneta
+        d.point([10, 3], fill=c("f2d36b"))
+    return img
+
+
+def platform_tile() -> Image.Image:
+    img = new()
+    d = ImageDraw.Draw(img)
+    dark, deep, mid, light, pale = WOOD
+    d.rectangle([0, 0, 15, 3], fill=c(mid))
+    d.line([0, 0, 15, 0], fill=c(pale))
+    d.line([0, 3, 15, 3], fill=c(dark))
+    d.line([7, 1, 7, 2], fill=c(deep))
+    d.point([3, 1], fill=c(light))
+    d.point([12, 2], fill=c(deep))
+    d.line([2, 4, 4, 6], fill=c(deep))  # mão-francesa
+    d.line([13, 4, 11, 6], fill=c(deep))
+    return img
+
+
+def ladder_tile() -> Image.Image:
+    img = new()
+    d = ImageDraw.Draw(img)
+    dark, deep, mid, light, pale = WOOD
+    for x in (3, 11):
+        d.rectangle([x, 0, x + 1, 15], fill=c(mid))
+        d.line([x, 0, x, 15], fill=c(light))
+    for y in (2, 7, 12):
+        d.rectangle([5, y, 10, y + 1], fill=c(light))
+        d.line([5, y + 1, 10, y + 1], fill=c(deep))
+    return img
+
+
+def rope_tile() -> Image.Image:
+    img = new()
+    px = img.load()
+    for y in range(16):
+        left = (y // 2) % 2 == 0
+        px[7, y] = c("b8956a" if left else "94744f")
+        px[8, y] = c("94744f" if left else "74593d")
+        if y % 4 == 0:
+            px[7, y] = c("fbeeb0")
+    return img
+
+
+def door_icon() -> Image.Image:
+    top, bottom = door_half(True, False), door_half(False, False)
+    img = new()
+    img.alpha_composite(top.resize((16, 8), Image.NEAREST), (0, 0))
+    img.alpha_composite(bottom.resize((16, 8), Image.NEAREST), (0, 8))
+    return outline(img)
+
+
+def platform_icon() -> Image.Image:
+    img = new()
+    img.alpha_composite(platform_tile(), (0, 5))
+    return outline(img)
+
+
+def rope_icon() -> Image.Image:
+    img = new()
+    d = ImageDraw.Draw(img)
+    for r, col in ((6, "74593d"), (5, "b8956a"), (3, "94744f")):
+        d.ellipse([8 - r, 8 - r, 7 + r, 7 + r], outline=c(col))
+    d.line([12, 10, 14, 15], fill=c("94744f"))
+    d.point([9, 3], fill=c("fbeeb0"))
+    return outline(img)
+
+
+def fiber_icon() -> Image.Image:
+    img = new()
+    d = ImageDraw.Draw(img)
+    for i, col in enumerate(("2f5a3a", "4f8a4a", "86b85a", "4f8a4a")):
+        d.line([4 + i * 2, 14, 6 + i, 2 + i], fill=c(col))
+    d.line([3, 9, 12, 8], fill=c("b8956a"))  # amarrado
+    return outline(img)
+
+
+MOVEMENT_FRAMES = {
+    "porta": ([door_half(False, False), door_half(False, True)], 0),
+    "porta_alto": ([door_half(True, False), door_half(True, True)], 0),
+    "plataforma": ([platform_tile()], 1),
+    "escada": ([ladder_tile()], 1),
+    "corda": ([rope_tile()], 1),
+}
+
+
 STATION_FRAMES = {
     "fogueira": ([campfire_world(f) for f in range(3)], 8),
     "bancada": ([workbench()], 1),
@@ -458,6 +578,11 @@ def icon_for(item_id: str, tiles: dict) -> Image.Image | None:
         "fulgurito": fulgurito,
         "pena_ave_trovao": feather,
         "tocha": lambda: torch_frame(0, icon=True),
+        "porta": door_icon,
+        "plataforma": platform_icon,
+        "escada": lambda: outline(ladder_tile()),
+        "corda": rope_icon,
+        "fibra": fiber_icon,
         "fogueira": campfire,
         "bancada": workbench,
         "fornalha": lambda: furnace(("57432f", "94744f", "b8956a"), "e0503a"),
@@ -499,12 +624,15 @@ def build(tiles: dict) -> dict:
     # Objetos no mundo: uma linha por objeto, colunas = quadros de animação.
     world_objects = {"tocha": ([torch_frame(f) for f in range(3)], 8)}
     world_objects.update(STATION_FRAMES)
+    world_objects.update(MOVEMENT_FRAMES)
     objects = new(3 * T, T * len(world_objects))
     meta = {}
     for row, (name, (frames, fps)) in enumerate(world_objects.items()):
         for col, frame in enumerate(frames):
             objects.alpha_composite(quantize(frame), (col * T, row * T))
         meta[name] = {"linha": row, "quadros": len(frames), "fps": fps}
+        if fps == 0:
+            meta[name]["estatico"] = True  # quadro escolhido pelo jogo (porta aberta/fechada)
     objects.save(ART / "tiles" / "objetos.png")
     (ART / "tiles" / "objetos.json").write_text(json.dumps(
         {"objetos": meta}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

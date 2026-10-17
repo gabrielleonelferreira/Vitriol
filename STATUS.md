@@ -2,28 +2,25 @@
 
 ## Onda atual
 
-Onda 4 — Produção: **concluída** (marco `marco/onda-4`). Próxima: Onda 5.
+Onda 5 — Progressão e magia: **em andamento**. 5D concluída; próximas: 5A, 5B, 5C.
 
-## Tarefas da Onda 4
+## Tarefas da Onda 5
 
-- [x] 4A Processos — fila de produção no servidor: estação por perto (6 blocos), materiais saem na hora,
-      tempo da receita, saída no inventário, cancelar devolve; XP por área de maestria com níveis 1–10;
-      receitas `xp` pedem nível; `experimentacao` ficam secretas; painel de fabricação (C) com o que
-      falta e o porquê; progresso ao lado da barra
-- [x] 4B Construção — botão direito coloca blocos, objetos e estações com regras de apoio (estação no
-      chão, bloco encostado, ninguém preso); moldura branca/vermelha usa as mesmas regras do servidor;
-      vidro deixa passar luz
-- [x] 4C Arte — estações no mundo (fogueira, bancada, fornalha, forno, forno de vidro) com brasa animada
-      e luz; tijolo, tijolo refratário, argamassa, vidro e vidro de tempestade construídos
+- [x] 5D Movimento na construção — portas (abrem ao encostar, 2 de altura), plataformas (sobe pulando,
+      S/↓ atravessa), escada de mão (sobe com W; na mão, se coloca sozinha enquanto sobe), rolo de corda
+      (desenrola até 20 blocos); fibra vegetal das folhas; 7 testes novos
+- [ ] 5A Descoberta e maestria — experimentação, cascata, bônus de velocidade por nível
+- [ ] 5B Tempestária — tempestades, raio na areia forma fulgurito, vidro de tempestade
+- [ ] 5C Áudio e partículas
 
-## Portão da Onda 4
+## Portão da Onda 5 (marco MVP)
 
-- [x] Cadeia completa testada: madeira → bancada → fornalha → tijolo → parede (teste
-      `test_cadeia_mao_bancada_fornalha_tijolo` + prints)
-- [x] Cobre fundido na fornalha dá descoberta e XP de metalurgia; nível 2 libera o estanho
-- [x] Casinha de tijolo com janelas de vidro, noite com fornalha e tocha acesas (prints)
-- [x] 68 testes passando no Godot 4.7.2 headless
-- [x] Marco `marco/onda-4` no GitHub
+- [ ] Partida de 30 a 60 minutos do primeiro bloco ao primeiro raio, atravessando uma casa pelas portas
+      e saindo de um poço fundo pela escada ou corda, sem travar, com a lista de bugs registrada
+
+## Onda 4 (concluída, marco `marco/onda-4`)
+
+Fabricação com fila e painel (C), maestria básica, construção com o mouse, arte das estações.
 
 ## Decisões tomadas
 
@@ -60,6 +57,10 @@ Onda 4 — Produção: **concluída** (marco `marco/onda-4`). Próxima: Onda 5.
 - Fabricar consome os materiais ao entrar na fila (não ao terminar): o inventário mostra o que sobra
 - Fila de até 20 trabalhos por jogador; anda mesmo longe da estação (a estação é conferida ao pedir)
 - Tochas: 2 madeiras = 1 tocha de galho; 1 madeira + 1 carvão = 4 tochas
+- Jogo sempre de lado, sem troca de cena ao entrar em casa; a vista de cima será só a Carta do
+  Território (Onda 10)
+- Porta não bloqueia a física (só a luz); abre e fecha só no desenho, sem estado no servidor
+- Escada automática: segurar W com a escada na mão constrói para cima até soltar (dá para fazer torre)
 - Fundir vidro é receita inicial (precisa do forno de vidro, que já pede nível 3 de construção)
 
 ## Pendências e observações
@@ -74,16 +75,9 @@ Onda 4 — Produção: **concluída** (marco `marco/onda-4`). Próxima: Onda 5.
 - Desempenho: o mundo é desenhado inteiro ao entrar; a luz é recalculada só perto da câmera
 - Busca oficial de marca no INPI e no USPTO (classes 9 e 41) — com o Gabriel
 
-## Próxima onda
+## Próximo passo
 
-Onda 5 — Progressão e magia, 4 tarefas em paralelo:
-
-- 5A Experimentação: misturar materiais sem receita, cascata de descobertas, bônus de velocidade por
-  nível de maestria
-- 5B Tempestária: tempestades, raios que formam fulgurito, primeira escola de magia
-- 5C Áudio: sons de mineração, estações e ambiente
-- 5D Movimento na construção: portas que abrem ao encostar, plataformas entre andares (sobe pulando,
-  desce com ↓), escada de mão que se coloca sozinha enquanto o jogador sobe, corda jogada do alto
+5A Descoberta e maestria (experimentação, cascata, bônus de velocidade por nível); depois 5B e 5C.
 
 Decidido para depois: fachada das casas e guincho de mina (Onda 6), Poção de Retorno e círculos de
 transmutação (Onda 7), defesa em camadas, portas com selo e Carta do Território (Onda 10). O jogo fica
@@ -91,4 +85,4 @@ sempre de lado; a vista de cima é só a Carta do Território (administrar e via
 
 ## Última sessão
 
-17/10/2026 — Onda 4 completa. O próximo passo é a Onda 5.
+17/10/2026 — Onda 4 completa; Onda 5 começada pela 5D (movimento na construção).
