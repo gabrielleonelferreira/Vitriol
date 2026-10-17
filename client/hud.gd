@@ -19,6 +19,8 @@ const COLORS := {
 	"info": Color("f7f6f0"),
 	"aviso": Color("f28a5c"),
 	"descoberta": Color("f2d36b"),
+	"nivel": Color("f2d36b"),
+	"pronto": Color("e3e6e4"),
 }
 
 var slots: Array = []

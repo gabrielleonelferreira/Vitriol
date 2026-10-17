@@ -17,7 +17,8 @@ const TILE_CHANGED := "tile_changed"
 const INVENTORY := "inventory"
 ## Progresso da mineração do próprio jogador: {"x", "y", "progress": 0..1} (-1 = parou)
 const MINE_PROGRESS := "mine_progress"
-## Aviso para mostrar na tela: {"text", "kind": "info" | "aviso" | "descoberta"}
+## Aviso para mostrar na tela: {"text", "kind"}.
+## kind: "info" | "aviso" | "descoberta" | "nivel" (subiu de nível) | "pronto" (fabricação)
 const MESSAGE := "message"
 ## Material ou item descoberto pela primeira vez: {"id", "nome", "xp"}
 const DISCOVERED := "discovered"

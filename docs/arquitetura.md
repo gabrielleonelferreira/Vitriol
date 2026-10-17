@@ -95,6 +95,21 @@ PlayerMotor.step() a 60 Hz
 - Bônus por nível acima do 1: receitas da área 6% mais rápidas (`Mastery.craft_seconds`) e ferramentas
   feitas nela 5% mais duráveis (`durability_for`; o espaço guarda `durabilidade_max`).
 
+## Sons e partículas (Onda 5C)
+
+- Sons gerados por síntese em `tools/audio/gerar_sons.py` (numpy/scipy): 25 sons, 43 arquivos WAV mono
+  de 22 kHz em `audio/`, com `audio/sons.json` (variações e quais são contínuos). Sem licença de
+  terceiros.
+- `client/sfx.gd`: efeitos com variação de tom (±8%), no mundo (`AudioStreamPlayer2D`, alcance 520 px)
+  ou de interface; contínuos (chuva, fogo) sobem e descem devagar. `Sfx.family` agrupa os tiles em
+  terra, pedra, madeira e folhas para minerar, quebrar e pisar. M liga e desliga.
+- Quem toca: `main.gd` (mineração a cada 0,24 s, quebra, colocação, portas, raio — trovão mais baixo
+  quanto mais longe —, mensagens de descoberta, nível e "pronto", experimento que falhou, fogo da estação
+  mais perto, chuva conforme a tempestade e mais baixa no subsolo) e os sinais do `Player` (passos a cada
+  18 px, pulo, salto do vento, degraus).
+- `client/bits.gd`: lascas na cor do material a cada batida e poeira ao quebrar, faíscas no raio, fumaça
+  nos fornos e brasas na fogueira e na fornalha que estão na tela (revistas a cada 0,25 s).
+
 ## Tempestades e Tempestária (Onda 5B)
 
 - `Weather` (`core/server/weather.gd`) decide quando: tempestade a cada 9–18 min (a primeira em 5–8),

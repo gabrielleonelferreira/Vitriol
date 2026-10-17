@@ -599,7 +599,7 @@ func _advance_crafting(player: PlayerState) -> void:
 			durability = Mastery.durability_for(int(base), area_xp)
 		_give(player, part["id"], int(part["qtd"]), durability)
 	_add_xp(player, recipe["maestria"], int(recipe["xp"]))
-	_message(player, "Pronto: %s." % recipe["nome"], "info")
+	_message(player, "Pronto: %s." % recipe["nome"], "pronto")
 	_dirty = true
 	_send_inventory(player)
 	_send_queue(player)
@@ -614,9 +614,7 @@ func _add_xp(player: PlayerState, area: String, amount: int) -> void:
 	var new_level := Mastery.level_for(before + amount)
 	if new_level > old_level:
 		_message(
-			player,
-			"%s subiu para o nível %d!" % [Mastery.display_name(area), new_level],
-			"descoberta"
+			player, "%s subiu para o nível %d!" % [Mastery.display_name(area), new_level], "nivel"
 		)
 	_send_mastery(player)
 

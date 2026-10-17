@@ -2,7 +2,8 @@
 
 ## Onda atual
 
-Onda 5 — Progressão e magia: **em andamento**. 5D, 5A e 5B concluídas; falta a 5C.
+Onda 5 — Progressão e magia: **em andamento**. 5D, 5A, 5B e 5C concluídas; falta o portão (teste
+de jogo).
 
 ## Tarefas da Onda 5
 
@@ -15,7 +16,9 @@ Onda 5 — Progressão e magia: **em andamento**. 5D, 5A e 5B concluídas; falta
 - [x] 5B Tempestária — tempestades com chuva e raios; raio funde areia em fulgurito (brilha); Pena de
       Ave-Trovão cai uma vez por tempestade e desperta a Tempestária: Q invoca raio (5 s), salto do
       vento (pulo duplo), vidro de tempestade liberado; F7 testa; 6 testes novos
-- [ ] 5C Áudio e partículas
+- [x] 5C Áudio e partículas — 25 sons gerados por síntese (mineração por material, quebra, passos,
+      portas, escada, pulo, trovão, chuva e fogo contínuos, descoberta, nível, pronto, falha); lascas,
+      poeira, faíscas do raio, fumaça e brasas das estações; M liga/desliga o som; 2 testes novos
 
 ## Portão da Onda 5 (marco MVP)
 
@@ -85,8 +88,7 @@ Fabricação com fila e painel (C), maestria básica, construção com o mouse, 
 
 ## Próximo passo
 
-5C Áudio e partículas (sons de mineração, forja, passos, chuva e raio; faíscas e fumaça); depois o
-portão da Onda 5.
+Portão da Onda 5: partida de teste de 30 a 60 minutos (com o Gabriel) e lista de bugs.
 
 Decidido para depois: fachada das casas e guincho de mina (Onda 6), Poção de Retorno e círculos de
 transmutação (Onda 7), defesa em camadas, portas com selo e Carta do Território (Onda 10). O jogo fica

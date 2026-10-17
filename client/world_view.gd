@@ -7,6 +7,9 @@ extends Node2D
 ## contorno, brilho e cantos arredondados só nos lados expostos. O TileSet é montado em código a
 ## partir de art/tiles/tiles.json (gerado por tools/art/gerar_arte.py).
 
+## Uma porta abriu ou fechou (só a metade de baixo avisa, para tocar um som por porta).
+signal door_changed(cell: Vector2i, open: bool)
+
 const TILES_PATH := "res://art/tiles/tiles.png"
 const ORES_PATH := "res://art/tiles/minerios.png"
 const WALLS_PATH := "res://art/tiles/paredes.png"
@@ -123,6 +126,8 @@ func update_doors(feet: Array[Vector2]) -> void:
 	_open_doors = now
 	for cell in changed:
 		_draw_cell(cell.x, cell.y)
+		if grid.registry.name_of(grid.get_tile(cell.x, cell.y)) == "porta":
+			door_changed.emit(cell, now.has(cell))
 
 
 func _load_meta() -> void:

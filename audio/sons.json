@@ -1,0 +1,172 @@
+{
+  "sons": {
+    "minerar_pedra": {
+      "arquivos": [
+        "minerar_pedra_1.wav",
+        "minerar_pedra_2.wav",
+        "minerar_pedra_3.wav"
+      ],
+      "loop": false
+    },
+    "minerar_terra": {
+      "arquivos": [
+        "minerar_terra_1.wav",
+        "minerar_terra_2.wav",
+        "minerar_terra_3.wav"
+      ],
+      "loop": false
+    },
+    "minerar_madeira": {
+      "arquivos": [
+        "minerar_madeira_1.wav",
+        "minerar_madeira_2.wav",
+        "minerar_madeira_3.wav"
+      ],
+      "loop": false
+    },
+    "minerar_folhas": {
+      "arquivos": [
+        "minerar_folhas_1.wav",
+        "minerar_folhas_2.wav"
+      ],
+      "loop": false
+    },
+    "quebrar_pedra": {
+      "arquivos": [
+        "quebrar_pedra_1.wav",
+        "quebrar_pedra_2.wav"
+      ],
+      "loop": false
+    },
+    "quebrar_terra": {
+      "arquivos": [
+        "quebrar_terra_1.wav",
+        "quebrar_terra_2.wav"
+      ],
+      "loop": false
+    },
+    "quebrar_madeira": {
+      "arquivos": [
+        "quebrar_madeira_1.wav",
+        "quebrar_madeira_2.wav"
+      ],
+      "loop": false
+    },
+    "colocar": {
+      "arquivos": [
+        "colocar_1.wav",
+        "colocar_2.wav"
+      ],
+      "loop": false
+    },
+    "passo_grama": {
+      "arquivos": [
+        "passo_grama_1.wav",
+        "passo_grama_2.wav",
+        "passo_grama_3.wav"
+      ],
+      "loop": false
+    },
+    "passo_pedra": {
+      "arquivos": [
+        "passo_pedra_1.wav",
+        "passo_pedra_2.wav",
+        "passo_pedra_3.wav"
+      ],
+      "loop": false
+    },
+    "passo_madeira": {
+      "arquivos": [
+        "passo_madeira_1.wav",
+        "passo_madeira_2.wav"
+      ],
+      "loop": false
+    },
+    "pulo": {
+      "arquivos": [
+        "pulo.wav"
+      ],
+      "loop": false
+    },
+    "salto_vento": {
+      "arquivos": [
+        "salto_vento.wav"
+      ],
+      "loop": false
+    },
+    "trovao": {
+      "arquivos": [
+        "trovao_1.wav",
+        "trovao_2.wav"
+      ],
+      "loop": false
+    },
+    "raio_invocado": {
+      "arquivos": [
+        "raio_invocado.wav"
+      ],
+      "loop": false
+    },
+    "chuva": {
+      "arquivos": [
+        "chuva.wav"
+      ],
+      "loop": true
+    },
+    "fogo": {
+      "arquivos": [
+        "fogo.wav"
+      ],
+      "loop": true
+    },
+    "pronto": {
+      "arquivos": [
+        "pronto.wav"
+      ],
+      "loop": false
+    },
+    "descoberta": {
+      "arquivos": [
+        "descoberta.wav"
+      ],
+      "loop": false
+    },
+    "nivel": {
+      "arquivos": [
+        "nivel.wav"
+      ],
+      "loop": false
+    },
+    "clique": {
+      "arquivos": [
+        "clique.wav"
+      ],
+      "loop": false
+    },
+    "porta_abre": {
+      "arquivos": [
+        "porta_abre.wav"
+      ],
+      "loop": false
+    },
+    "porta_fecha": {
+      "arquivos": [
+        "porta_fecha.wav"
+      ],
+      "loop": false
+    },
+    "falhou": {
+      "arquivos": [
+        "falhou.wav"
+      ],
+      "loop": false
+    },
+    "escada": {
+      "arquivos": [
+        "escada_1.wav",
+        "escada_2.wav"
+      ],
+      "loop": false
+    }
+  }
+}

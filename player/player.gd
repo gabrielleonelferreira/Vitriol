@@ -5,6 +5,11 @@ extends Node2D
 ## Local (is_local = true): lê o teclado, move com o PlayerMotor e envia a posição ao
 ## servidor. Remoto: só mostra a posição que o servidor repassa, suavizada.
 
+## Para os sons: pisou (a cada passo), pulou do chão, subiu/desceu um degrau.
+signal stepped(feet: Vector2)
+signal jumped(air: bool)
+signal climbed(feet: Vector2)
+
 signal moved(position: Vector2, velocity: Vector2, facing: int)
 
 const ART_DIR := "res://art/personagem"
@@ -28,6 +33,8 @@ var _remote_target: Vector2 = Vector2.ZERO
 var _camera: Camera2D
 ## Lufada de vento do salto da Tempestária.
 var _wind := CPUParticles2D.new()
+var _walked: float = 0.0
+var _climbed: float = 0.0
 
 
 func _make_wind() -> void:
@@ -103,6 +110,8 @@ func _physics_process(delta: float) -> void:
 		return
 	if is_local:
 		var move := Input.get_axis("mover_esquerda", "mover_direita")
+		var was_on_floor := motor.on_floor
+		var before := motor.position
 		motor.step(
 			move,
 			Input.is_action_just_pressed("pular"),
@@ -114,6 +123,19 @@ func _physics_process(delta: float) -> void:
 		position = motor.position
 		if motor.air_jumped:
 			_wind.restart()
+			jumped.emit(true)
+		elif was_on_floor and motor.velocity.y < -200.0 and not motor.climbing:
+			jumped.emit(false)
+		if motor.on_floor:
+			_walked += absf(motor.position.x - before.x)
+			if _walked >= 18.0:
+				_walked = 0.0
+				stepped.emit(motor.position)
+		if motor.climbing:
+			_climbed += absf(motor.position.y - before.y)
+			if _climbed >= 12.0:
+				_climbed = 0.0
+				climbed.emit(motor.position)
 		_send_timer -= delta
 		if _send_timer <= 0.0:
 			_send_timer = 1.0 / SEND_RATE

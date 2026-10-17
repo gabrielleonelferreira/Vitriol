@@ -22,6 +22,7 @@ materiais por processos com base real e usa magia para criar o que a ciência so
 | C | Abrir a fabricação: clique em **Fazer** (Shift + clique faz 5). Precisa da estação por perto. Na aba **Experimentar**, misture materiais sem receita |
 | 1 a 0 ou rodinha do mouse | Escolher o espaço da barra |
 | E ou I | Abrir o inventário (clique em dois espaços para trocar) |
+| M | Liga e desliga o som |
 | F3 | Mostrar ou esconder as informações de depuração |
 | Q | Tempestária desperta: invoca um raio onde o mouse aponta (espera de 5 s) |
 | F4 | Kit de teste: picaretas, bateia e tochas (só na versão de desenvolvimento) |
@@ -57,6 +58,7 @@ O jogo salva sozinho a cada minuto e ao fechar a janela. No Windows os saves fic
 python3 tools/build_data.py      # valida o conteúdo (CSV) e gera os dados do jogo
 python3 tools/check_project.py   # confere os caminhos res:// do projeto
 python3 tools/art/gerar_arte.py  # gera de novo a arte base (tiles e personagem)
+python3 tools/audio/gerar_sons.py # gera de novo os sons (síntese, sem arquivos de terceiros)
 godot --headless --path . --import
 godot --headless --path . -s res://tests/run_tests.gd
 ```

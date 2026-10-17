@@ -6,6 +6,9 @@ extends Node2D
 ## Envios de "continuar minerando" por segundo enquanto o botão está apertado.
 const MINE_RATE := 20.0
 const LAYER_NAMES := ["Planícies", "Solo", "Rocha Sedimentar", "Rocha Metamórfica"]
+## Sons de mensagem, por tipo.
+const MESSAGE_SOUNDS := {"descoberta": "descoberta", "nivel": "nivel", "pronto": "pronto"}
+const FIRE_STATIONS := ["fogueira", "fornalha", "forno", "forno_de_vidro"]
 
 var _session: ClientSession
 var _grid: WorldGrid
@@ -24,18 +27,31 @@ var _ladder_timer: float = 0.0
 var _storm: StormView
 var _schools: Dictionary = {}
 var _bolt_light_timer: float = 0.0
+var _sfx: Sfx
+var _bits: Bits
+var _hit_timer: float = 0.0
+var _last_cast_msec: int = -10000
+## Estações acesas por perto (para o som de fogo e a fumaça): {Vector2i: nome}.
+var _fires: Dictionary = {}
 
 @onready var _info: Label = $HUD/Info
 
 
 func _ready() -> void:
+	_sfx = Sfx.new()
+	_sfx.name = "Sons"
+	add_child(_sfx)
 	_hud = Hud.new()
 	_hud.name = "Interface"
 	add_child(_hud)
 	_hud.setup(GameData)
 	_hud.slot_selected.connect(func(index: int) -> void: _session.select_slot(index))
 	_hud.slots_swapped.connect(func(a: int, b: int) -> void: _session.swap_slots(a, b))
-	_hud.craft_requested.connect(func(id: String, qtd: int) -> void: _session.craft(id, qtd))
+	_hud.craft_requested.connect(
+		func(id: String, qtd: int) -> void:
+			_sfx.play("clique")
+			_session.craft(id, qtd)
+	)
 	_hud.craft_cancel_requested.connect(func(i: int) -> void: _session.craft_cancel(i))
 	_hud.experiment_requested.connect(
 		func(station: String, mix: Dictionary) -> void: _session.experiment(station, mix)
@@ -67,15 +83,24 @@ func _on_event(event: Dictionary) -> void:
 		Events.INVENTORY:
 			_hud.set_inventory(event["slots"], int(event["selected"]))
 		Events.MINE_PROGRESS:
-			_mining_view.show_progress(
-				Vector2i(int(event["x"]), int(event["y"])), float(event["progress"])
-			)
+			var spot := Vector2i(int(event["x"]), int(event["y"]))
+			_mining_view.show_progress(spot, float(event["progress"]))
+			if float(event["progress"]) > 0.0 and _hit_timer <= 0.0:
+				_hit_timer = 0.24
+				var family := Sfx.family(_grid.tile_name(spot.x, spot.y))
+				var center := (Vector2(spot) + Vector2(0.5, 0.5)) * WorldGrid.TILE_SIZE
+				_sfx.play("minerar_" + family, center)
+				_bits.burst(center, family)
 		Events.MESSAGE:
-			_hud.toast(event["text"], event.get("kind", "info"))
+			var kind: String = event.get("kind", "info")
+			_hud.toast(event["text"], kind)
+			if MESSAGE_SOUNDS.has(kind):
+				_sfx.play(MESSAGE_SOUNDS[kind], null, 0.0, 0.0)
 		Events.DISCOVERED:
 			var xp := int(event.get("xp", 0))
 			var suffix := "  +%d XP" % xp if xp > 0 else ""
 			_hud.toast("Descoberta: %s%s" % [event["nome"], suffix], "descoberta")
+			_sfx.play("descoberta", null, 0.0, 0.0)
 		Events.MASTERY:
 			_hud.set_mastery(event["xp"], event.get("receitas", []))
 			_set_schools(event.get("escolas", []))
@@ -88,6 +113,8 @@ func _on_event(event: Dictionary) -> void:
 			_hud.set_cast_cooldown(float(event["segundos"]))
 		Events.EXPERIMENT_RESULT:
 			_hud.crafting.show_result(bool(event["ok"]), str(event["texto"]))
+			if not event["ok"]:
+				_sfx.play("falhou")
 			if not _hud.crafting_open():
 				_hud.toast(str(event["texto"]), "descoberta" if event["ok"] else "aviso")
 		Events.CRAFT_QUEUE:
@@ -120,13 +147,25 @@ func _build_world(snapshot: Dictionary) -> void:
 	_storm = StormView.new()
 	_storm.name = "Tempestade"
 	add_child(_storm)
+	_bits = Bits.new()
+	_bits.name = "Particulas"
+	add_child(_bits)
+	_world_view.door_changed.connect(
+		func(cell: Vector2i, open: bool) -> void:
+			var at := (Vector2(cell) + Vector2(0.5, 0.0)) * WorldGrid.TILE_SIZE
+			_sfx.play("porta_abre" if open else "porta_fecha", at)
+	)
 
 
 func _apply_changes(changes: Array) -> void:
+	var sounded := false
 	for change in changes:
 		var x := int(change[0])
 		var y := int(change[1])
+		var before := _grid.tile_name(x, y)
 		_grid.set_tile(x, y, maxi(_grid.registry.id_of(str(change[2])), 0))
+		if not sounded and _sfx:
+			sounded = _change_sound(Vector2i(x, y), before, str(change[2]))
 		_world_view.refresh(x, y)
 		_lighting.tile_changed(x, y)
 
@@ -137,6 +176,11 @@ func _spawn_local(info: Dictionary) -> void:
 	add_child(_local)
 	_local.setup(_grid, _vec(info["position"]), true)
 	_local.moved.connect(_on_local_moved)
+	_local.stepped.connect(_on_step)
+	_local.jumped.connect(
+		func(air: bool) -> void: _sfx.play("salto_vento" if air else "pulo", _local.position)
+	)
+	_local.climbed.connect(func(feet: Vector2) -> void: _sfx.play("escada", feet, 0.0, 0.15))
 	_local.motor.air_jumps = 1 if _schools.has("tempestaria") else 0
 
 
@@ -179,6 +223,8 @@ func _process(delta: float) -> void:
 	if _station_timer <= 0.0:
 		_station_timer = 0.25
 		_hud.set_stations(Crafting.stations_near(_grid, GameData, _local.position))
+		_scan_fires()
+	_hit_timer -= delta
 	var tile := WorldGrid.to_tile(_local.position)
 	var layer := clampi(_grid.layer_at(tile.x, tile.y - 1), 0, LAYER_NAMES.size() - 1)
 	var hour := int(_time_of_day * 24.0)
@@ -194,6 +240,7 @@ func _update_light() -> void:
 	var feet_tile := WorldGrid.to_tile(_local.position)
 	var underground := feet_tile.y > _grid.surface[clampi(feet_tile.x, 0, _grid.width - 1)] + 3
 	_storm.update(get_process_delta_time(), camera, underground)
+	_sfx.set_loop("chuva", _storm.amount * (0.25 if underground else 0.8))
 	var daylight := _storm.adjust_daylight(WorldState.daylight(_time_of_day))
 	_lighting.set_daylight(daylight)
 	_background.set_daylight(daylight)
@@ -288,9 +335,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		_hud.toggle_crafting()
 	elif event.is_action_pressed("magia") and _local and not _hud.inventory_open():
 		if _schools.has("tempestaria"):
+			_last_cast_msec = Time.get_ticks_msec()
 			_session.cast("raio", WorldGrid.to_tile(get_global_mouse_position()))
 		else:
 			_hud.toast("Nenhuma escola desperta ainda. Tempestades trazem algo raro...", "aviso")
+	elif event.is_action_pressed("som"):
+		_sfx.enabled = not _sfx.enabled
+		_hud.toast("Som ligado." if _sfx.enabled else "Som desligado (M liga de novo).", "info")
 	elif event.is_action_pressed("tempestade_teste"):
 		_session.debug_storm()
 	elif event.is_action_pressed("kit_teste"):
@@ -311,6 +362,46 @@ func _unhandled_input(event: InputEvent) -> void:
 		for i in Inventory.HOTBAR:
 			if event.is_action_pressed("slot_%d" % (i + 1)):
 				_session.select_slot(i)
+
+
+## Som e poeira de um tile que quebrou ou foi colocado. Devolve true se tocou.
+func _change_sound(cell: Vector2i, before: String, after: String) -> bool:
+	var center := (Vector2(cell) + Vector2(0.5, 0.5)) * WorldGrid.TILE_SIZE
+	if after == "fulgurito":
+		return false
+	if after == TileRegistry.AIR and before != TileRegistry.AIR:
+		var family := Sfx.family(before)
+		_sfx.play("minerar_folhas" if family == "folhas" else "quebrar_" + family, center)
+		_bits.burst(center, family, true)
+		return true
+	if before == TileRegistry.AIR and after != TileRegistry.AIR and after != TileRegistry.FEATHER:
+		_sfx.play("colocar", center)
+		return true
+	return false
+
+
+func _on_step(feet: Vector2) -> void:
+	var under := WorldGrid.to_tile(feet + Vector2(0, 2))
+	var family := Sfx.family(_grid.tile_name(under.x, under.y))
+	var sound := {"terra": "passo_grama", "folhas": "passo_grama", "madeira": "passo_madeira"}
+	_sfx.play(sound.get(family, "passo_pedra"), feet, 0.0, 0.12)
+
+
+## A cada 0,25 s: estações acesas na tela (fumaça) e a mais perto (volume do fogo).
+func _scan_fires() -> void:
+	_fires.clear()
+	var center := WorldGrid.to_tile(get_viewport().get_camera_2d().get_screen_center_position())
+	var nearest := 99.0
+	var feet := WorldGrid.to_tile(MiningRules.body_center(_local.position))
+	for dy in range(-13, 14):
+		for dx in range(-22, 23):
+			var cell := center + Vector2i(dx, dy)
+			var name := _grid.tile_name(cell.x, cell.y)
+			if name in FIRE_STATIONS:
+				_fires[cell] = name
+				nearest = minf(nearest, Vector2(cell - feet).length())
+	_bits.set_stations(_fires)
+	_sfx.set_loop("fogo", clampf(1.0 - nearest / 9.0, 0.0, 1.0) * 0.7)
 
 
 func _set_schools(list: Array) -> void:
@@ -335,6 +426,13 @@ func _on_lightning(event: Dictionary) -> void:
 	_storm.bolt(x, y, minf(start, y * WorldGrid.TILE_SIZE - 32.0))
 	_lighting.set_point_light("raio", Vector2i(x, y - 1), 18.0, StormView.BOLT_COLOR)
 	_bolt_light_timer = 0.2
+	var hit := (Vector2(x, y) + Vector2(0.5, 0.0)) * WorldGrid.TILE_SIZE
+	_bits.sparks(hit)
+	var distance := hit.distance_to(_local.position) if _local else 0.0
+	if Time.get_ticks_msec() - _last_cast_msec < 600:
+		_sfx.play("raio_invocado", null, 0.0, 0.05)
+	else:
+		_sfx.play("trovao", null, -distance / 60.0, 0.1)
 
 
 func _over_crafting() -> bool:

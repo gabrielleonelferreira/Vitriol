@@ -11,6 +11,7 @@ const ACTIONS := {
 	"kit_teste": [KEY_F4],
 	"tempestade_teste": [KEY_F7],
 	"magia": [KEY_Q],
+	"som": [KEY_M],
 	"inventario": [KEY_E, KEY_I],
 	"fabricar": [KEY_C],
 	"slot_1": [KEY_1],
