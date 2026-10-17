@@ -1,0 +1,79 @@
+{
+  "tamanho": 16,
+  "variacoes": 4,
+  "coluna_parede": 4,
+  "tiles": {
+    "terra": {
+      "linha": 0,
+      "parede": true
+    },
+    "grama": {
+      "linha": 1,
+      "parede": true
+    },
+    "argila": {
+      "linha": 2,
+      "parede": true
+    },
+    "areia": {
+      "linha": 3,
+      "parede": true
+    },
+    "cascalho": {
+      "linha": 4,
+      "parede": true
+    },
+    "calcario": {
+      "linha": 5,
+      "parede": true
+    },
+    "xisto": {
+      "linha": 6,
+      "parede": true
+    },
+    "rocha_base": {
+      "linha": 7,
+      "parede": true
+    },
+    "tronco": {
+      "linha": 8,
+      "parede": false
+    },
+    "folhas": {
+      "linha": 9,
+      "parede": false
+    },
+    "agua": {
+      "linha": 10,
+      "parede": false
+    },
+    "agua_topo": {
+      "linha": 11,
+      "parede": false
+    }
+  },
+  "minerios": {
+    "malaquita": {
+      "linha": 0
+    },
+    "limonita": {
+      "linha": 1
+    },
+    "carvao_mineral": {
+      "linha": 2
+    },
+    "hematita": {
+      "linha": 3
+    },
+    "quartzo": {
+      "linha": 4
+    },
+    "acantita": {
+      "linha": 5
+    },
+    "silex": {
+      "linha": 6
+    }
+  },
+  "observacao": "Gerado por tools/art/gerar_arte.py. Minérios são desenhados por cima da rocha da camada."
+}

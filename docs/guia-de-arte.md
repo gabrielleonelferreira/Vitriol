@@ -100,6 +100,31 @@ de luz. Valores iniciais, a ajustar no teste de jogo:
 No Godot: `CanvasModulate` para a luz ambiente de cada camada e `PointLight2D` para cada fonte, com sombras
 2D ligadas nos tiles sólidos.
 
+## Arte gerada por código (Onda 2)
+
+A arte base é gerada por `tools/art/gerar_arte.py`, só com cores da paleta (o script recusa qualquer cor
+fora dela). Rodar de novo gera os mesmos arquivos.
+
+![Arte base](img/arte-base.png)
+
+| Arquivo | Conteúdo |
+| --- | --- |
+| `art/tiles/tiles.png` | Uma linha por tile: colunas 0–3 são variações da frente, 4–7 a parede de fundo |
+| `art/tiles/minerios.png` | Minérios com fundo transparente, desenhados **por cima da rocha** da camada |
+| `art/tiles/bordas.png` | 16 máscaras de borda: contorno e brilho onde o bloco encosta no ar |
+| `art/personagem/*.png` | Uma folha por parte do corpo, 16 × 32 por quadro |
+
+Por que assim:
+
+- **Minério sobre a rocha:** malaquita no calcário tem fundo de calcário; no Solo, fundo de terra. Um
+  desenho por minério serve para qualquer camada.
+- **Bordas automáticas:** em vez de 47 variações de autotile por material, uma camada de bordas por cima
+  dá o contorno. Cantos arredondados ficam para o polimento.
+- **Formas distintas por minério:** faixas (hematita), prismas (quartzo), grãos redondos (prata), lascas
+  (carvão), manchas concêntricas (malaquita).
+
+Animações prontas: parado (4), andar (8), pular (2). Minerar e fabricar entram com as ações (Ondas 3 e 4).
+
 ## Referências de estilo
 
 - **Terraria:** escala de tiles e personagem, leitura clara dos blocos.
