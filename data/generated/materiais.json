@@ -71,6 +71,29 @@
       "descricao": "Solta e fina."
     },
     {
+      "id": "cascalho",
+      "nome": "Cascalho de rio",
+      "categoria": "bloco",
+      "tier": "comum",
+      "dureza_bloco": 1,
+      "dureza_mohs": null,
+      "densidade_g_cm3": 1.8,
+      "ponto_fusao_c": null,
+      "condutividade": 0,
+      "afinidade_arcana": 0,
+      "escola_afim": null,
+      "fonte": "mineracao",
+      "fonte_detalhe": "Leito de lagos e rios nas Planícies",
+      "ferramenta_coleta": null,
+      "camadas": [
+        1
+      ],
+      "maestria": "metalurgia",
+      "xp_descoberta": 3,
+      "base_real": "Cascalho de aluvião; garimpado com bateia, rende cassiterita e ouro.",
+      "descricao": "Fundo de lagos e rios."
+    },
+    {
       "id": "silex",
       "nome": "Sílex",
       "categoria": "mineral",

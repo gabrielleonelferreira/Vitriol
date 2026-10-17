@@ -1,55 +1,50 @@
 extends SceneTree
-## Testes de fumaça da arquitetura base.
-## Rodar no terminal: godot --headless --path . -s res://tests/run_tests.gd
+## Executa todos os testes de res://tests/test_*.gd.
+## Rodar: godot --headless --path . -s res://tests/run_tests.gd
+## Filtrar: godot --headless --path . -s res://tests/run_tests.gd -- mundo
 
-const GameServerScript := preload("res://core/server/game_server.gd")
-
-var _failures: int = 0
+const TEST_DIR := "res://tests"
 
 
 func _initialize() -> void:
-	_test_join_and_ping()
-	_test_leave()
-	if _failures == 0:
-		print("OK: todos os testes passaram")
-	quit(1 if _failures > 0 else 0)
+	var filter := ""
+	var args := OS.get_cmdline_user_args()
+	if not args.is_empty():
+		filter = args[0]
 
+	var total_failures := 0
+	var total_tests := 0
+	var files := DirAccess.get_files_at(TEST_DIR)
+	files.sort()
+	for file in files:
+		if not (file.begins_with("test_") and file.ends_with(".gd")):
+			continue
+		if file == "test_case.gd":
+			continue
+		var script: GDScript = load("%s/%s" % [TEST_DIR, file])
+		for method in script.get_script_method_list():
+			var name: String = method["name"]
+			if not name.begins_with("test_"):
+				continue
+			if not filter.is_empty() and not (file + ":" + name).contains(filter):
+				continue
+			var case: TestCase = script.new()
+			var started := Time.get_ticks_msec()
+			case.call(name)
+			var elapsed := Time.get_ticks_msec() - started
+			total_tests += 1
+			if case.failures.is_empty():
+				print("  ok    %s:%s (%d verificações, %d ms)" % [file, name, case.checks, elapsed])
+			else:
+				total_failures += 1
+				printerr("  FALHA %s:%s" % [file, name])
+				for failure in case.failures:
+					printerr("        - " + failure)
+			if case.has_method("cleanup"):
+				case.call("cleanup")
 
-func _test_join_and_ping() -> void:
-	var server = GameServerScript.new()
-	var transport := LocalTransport.new(server)
-	var received: Array[Dictionary] = []
-	transport.event_received.connect(func(event: Dictionary) -> void: received.append(event))
-	transport.open()
-
-	transport.send({"type": Commands.JOIN, "name": "Teste"})
-	server.step_once()
-	_check(received.size() == 1, "join devolve um evento")
-	_check(received[0].get("type") == Events.JOINED, "evento é joined")
-	_check(server.players.has(transport.peer_id), "servidor registra o jogador")
-
-	transport.send({"type": Commands.PING})
-	server.step_once()
-	_check(received.back().get("type") == Events.PONG, "ping devolve pong")
-
-	transport.close()
-	server.free()
-
-
-func _test_leave() -> void:
-	var server = GameServerScript.new()
-	var transport := LocalTransport.new(server)
-	transport.open()
-	transport.send({"type": Commands.JOIN, "name": "Teste"})
-	server.step_once()
-	transport.close()
-	_check(server.players.is_empty(), "fechar a conexão remove o jogador")
-	server.free()
-
-
-func _check(condition: bool, label: String) -> void:
-	if condition:
-		print("  ok   ", label)
+	if total_failures == 0:
+		print("OK: %d testes passaram" % total_tests)
 	else:
-		_failures += 1
-		printerr("  FALHA ", label)
+		printerr("%d de %d testes falharam" % [total_failures, total_tests])
+	quit(1 if total_failures > 0 else 0)

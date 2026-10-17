@@ -2,6 +2,7 @@ id,nome,categoria,tier,dureza_bloco,dureza_mohs,densidade_g_cm3,ponto_fusao_c,co
 terra,Terra,bloco,comum,1,,1.3,,1,0,,mineracao,Superfície e camada Solo,,1,construcao,1,"Solo de minerais e matéria orgânica.",Bloco básico da superfície.
 argila,Argila,mineral,comum,1,2,1.8,1750,1,0,,mineracao,Margens de rio e camada Solo,,1,construcao,3,"Argila de caulinita; vira cerâmica quando cozida.",Moldável quando úmida.
 areia,Areia,mineral,comum,1,7,1.6,1713,0,0,,mineracao,Margens de rio e camada Solo,,1,vidraria,2,"Grãos de quartzo (SiO2), matéria-prima do vidro.",Solta e fina.
+cascalho,Cascalho de rio,bloco,comum,1,,1.8,,0,0,,mineracao,Leito de lagos e rios nas Planícies,,1,metalurgia,3,"Cascalho de aluvião; garimpado com bateia, rende cassiterita e ouro.",Fundo de lagos e rios.
 silex,Sílex,mineral,comum,1,7,2.6,1713,0,0,,mineracao,Nódulos soltos na camada Solo,,1,construcao,3,"Pederneira: quebra em lascas afiadas, usada em ferramentas desde a Pré-História.",A primeira ferramenta do alquimista.
 madeira,Madeira,organico,comum,,,0.6,,0,0,,coleta,Árvores das Planícies,,,construcao,1,"Madeira de lei das Planícies.",Combustível e material de construção.
 agua,Água,liquido,comum,,,1.0,0,1,0,,coleta,Rios e lagos,balde,,quimica,1,H2O.,Necessária em misturas.

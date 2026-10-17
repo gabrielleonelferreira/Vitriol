@@ -1,0 +1,140 @@
+{
+  "versao": 1,
+  "geracao": [
+    {
+      "material": "terra",
+      "camada": 1,
+      "forma": "rocha",
+      "frequencia": 0,
+      "tamanho_min": 1,
+      "tamanho_max": 1,
+      "observacao": "Rocha principal da camada Solo"
+    },
+    {
+      "material": "calcario",
+      "camada": 2,
+      "forma": "rocha",
+      "frequencia": 0,
+      "tamanho_min": 1,
+      "tamanho_max": 1,
+      "observacao": "Rocha principal da camada Sedimentar"
+    },
+    {
+      "material": "xisto",
+      "camada": 3,
+      "forma": "rocha",
+      "frequencia": 0,
+      "tamanho_min": 1,
+      "tamanho_max": 1,
+      "observacao": "Rocha principal da camada Metamórfica"
+    },
+    {
+      "material": "argila",
+      "camada": 1,
+      "forma": "margem",
+      "frequencia": 2,
+      "tamanho_min": 3,
+      "tamanho_max": 6,
+      "observacao": "Margens de lagos"
+    },
+    {
+      "material": "areia",
+      "camada": 1,
+      "forma": "margem",
+      "frequencia": 2,
+      "tamanho_min": 3,
+      "tamanho_max": 6,
+      "observacao": "Margens de lagos"
+    },
+    {
+      "material": "limonita",
+      "camada": 1,
+      "forma": "margem",
+      "frequencia": 1,
+      "tamanho_min": 2,
+      "tamanho_max": 4,
+      "observacao": "Ferro de pântano nas áreas alagadas"
+    },
+    {
+      "material": "cascalho",
+      "camada": 1,
+      "forma": "leito",
+      "frequencia": 1,
+      "tamanho_min": 1,
+      "tamanho_max": 1,
+      "observacao": "Fundo de lagos"
+    },
+    {
+      "material": "argila",
+      "camada": 1,
+      "forma": "bolsao",
+      "frequencia": 2,
+      "tamanho_min": 2,
+      "tamanho_max": 4,
+      "observacao": "Bolsões de argila no Solo"
+    },
+    {
+      "material": "silex",
+      "camada": 1,
+      "forma": "veio",
+      "frequencia": 10,
+      "tamanho_min": 1,
+      "tamanho_max": 3,
+      "observacao": "Nódulos soltos"
+    },
+    {
+      "material": "malaquita",
+      "camada": 1,
+      "forma": "superficie",
+      "frequencia": 1.5,
+      "tamanho_min": 3,
+      "tamanho_max": 6,
+      "observacao": "Afloramentos verdes"
+    },
+    {
+      "material": "malaquita",
+      "camada": 2,
+      "forma": "veio",
+      "frequencia": 4,
+      "tamanho_min": 4,
+      "tamanho_max": 9,
+      "observacao": "Veios de cobre"
+    },
+    {
+      "material": "carvao_mineral",
+      "camada": 2,
+      "forma": "veio",
+      "frequencia": 5,
+      "tamanho_min": 6,
+      "tamanho_max": 14,
+      "observacao": "Camadas de carvão"
+    },
+    {
+      "material": "hematita",
+      "camada": 3,
+      "forma": "veio",
+      "frequencia": 4,
+      "tamanho_min": 4,
+      "tamanho_max": 10,
+      "observacao": "Ferro em faixas"
+    },
+    {
+      "material": "quartzo",
+      "camada": 3,
+      "forma": "veio",
+      "frequencia": 3,
+      "tamanho_min": 3,
+      "tamanho_max": 7,
+      "observacao": "Veios de quartzo"
+    },
+    {
+      "material": "acantita",
+      "camada": 3,
+      "forma": "veio",
+      "frequencia": 1.2,
+      "tamanho_min": 2,
+      "tamanho_max": 5,
+      "observacao": "Veios raros de prata"
+    }
+  ]
+}
