@@ -5,13 +5,14 @@ Uso (na raiz do repositório):
     pip install jsonschema
     python3 tools/build_data.py
 
-Lê    data/content/materiais.csv, itens.csv, receitas.csv
-Gera  data/generated/materiais.json, itens.json, receitas.json
+Lê    data/content/materiais.csv, itens.csv, receitas.csv, geracao.csv
+Gera  data/generated/materiais.json, itens.json, receitas.json, geracao.json
 Valida contra data/schema/*.schema.json e confere:
   - ids únicos entre materiais e itens
   - referências (entradas, saídas, estações, ferramentas, material base)
   - temperatura da receita dentro do limite da estação
   - regras de desbloqueio
+  - regras de geração do mundo (material é bloco, camada coerente, uma rocha por camada)
   - progressão: tudo é alcançável partindo de mãos vazias
 
 Sai com código 1 se houver erro. Avisos não impedem a geração.
@@ -35,9 +36,6 @@ SCHEMA = ROOT / "data" / "schema"
 MAOS = "mao"  # estação implícita: fazer à mão, sem bancada
 PODER_MAOS = 1.0
 
-# Rocha principal de cada camada. Para chegar à camada N, o jogador precisa
-# conseguir minerar a rocha principal de todas as camadas até N.
-ROCHA_DAS_CAMADAS = {1: "terra", 2: "calcario", 3: "xisto"}
 
 
 class Report:
@@ -148,6 +146,26 @@ def load_itens() -> list[dict]:
     return rows
 
 
+def load_geracao() -> list[dict]:
+    rows = []
+    for r in _read_csv("geracao.csv"):
+        rows.append({
+            "material": _text(r["material"]),
+            "camada": _int(r["camada"]),
+            "forma": _text(r["forma"]),
+            "frequencia": _num(r["frequencia"]) or 0,
+            "tamanho_min": _int(r["tamanho_min"]),
+            "tamanho_max": _int(r["tamanho_max"]),
+            "observacao": _text(r.get("observacao")),
+        })
+    return rows
+
+
+def rocks_by_layer(geracao: list[dict]) -> dict[int, str]:
+    """Rocha principal de cada camada, lida das regras de geração (forma 'rocha')."""
+    return {g["camada"]: g["material"] for g in geracao if g["forma"] == "rocha"}
+
+
 def load_receitas() -> list[dict]:
     rows = []
     for r in _read_csv("receitas.csv"):
@@ -179,7 +197,7 @@ def _validators() -> dict[str, Draft202012Validator]:
     )
     return {
         name: Draft202012Validator(schemas[f"{name}.schema.json"], registry=registry)
-        for name in ("material", "item", "receita")
+        for name in ("material", "item", "receita", "geracao")
     }
 
 
@@ -250,7 +268,36 @@ def validate_rules(materiais: list[dict], itens: list[dict], receitas: list[dict
             report.warn(f"material '{m['id']}' ainda não é usado em nenhuma receita")
 
 
-def simulate_progression(materiais: list[dict], itens: list[dict], receitas: list[dict], report: Report) -> list[str]:
+def validate_generation(materiais: list[dict], geracao: list[dict], report: Report) -> None:
+    mat = {m["id"]: m for m in materiais}
+    rocks: dict[int, list[str]] = {}
+    for g in geracao:
+        label = f"geração '{g['material']}' camada {g['camada']} ({g['forma']})"
+        m = mat.get(g["material"])
+        if m is None:
+            report.error(f"{label}: material não existe")
+            continue
+        if m["dureza_bloco"] is None and m["categoria"] != "liquido":
+            report.error(f"{label}: material não é bloco (dureza_bloco vazia)")
+        if g["camada"] not in m["camadas"]:
+            report.error(f"{label}: a camada não está nas camadas do material ({m['camadas']})")
+        if g["tamanho_max"] < g["tamanho_min"]:
+            report.error(f"{label}: tamanho_max menor que tamanho_min")
+        if g["forma"] == "rocha":
+            rocks.setdefault(g["camada"], []).append(g["material"])
+    for camada, ids in sorted(rocks.items()):
+        if len(ids) > 1:
+            report.error(f"geração: camada {camada} tem mais de uma rocha principal: {ids}")
+    camadas = sorted(rocks)
+    if camadas != list(range(1, len(camadas) + 1)):
+        report.error(f"geração: as camadas com rocha principal precisam ser contínuas a partir de 1 (tem {camadas})")
+    placed = {g["material"] for g in geracao}
+    for m in materiais:
+        if m["fonte"] == "mineracao" and m["id"] not in placed:
+            report.warn(f"material '{m['id']}' tem fonte mineracao mas nenhuma regra de geração")
+
+
+def simulate_progression(materiais: list[dict], itens: list[dict], receitas: list[dict], geracao: list[dict], report: Report) -> list[str]:
     """Parte de mãos vazias e vê até onde o jogador chega. Devolve as etapas em texto."""
     mat = {m["id"]: m for m in materiais}
     itm = {i["id"]: i for i in itens}
@@ -259,6 +306,7 @@ def simulate_progression(materiais: list[dict], itens: list[dict], receitas: lis
     power = PODER_MAOS
     steps: list[str] = []
 
+    ROCHA_DAS_CAMADAS = rocks_by_layer(geracao)
     for camada, rocha in ROCHA_DAS_CAMADAS.items():
         if rocha not in mat or mat[rocha]["dureza_bloco"] is None:
             report.error(f"progressão: rocha principal da camada {camada} ('{rocha}') não existe ou não é bloco")
@@ -331,14 +379,17 @@ def simulate_progression(materiais: list[dict], itens: list[dict], receitas: lis
 def main() -> int:
     report = Report()
     materiais, itens, receitas = load_materiais(), load_itens(), load_receitas()
+    geracao = load_geracao()
     validators = _validators()
     validate_schema("material", materiais, validators["material"], report)
     validate_schema("item", itens, validators["item"], report)
     validate_schema("receita", receitas, validators["receita"], report)
+    validate_schema("geracao", geracao, validators["geracao"], report)
     validate_rules(materiais, itens, receitas, report)
-    steps = simulate_progression(materiais, itens, receitas, report)
+    validate_generation(materiais, geracao, report)
+    steps = simulate_progression(materiais, itens, receitas, geracao, report)
 
-    print(f"{len(materiais)} materiais, {len(itens)} itens, {len(receitas)} receitas")
+    print(f"{len(materiais)} materiais, {len(itens)} itens, {len(receitas)} receitas, {len(geracao)} regras de geração")
     print("\nProgressão a partir de mãos vazias:")
     for step in steps:
         print("  " + step)
@@ -354,7 +405,7 @@ def main() -> int:
         return 1
 
     GENERATED.mkdir(parents=True, exist_ok=True)
-    for name, rows in (("materiais", materiais), ("itens", itens), ("receitas", receitas)):
+    for name, rows in (("materiais", materiais), ("itens", itens), ("receitas", receitas), ("geracao", geracao)):
         payload = {"versao": 1, name: rows}
         (GENERATED / f"{name}.json").write_text(
             json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"

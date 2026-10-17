@@ -76,6 +76,21 @@ O item `mao` representa fazer algo à mão, sem estação.
 | nivel_maestria | Nível exigido quando desbloqueio = xp | 2 |
 | base_real | O fundo de verdade | — |
 
+## geracao.csv
+
+Onde cada material aparece no mundo gerado. Uma linha por regra; o mesmo material pode ter várias.
+
+| Coluna | O que é |
+| --- | --- |
+| material | id do material (precisa ser um bloco) |
+| camada | 1 Solo, 2 Sedimentar, 3 Metamórfica… (precisa estar nas `camadas` do material) |
+| forma | `rocha` (preenche a camada; uma por camada), `veio`, `bolsao`, `superficie` (afloramento), `margem` (em volta de lagos), `leito` (fundo de lagos) |
+| frequencia | veio, bolsão e superfície: ocorrências a cada 100 colunas de largura. margem: por lago |
+| tamanho_min, tamanho_max | Tamanho de cada ocorrência, em blocos (veio) ou raio (bolsão, margem) |
+| observacao | Nota livre |
+
+A rocha principal de cada camada vem daqui (forma `rocha`) e é usada pela simulação de progressão.
+
 ## Regras conferidas pelo validador
 
 1. Cada registro segue o esquema (tipos, valores permitidos, faixas).
@@ -84,7 +99,8 @@ O item `mao` representa fazer algo à mão, sem estação.
 4. A temperatura da receita cabe na estação.
 5. Desbloqueio por xp tem nível; os outros não.
 6. Material com fonte `processo` é produzido por alguma receita.
-7. **Progressão:** partindo de mãos vazias, todo material e item é alcançável, respeitando dureza dos
+7. Regras de geração: material é bloco, a camada é coerente, uma rocha principal por camada.
+8. **Progressão:** partindo de mãos vazias, todo material e item é alcançável, respeitando dureza dos
    blocos, poder das picaretas, ferramentas de coleta, estações e escolas despertadas (um material
    mítico com `escola_afim` desperta aquela escola).
 

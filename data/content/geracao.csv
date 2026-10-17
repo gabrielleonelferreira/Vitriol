@@ -1,0 +1,16 @@
+material,camada,forma,frequencia,tamanho_min,tamanho_max,observacao
+terra,1,rocha,0,1,1,Rocha principal da camada Solo
+calcario,2,rocha,0,1,1,Rocha principal da camada Sedimentar
+xisto,3,rocha,0,1,1,Rocha principal da camada Metamórfica
+argila,1,margem,2,3,6,Margens de lagos
+areia,1,margem,2,3,6,Margens de lagos
+limonita,1,margem,1,2,4,Ferro de pântano nas áreas alagadas
+cascalho,1,leito,1,1,1,Fundo de lagos
+argila,1,bolsao,2,2,4,Bolsões de argila no Solo
+silex,1,veio,10,1,3,Nódulos soltos
+malaquita,1,superficie,1.5,3,6,Afloramentos verdes
+malaquita,2,veio,4,4,9,Veios de cobre
+carvao_mineral,2,veio,5,6,14,Camadas de carvão
+hematita,3,veio,4,4,10,Ferro em faixas
+quartzo,3,veio,3,3,7,Veios de quartzo
+acantita,3,veio,1.2,2,5,Veios raros de prata

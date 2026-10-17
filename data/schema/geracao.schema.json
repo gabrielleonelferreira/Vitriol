@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vitriol.local/schema/geracao.schema.json",
+  "title": "Regra de geração",
+  "description": "Onde e como um material aparece no mundo gerado.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["material", "camada", "forma", "frequencia", "tamanho_min", "tamanho_max"],
+  "properties": {
+    "material": {"$ref": "comum.schema.json#/$defs/id"},
+    "camada": {"type": "integer", "minimum": 1, "maximum": 6},
+    "forma": {
+      "description": "rocha = preenche a camada; veio = caminho sinuoso; bolsao = mancha arredondada; superficie = afloramento no topo do terreno; margem = em volta dos lagos; leito = fundo dos lagos.",
+      "enum": ["rocha", "veio", "bolsao", "superficie", "margem", "leito"]
+    },
+    "frequencia": {
+      "description": "veio, bolsao e superficie: ocorrências a cada 100 colunas de largura do mundo. margem: ocorrências por lago. rocha e leito: ignorada.",
+      "type": "number", "minimum": 0
+    },
+    "tamanho_min": {"type": "integer", "minimum": 1},
+    "tamanho_max": {"type": "integer", "minimum": 1},
+    "observacao": {"type": "string"}
+  }
+}
