@@ -76,12 +76,18 @@ Onda 4 — Produção: **concluída** (marco `marco/onda-4`). Próxima: Onda 5.
 
 ## Próxima onda
 
-Onda 5 — Descoberta e magia, em paralelo:
+Onda 5 — Progressão e magia, 4 tarefas em paralelo:
 
 - 5A Experimentação: misturar materiais sem receita, cascata de descobertas, bônus de velocidade por
   nível de maestria
 - 5B Tempestária: tempestades, raios que formam fulgurito, primeira escola de magia
 - 5C Áudio: sons de mineração, estações e ambiente
+- 5D Movimento na construção: portas que abrem ao encostar, plataformas entre andares (sobe pulando,
+  desce com ↓), escada de mão que se coloca sozinha enquanto o jogador sobe, corda jogada do alto
+
+Decidido para depois: fachada das casas e guincho de mina (Onda 6), Poção de Retorno e círculos de
+transmutação (Onda 7), defesa em camadas, portas com selo e Carta do Território (Onda 10). O jogo fica
+sempre de lado; a vista de cima é só a Carta do Território (administrar e viajar).
 
 ## Última sessão
 
