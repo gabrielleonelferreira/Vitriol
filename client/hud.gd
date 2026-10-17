@@ -6,6 +6,7 @@ signal slot_selected(index: int)
 signal slots_swapped(a: int, b: int)
 signal craft_requested(recipe_id: String, qtd: int)
 signal craft_cancel_requested(index: int)
+signal experiment_requested(station: String, mix: Dictionary)
 
 const ICONS_PATH := "res://art/itens/icones.png"
 const ICONS_META := "res://art/itens/icones.json"
@@ -24,6 +25,7 @@ var slots: Array = []
 var selected: int = 0
 var data: DataStore
 var mastery: Dictionary = {}
+var known_recipes: Dictionary = {}
 var queue: Array = []
 var stations: Dictionary = {"mao": true}
 var crafting: CraftingPanel
@@ -95,6 +97,9 @@ func setup(game_data: DataStore) -> void:
 		func(id: String, qtd: int) -> void: craft_requested.emit(id, qtd)
 	)
 	crafting.cancel_requested.connect(func(i: int) -> void: craft_cancel_requested.emit(i))
+	crafting.experiment_requested.connect(
+		func(station: String, mix: Dictionary) -> void: experiment_requested.emit(station, mix)
+	)
 
 	# Trabalho em andamento, ao lado da barra: ícone, barra de progresso e quantos esperam.
 	_queue_box.position = Vector2(_hotbar.position.x + width + 6, _hotbar.position.y + 1)
@@ -135,8 +140,11 @@ func set_inventory(new_slots: Array, new_selected: int) -> void:
 	_refresh_crafting()
 
 
-func set_mastery(xp: Dictionary) -> void:
+func set_mastery(xp: Dictionary, known: Array = []) -> void:
 	mastery = xp
+	known_recipes.clear()
+	for id in known:
+		known_recipes[str(id)] = true
 	_refresh_crafting()
 
 
@@ -172,7 +180,7 @@ func crafting_open() -> bool:
 
 func _refresh_crafting() -> void:
 	if crafting and crafting.visible:
-		crafting.refresh(slots, mastery, stations, queue)
+		crafting.refresh(slots, mastery, stations, queue, known_recipes)
 
 
 func selected_item() -> Dictionary:
@@ -210,7 +218,8 @@ func show_item_name() -> void:
 	var text := data.display_name(slot["id"])
 	if slot.has("durabilidade"):
 		var item: Dictionary = data.get_item(slot["id"])
-		text += "  (%d/%d)" % [slot["durabilidade"], int(item.get("durabilidade", 1))]
+		var full_text := int(slot.get("durabilidade_max", item.get("durabilidade", 1)))
+		text += "  (%d/%d)" % [slot["durabilidade"], full_text]
 	elif slot["qtd"] > 1:
 		text += "  ×%d" % slot["qtd"]
 	_item_label.text = text
@@ -281,7 +290,9 @@ func _paint(cell: Dictionary, slot: Dictionary, highlighted: bool) -> void:
 	cell["count"].text = str(slot["qtd"]) if slot["qtd"] > 1 else ""
 	cell["wear"].visible = slot.has("durabilidade")
 	if slot.has("durabilidade"):
-		var full := float(data.get_item(slot["id"]).get("durabilidade", 1))
+		var full := float(
+			slot.get("durabilidade_max", data.get_item(slot["id"]).get("durabilidade", 1))
+		)
 		var ratio := clampf(slot["durabilidade"] / full, 0.0, 1.0)
 		cell["wear"].size.x = maxf(1.0, 14.0 * ratio)
 		cell["wear"].color = (

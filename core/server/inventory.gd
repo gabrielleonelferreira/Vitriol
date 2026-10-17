@@ -26,7 +26,8 @@ func stack_limit(id: String) -> int:
 
 ## Adiciona e devolve quantos NÃO couberam (0 = tudo guardado).
 ## Completa pilhas existentes primeiro, depois ocupa espaços vazios (barra antes da mochila).
-func add(id: String, qtd: int) -> int:
+## `durability`: para ferramentas feitas com bônus de maestria (-1 = a padrão do item).
+func add(id: String, qtd: int, durability: int = -1) -> int:
 	if qtd <= 0 or id.is_empty():
 		return 0
 	var left := qtd
@@ -46,7 +47,9 @@ func add(id: String, qtd: int) -> int:
 			var put := mini(limit, left)
 			slots[i] = {"id": id, "qtd": put}
 			if _is_tool(id):
-				slots[i]["durabilidade"] = _max_durability(id)
+				slots[i]["durabilidade"] = durability if durability > 0 else _max_durability(id)
+				if durability > _max_durability(id):
+					slots[i]["durabilidade_max"] = durability
 			left -= put
 	return left
 
@@ -162,6 +165,8 @@ func load_array(saved: Array) -> PackedStringArray:
 		var slot := {"id": id, "qtd": clampi(int(saved[i].get("qtd", 1)), 1, stack_limit(id))}
 		if _is_tool(id):
 			slot["durabilidade"] = int(saved[i].get("durabilidade", _max_durability(id)))
+			if saved[i].has("durabilidade_max"):
+				slot["durabilidade_max"] = int(saved[i]["durabilidade_max"])
 		slots[i] = slot
 	return dropped
 

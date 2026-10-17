@@ -787,6 +787,27 @@
       "xp_descoberta": 1,
       "base_real": "Fibras de folhas e cascas eram torcidas em cordas há mais de 40 mil anos.",
       "descricao": "Torcida vira corda."
+    },
+    {
+      "id": "electro",
+      "nome": "Electro",
+      "categoria": "metal",
+      "tier": "raro",
+      "dureza_bloco": null,
+      "dureza_mohs": null,
+      "densidade_g_cm3": 15.5,
+      "ponto_fusao_c": 1030,
+      "condutividade": 4,
+      "afinidade_arcana": 1,
+      "escola_afim": null,
+      "fonte": "processo",
+      "fonte_detalhe": "Liga de ouro e prata na fornalha",
+      "ferramenta_coleta": null,
+      "camadas": [],
+      "maestria": "metalurgia",
+      "xp_descoberta": 25,
+      "base_real": "Liga natural de ouro e prata; os lídios cunharam com ela as primeiras moedas, por volta de 600 a.C.",
+      "descricao": "Brilho de ouro pálido. Base das moedas antigas."
     }
   ]
 }

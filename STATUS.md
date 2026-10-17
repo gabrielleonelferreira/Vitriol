@@ -2,14 +2,16 @@
 
 ## Onda atual
 
-Onda 5 — Progressão e magia: **em andamento**. 5D concluída; próximas: 5A, 5B, 5C.
+Onda 5 — Progressão e magia: **em andamento**. 5D e 5A concluídas; próximas: 5B, 5C.
 
 ## Tarefas da Onda 5
 
 - [x] 5D Movimento na construção — portas (abrem ao encostar, 2 de altura), plataformas (sobe pulando,
       S/↓ atravessa), escada de mão (sobe com W; na mão, se coloca sozinha enquanto sobe), rolo de corda
       (desenrola até 20 blocos); fibra vegetal das folhas; 7 testes novos
-- [ ] 5A Descoberta e maestria — experimentação, cascata, bônus de velocidade por nível
+- [x] 5A Descoberta e maestria — aba Experimentar (mistura sem receita, 5 tipos de pista, errar gasta
+      1 de cada); cascata de raros (electro = ouro + prata, novo); nível de maestria: +6% de velocidade
+      e +5% de durabilidade por nível; 7 testes novos
 - [ ] 5B Tempestária — tempestades, raio na areia forma fulgurito, vidro de tempestade
 - [ ] 5C Áudio e partículas
 
@@ -60,14 +62,15 @@ Fabricação com fila e painel (C), maestria básica, construção com o mouse, 
 - Jogo sempre de lado, sem troca de cena ao entrar em casa; a vista de cima será só a Carta do
   Território (Onda 10)
 - Porta não bloqueia a física (só a luz); abre e fecha só no desenho, sem estado no servidor
+- Experimentar errado custa 1 de cada material (tentativa e erro tem preço, mas a pista ajuda)
+- Electro (ouro + prata, liga real das primeiras moedas) entrou como receita secreta de cascata
 - Escada automática: segurar W com a escada na mão constrói para cima até soltar (dá para fazer torre)
 - Fundir vidro é receita inicial (precisa do forno de vidro, que já pede nível 3 de construção)
 
 ## Pendências e observações
 
 - Balanceamento (Onda 5): a picareta de ferro (limonita do Solo) pode chegar antes da de bronze
-- Receitas secretas (bronze, coque, fulgurito) aparecem como `???` e ainda não há como descobri-las:
-  entram com a experimentação (5A)
+- Fulgurito (secreto) só se forma com raio: entra na 5B
 - Itens que caem no chão não existem: com o inventário cheio, o bloco não quebra e o item fabricado
   espera na fila
 - Estações não mudam de aparência quando estão trabalhando (a brasa anima sempre)
@@ -77,7 +80,7 @@ Fabricação com fila e painel (C), maestria básica, construção com o mouse, 
 
 ## Próximo passo
 
-5A Descoberta e maestria (experimentação, cascata, bônus de velocidade por nível); depois 5B e 5C.
+5B Tempestária (tempestades, raio na areia forma fulgurito, vidro de tempestade); depois 5C.
 
 Decidido para depois: fachada das casas e guincho de mina (Onda 6), Poção de Retorno e círculos de
 transmutação (Onda 7), defesa em camadas, portas com selo e Carta do Território (Onda 10). O jogo fica

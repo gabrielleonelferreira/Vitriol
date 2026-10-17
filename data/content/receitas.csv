@@ -36,3 +36,4 @@ fazer_porta,Porta de madeira,bancada,montagem,madeira:6,porta:1,,,4,construcao,2
 fazer_plataforma,Plataforma de madeira,mao,montagem,madeira:1,plataforma:2,,,1,construcao,1,inicial,,
 fazer_escada,Escada de mão,mao,montagem,madeira:1,escada:2,,,1,construcao,1,inicial,,
 torcer_corda,Rolo de corda,mao,montagem,fibra:3,corda:1,,,3,construcao,1,inicial,,"Fibra torcida em dois sentidos não desenrola: é o princípio de toda corda."
+ligar_electro,Ligar electro,fornalha,liga,lingote_ouro:1;lingote_prata:1,electro:2,1064,,10,metalurgia,12,experimentacao,,Ouro e prata se misturam em qualquer proporção.

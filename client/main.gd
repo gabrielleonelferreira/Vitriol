@@ -34,6 +34,9 @@ func _ready() -> void:
 	_hud.slots_swapped.connect(func(a: int, b: int) -> void: _session.swap_slots(a, b))
 	_hud.craft_requested.connect(func(id: String, qtd: int) -> void: _session.craft(id, qtd))
 	_hud.craft_cancel_requested.connect(func(i: int) -> void: _session.craft_cancel(i))
+	_hud.experiment_requested.connect(
+		func(station: String, mix: Dictionary) -> void: _session.experiment(station, mix)
+	)
 	_session = ClientSession.new()
 	_session.name = "ClientSession"
 	add_child(_session)
@@ -71,7 +74,11 @@ func _on_event(event: Dictionary) -> void:
 			var suffix := "  +%d XP" % xp if xp > 0 else ""
 			_hud.toast("Descoberta: %s%s" % [event["nome"], suffix], "descoberta")
 		Events.MASTERY:
-			_hud.set_mastery(event["xp"])
+			_hud.set_mastery(event["xp"], event.get("receitas", []))
+		Events.EXPERIMENT_RESULT:
+			_hud.crafting.show_result(bool(event["ok"]), str(event["texto"]))
+			if not _hud.crafting_open():
+				_hud.toast(str(event["texto"]), "descoberta" if event["ok"] else "aviso")
 		Events.CRAFT_QUEUE:
 			_hud.set_queue(event["jobs"])
 		Events.TIME:

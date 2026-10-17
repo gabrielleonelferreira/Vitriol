@@ -23,5 +23,8 @@ const SWAP_SLOTS := "swap_slots"
 const CRAFT := "craft"
 ## Cancela um trabalho da fila e devolve os materiais: {"index": int}
 const CRAFT_CANCEL := "craft_cancel"
+## Experimenta uma mistura sem receita: {"estacao": id, "itens": {material: qtd}}.
+## Acertou: revela a receita e faz uma unidade. Errou: gasta 1 de cada e devolve uma pista.
+const EXPERIMENT := "experiment"
 ## Só em versão de desenvolvimento: dá um kit de teste (picaretas e tochas).
 const DEBUG_KIT := "debug_kit"

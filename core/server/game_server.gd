@@ -208,6 +208,9 @@ func _handle(peer_id: int, command: Dictionary) -> void:
 		Commands.CRAFT:
 			if player:
 				_craft(player, str(command.get("receita", "")), int(command.get("qtd", 1)))
+		Commands.EXPERIMENT:
+			if player:
+				_experiment(player, command)
 		Commands.CRAFT_CANCEL:
 			if player:
 				_cancel_craft(player, int(command.get("index", -1)))
@@ -462,8 +465,8 @@ func _player_positions() -> Array[Vector2]:
 	return out
 
 
-func _give(player: PlayerState, id: String, qtd: int) -> void:
-	player.inventory.add(id, qtd)
+func _give(player: PlayerState, id: String, qtd: int, durability: int = -1) -> void:
+	player.inventory.add(id, qtd, durability)
 	if not player.discoveries.has(id):
 		player.discoveries[id] = true
 		var material := data.get_material(id)
@@ -474,6 +477,20 @@ func _give(player: PlayerState, id: String, qtd: int) -> void:
 		)
 		if xp > 0:
 			_add_xp(player, str(material.get("maestria", "")), xp)
+		# Cascata: um material raro revela as receitas secretas que dependem só dele.
+		var revealed := Experiment.cascade(data, id, player.discoveries, player.known_recipes)
+		for recipe_id in revealed:
+			player.known_recipes[recipe_id] = true
+			_message(
+				player,
+				(
+					"Cascata: %s revelou a receita %s."
+					% [data.display_name(id), data.get_recipe(recipe_id)["nome"]]
+				),
+				"descoberta"
+			)
+		if not revealed.is_empty():
+			_send_mastery(player)
 
 
 # ---------------------------------------------------------------- fabricação e maestria
@@ -498,7 +515,8 @@ func _craft(player: PlayerState, recipe_id: String, qtd: int) -> void:
 			break
 		for part in recipe["entradas"]:
 			player.inventory.remove(part["id"], int(part["qtd"]))
-		var seconds := float(recipe["tempo_s"])
+		var area_xp := int(player.mastery.get(recipe["maestria"], 0))
+		var seconds := Mastery.craft_seconds(float(recipe["tempo_s"]), area_xp)
 		player.craft_queue.append(
 			{"receita": recipe_id, "restante": seconds, "total": seconds, "avisado": false}
 		)
@@ -546,8 +564,13 @@ func _advance_crafting(player: PlayerState) -> void:
 				)
 			return
 	player.craft_queue.pop_front()
+	var area_xp := int(player.mastery.get(recipe["maestria"], 0))
 	for part in recipe["saidas"]:
-		_give(player, part["id"], int(part["qtd"]))
+		var durability := -1
+		var base: Variant = data.get_item(part["id"]).get("durabilidade")
+		if base != null:
+			durability = Mastery.durability_for(int(base), area_xp)
+		_give(player, part["id"], int(part["qtd"]), durability)
 	_add_xp(player, recipe["maestria"], int(recipe["xp"]))
 	_message(player, "Pronto: %s." % recipe["nome"], "info")
 	_dirty = true
@@ -572,7 +595,67 @@ func _add_xp(player: PlayerState, area: String, amount: int) -> void:
 
 
 func _send_mastery(player: PlayerState) -> void:
-	_emit(player.player_id, {"type": Events.MASTERY, "xp": player.mastery.duplicate()})
+	_emit(
+		player.player_id,
+		{
+			"type": Events.MASTERY,
+			"xp": player.mastery.duplicate(),
+			"receitas": player.known_recipes.keys(),
+		}
+	)
+
+
+## Mistura sem receita: acerta (revela e faz 1), quase acerta (pista) ou erra (gasta 1 de cada).
+func _experiment(player: PlayerState, command: Dictionary) -> void:
+	var station := str(command.get("estacao", ""))
+	var raw: Variant = command.get("itens", {})
+	if typeof(raw) != TYPE_DICTIONARY:
+		return
+	var mix := {}
+	for id in raw:
+		mix[str(id)] = int(raw[id])
+	var stations := Crafting.stations_near(world.grid, data, player.position)
+	if not stations.has(station):
+		_experiment_result(player, false, "Precisa de %s por perto." % data.display_name(station))
+		return
+	for id in mix:
+		if player.inventory.count(id) < mix[id]:
+			_experiment_result(player, false, "Você não tem %s suficiente." % data.display_name(id))
+			return
+	var result := Experiment.evaluate(data, mix, station, player.mastery, player.known_recipes)
+	match result["tipo"]:
+		"invalida":
+			_experiment_result(player, false, result["texto"])
+		"bloqueada":
+			var name: String = data.get_recipe(result["receita"])["nome"]
+			_experiment_result(
+				player, false, "Existe uma receita aqui (%s), mas: %s." % [name, result["motivo"]]
+			)
+		"receita":
+			var recipe_id: String = result["receita"]
+			var recipe := data.get_recipe(recipe_id)
+			if result["nova"]:
+				player.known_recipes[recipe_id] = true
+				_dirty = true
+				_message(player, "Descoberta por experimento: %s!" % recipe["nome"], "descoberta")
+				_add_xp(player, recipe["maestria"], int(recipe["xp"]) * 2)
+				_send_mastery(player)
+			_experiment_result(player, true, "Funcionou: %s." % recipe["nome"], recipe_id)
+			_craft(player, recipe_id, 1)
+		"falhou":
+			for id in mix:
+				player.inventory.remove(id, 1)
+			_add_xp(player, Experiment.STATION_AREA.get(station, "quimica"), 1)
+			_dirty = true
+			_send_inventory(player)
+			_experiment_result(player, false, result["texto"] + " (gastou 1 de cada material)")
+
+
+func _experiment_result(player: PlayerState, ok: bool, text: String, recipe_id := "") -> void:
+	var event := {"type": Events.EXPERIMENT_RESULT, "ok": ok, "texto": text}
+	if not recipe_id.is_empty():
+		event["receita"] = recipe_id
+	_emit(player.player_id, event)
 
 
 func _send_queue(player: PlayerState) -> void:

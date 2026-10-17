@@ -80,6 +80,21 @@ PlayerMotor.step() a 60 Hz
 - Vidro é sólido mas **não opaco**: a luz e a parede de fundo aparecem através dele
   (`TileRegistry.is_opaque`).
 
+## Experimentação, cascata e bônus de maestria (Onda 5A)
+
+- `experiment {estacao, itens}`: `Experiment.evaluate` compara o conjunto de materiais com todas as
+  receitas da estação. Mesmo conjunto e quantidade suficiente: faz 1 (secreta não conhecida = descoberta,
+  XP em dobro). Conjunto certo mas pouco material: pista "proporção". Pistas de quase acerto só apontam
+  para receitas secretas ainda não achadas: mesmo conjunto em outra estação ("estação"), conjunto
+  menor ("falta"), conjunto maior ("demais"). Errou: gasta 1 de cada material e dá 1 XP na área da
+  estação. Resposta no evento `experiment_result`.
+- Cascata (`Experiment.cascade`): descobrir um material raro ou acima revela as receitas secretas que o
+  usam, desde que os outros materiais não comuns delas já tenham sido descobertos. Exemplo: prata
+  sozinha não revela o electro; prata e ouro, sim.
+- `mastery` agora leva `receitas` (descobertas) para o painel mostrar as secretas conhecidas.
+- Bônus por nível acima do 1: receitas da área 6% mais rápidas (`Mastery.craft_seconds`) e ferramentas
+  feitas nela 5% mais duráveis (`durability_for`; o espaço guarda `durabilidade_max`).
+
 ## Movimento na construção (Onda 5D)
 
 O jogo é sempre de lado: a casa é um corte e se atravessa por dentro. Cada objeto tem uma `forma`

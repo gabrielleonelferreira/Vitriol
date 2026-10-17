@@ -532,6 +532,7 @@ METALS = {
     "aco": ("4a5058", "949ca3", "bfc5c9", "c8f0ff"),
     "lingote_prata": ("6b737c", "e3e6e4", "f7f6f0", "c8f0ff"),
     "lingote_ouro": ("8a5a12", "e2b33c", "f2d36b", "fbeeb0"),
+    "electro": ("8a5a12", "f2d36b", "e3e6e4", "f7f6f0"),
 }
 PICK_HEADS = {
     "picareta_silex": ("1b1714", "2b231d", "949ca3"),

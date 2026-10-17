@@ -44,6 +44,10 @@ func mine_stop() -> void:
 	transport.send({"type": Commands.MINE_STOP})
 
 
+func experiment(station: String, mix: Dictionary) -> void:
+	transport.send({"type": Commands.EXPERIMENT, "estacao": station, "itens": mix})
+
+
 ## `auto`: colocação automática (escada subindo); o servidor não avisa quando não dá.
 func place(tile: Vector2i, auto: bool = false) -> void:
 	transport.send({"type": Commands.PLACE, "x": tile.x, "y": tile.y, "auto": auto})

@@ -19,7 +19,7 @@ materiais por processos com base real e usa magia para criar o que a ciência so
 | S ou ↓ | Descer escada e corda; em cima de uma plataforma, cai através dela |
 | Botão esquerdo (segurar) | Minerar o bloco sob o mouse (alcance de 5 blocos) |
 | Botão direito | Colocar o item selecionado: blocos (tijolo, vidro, terra…), tochas e estações. Moldura branca = pode, vermelha = não |
-| C | Abrir a fabricação: clique em **Fazer** (Shift + clique faz 5). Precisa da estação por perto |
+| C | Abrir a fabricação: clique em **Fazer** (Shift + clique faz 5). Precisa da estação por perto. Na aba **Experimentar**, misture materiais sem receita |
 | 1 a 0 ou rodinha do mouse | Escolher o espaço da barra |
 | E ou I | Abrir o inventário (clique em dois espaços para trocar) |
 | F3 | Mostrar ou esconder as informações de depuração |
@@ -28,6 +28,11 @@ materiais por processos com base real e usa magia para criar o que a ciência so
 Primeiros passos: derrube uma árvore (madeira), faça uma **Bancada** à mão e coloque-a no chão; na
 bancada, faça a **Fornalha de argila** (argila + calcário). Perto da fornalha dá para fazer carvão,
 fundir cobre e cozer tijolos.
+
+Receitas secretas (como o bronze) só aparecem experimentando: escolha a estação, clique nos
+materiais para montar a mistura e em **Misturar**. Errar gasta 1 de cada material e dá uma pista
+(proporção errada, estação errada, falta ingrediente, material demais). Cada nível de maestria deixa as
+receitas da área 6% mais rápidas e as ferramentas feitas nela 5% mais duráveis.
 
 Para construir e explorar: **porta** (bancada, 6 madeiras) abre sozinha quando você encosta;
 **plataforma** e **escada de mão** saem de 1 madeira, à mão. Com a escada na mão, segure W e ela se

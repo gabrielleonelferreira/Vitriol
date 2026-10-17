@@ -35,3 +35,4 @@ pena_ave_trovao,Pena de Ave-Trovão,magico,mitico,,,,,8,10,tempestaria,evento,"C
 fulgurito,Fulgurito,mineral,raro,,6,1.5,1713,0,6,tempestaria,processo,Raio sobre areia,,,arcano,30,"Vidro natural formado quando um raio funde a areia, acima de 1.800 °C.",Guarda o eco do raio.
 vidro_de_tempestade,Vidro de tempestade,vidro,epico,1,6,2.4,1713,8,9,tempestaria,processo,Fulgurito refinado com magia Tempestária,,,arcano,60,"Parte do fulgurito real; o refino e a carga elétrica são fantasia.",Armazena e dispara raios.
 fibra,Fibra vegetal,organico,comum,,,0.5,,0,0,,coleta,Folhas das árvores (uma em cada três),,,construcao,1,"Fibras de folhas e cascas eram torcidas em cordas há mais de 40 mil anos.",Torcida vira corda.
+electro,Electro,metal,raro,,,15.5,1030,4,1,,processo,Liga de ouro e prata na fornalha,,,metalurgia,25,"Liga natural de ouro e prata; os lídios cunharam com ela as primeiras moedas, por volta de 600 a.C.","Brilho de ouro pálido. Base das moedas antigas."

@@ -57,6 +57,23 @@ func _initialize() -> void:
 		{"wait": 2, "do": _check_save},
 		{"wait": 2, "do": quit},
 	]
+	if script == "experimento":
+		_steps = [
+			{"wait": 90, "do": _go_to_flat},
+			{"wait": 2, "do": _lab_setup},
+			{"wait": 4, "do": _toggle_crafting},
+			{"wait": 2, "do": _lab_tab.bind(1)},
+			{"wait": 4, "do": _lab_mix.bind({"lingote_cobre": 3})},
+			{"wait": 6, "do": _shot.bind("20_experimentar_mistura")},
+			{"wait": 2, "do": _lab_go},
+			{"wait": 8, "do": _shot.bind("21_pista_falta_algo")},
+			{"wait": 2, "do": _lab_mix.bind({"lingote_cobre": 3, "lingote_estanho": 1})},
+			{"wait": 2, "do": _lab_go},
+			{"wait": 8, "do": _shot.bind("22_descobriu_bronze")},
+			{"wait": 2, "do": _lab_tab.bind(0)},
+			{"wait": 6, "do": _shot.bind("23_receita_revelada")},
+			{"wait": 2, "do": quit},
+		]
 	if script == "movimento":
 		_steps = [
 			{"wait": 90, "do": _go_to_flat},
@@ -229,7 +246,9 @@ func _put_in_hand(item: String) -> void:
 			break
 	if player.inventory.slots[0].get("id") != item:
 		# Só para montar a cena da construção (tijolo, vidro, terra): o resto vem da fabricação.
-		var scenery := ["tijolo", "vidro", "tocha", "porta", "plataforma", "escada", "corda"]
+		var scenery := [
+			"tijolo", "vidro", "tocha", "porta", "plataforma", "escada", "corda", "fornalha"
+		]
 		assert(item in scenery, "faltou fabricar: " + item)
 		player.inventory.slots[0] = {"id": item, "qtd": 20}
 	player.selected = 0
@@ -308,6 +327,35 @@ func _place_as(player: PlayerState, item: String, tile: Vector2i, stand: Vector2
 				]
 			)
 		)
+
+
+func _lab_setup() -> void:
+	var inv := _state().inventory
+	for i in Inventory.SIZE:
+		inv.slots[i] = {}
+	for pair in [
+		["lingote_cobre", 7], ["lingote_estanho", 3], ["argila", 6], ["areia", 4], ["madeira", 8]
+	]:
+		inv.add(pair[0], pair[1])
+	inv.add("fornalha", 1)
+	_place_near("fornalha", [-3, -4, -2, 3, 4])
+	_server._send_inventory(_state())
+
+
+func _lab_tab(index: int) -> void:
+	_main._hud.crafting._show_tab(index)
+
+
+func _lab_mix(mix: Dictionary) -> void:
+	var panel = _main._hud.crafting
+	panel._mix = mix.duplicate()
+	panel._lab_signature = ""
+	panel._refresh_lab()
+
+
+func _lab_go() -> void:
+	var panel = _main._hud.crafting
+	panel.experiment_requested.emit(panel._station, panel._mix.duplicate())
 
 
 ## Casinha com porta dos dois lados e um andar de plataforma; poço com escada e corda ao lado.

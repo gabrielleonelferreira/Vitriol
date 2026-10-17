@@ -107,7 +107,7 @@ A rocha principal de cada camada vem daqui (forma `rocha`) e é usada pela simul
    blocos, poder das picaretas, ferramentas de coleta, estações e escolas despertadas (um material
    mítico com `escola_afim` desperta aquela escola).
 
-## Regra de descoberta em cascata (implementada na Onda 5)
+## Regra de descoberta em cascata (implementada na Onda 5A, `core/server/experiment.gd`)
 
 Descobrir um material raro libera todas as receitas que o usam, exceto as que também exigem outro
 material raro ou de tier maior que ainda não foi descoberto. Essas continuam secretas.

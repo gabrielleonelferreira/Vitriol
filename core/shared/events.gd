@@ -23,8 +23,10 @@ const MESSAGE := "message"
 const DISCOVERED := "discovered"
 ## Fila de fabricação do próprio jogador: {"jobs": [{"receita", "restante", "total"}]}
 const CRAFT_QUEUE := "craft_queue"
-## XP de maestria do próprio jogador: {"xp": {area: int}}
+## XP de maestria e receitas descobertas do próprio jogador: {"xp": {area: int}, "receitas": [id]}
 const MASTERY := "mastery"
+## Resultado de um experimento: {"ok": bool, "texto": String, "receita"?: id}
+const EXPERIMENT_RESULT := "experiment_result"
 ## Hora do dia: {"time": 0..1}
 const TIME := "time"
 
