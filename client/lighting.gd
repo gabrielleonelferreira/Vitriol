@@ -102,7 +102,7 @@ func update_view(center: Vector2i, view_tiles: Vector2i) -> void:
 
 func _update_sky_column(x: int) -> void:
 	var y := 0
-	while y < grid.height and not grid.is_solid(x, y):
+	while y < grid.height and not grid.registry.is_opaque(grid.get_tile(x, y)):
 		y += 1
 	_sky_top[x] = y
 
@@ -126,7 +126,7 @@ func _compute(origin: Vector2i, size: Vector2i) -> void:
 			var x := origin.x + lx
 			var i := ly * size.x + lx
 			var id := grid.get_tile(x, y)
-			solid[i] = 1 if grid.registry.is_solid(id) else 0
+			solid[i] = 1 if grid.registry.is_opaque(id) else 0
 			var lit := false
 			if y < _sky_top[x] and solid[i] == 0:
 				r[i] = sky.r

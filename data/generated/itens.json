@@ -46,7 +46,7 @@
       "durabilidade": null,
       "temperatura_max_c": 1250,
       "descricao": "Forno de redução a carvão vegetal, com fole. Funde e reduz minérios.",
-      "luz_raio": 4,
+      "luz_raio": 6,
       "luz_cor": "e0503a"
     },
     {
@@ -58,7 +58,7 @@
       "durabilidade": null,
       "temperatura_max_c": 1200,
       "descricao": "Calcinação, coqueificação e cozimento de cerâmica.",
-      "luz_raio": 4,
+      "luz_raio": 6,
       "luz_cor": "e2b33c"
     },
     {
@@ -70,7 +70,7 @@
       "durabilidade": null,
       "temperatura_max_c": 1400,
       "descricao": "Funde vidro. Revestido de tijolo refratário.",
-      "luz_raio": 4,
+      "luz_raio": 6,
       "luz_cor": "f28a5c"
     },
     {

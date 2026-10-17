@@ -87,11 +87,14 @@ func load_save(saved: Dictionary) -> void:
 		known_recipes[str(id)] = true
 	craft_queue.clear()
 	for job in saved.get("fila", []):
-		craft_queue.append(
-			{
-				"receita": str(job["receita"]),
-				"restante": float(job["restante"]),
-				"total": float(job["total"]),
-				"avisado": false,
-			}
+		(
+			craft_queue
+			. append(
+				{
+					"receita": str(job["receita"]),
+					"restante": float(job["restante"]),
+					"total": float(job["total"]),
+					"avisado": false,
+				}
+			)
 		)

@@ -34,7 +34,7 @@ func _ticks(server: Node, seconds: float) -> void:
 		server.step_once()
 
 
-func _place_station(server: Node, player: PlayerState, station: String, dx: int) -> void:
+func _place_station(server: Node, _player: PlayerState, station: String, dx: int) -> void:
 	var grid: WorldGrid = server.world.grid
 	var spot := Vector2i(grid.spawn_tile.x + dx, grid.spawn_tile.y - 1)
 	grid.set_tile(spot.x, spot.y, grid.registry.id_of(station))
@@ -71,7 +71,9 @@ func test_precisa_da_estacao_por_perto() -> void:
 	s[1].send({"type": Commands.CRAFT, "receita": "fundir_cobre", "qtd": 1})
 	s[0].step_once()
 	check(player.craft_queue.is_empty(), "sem fornalha não funde")
-	check("Fornalha" in _events(received, Events.MESSAGE).back()["text"], "avisa que falta a fornalha")
+	check(
+		"Fornalha" in _events(received, Events.MESSAGE).back()["text"], "avisa que falta a fornalha"
+	)
 	check_eq(player.inventory.count("malaquita"), 2, "não gastou nada")
 	_place_station(s[0], player, "fornalha", 2)
 	s[1].send({"type": Commands.CRAFT, "receita": "fundir_cobre", "qtd": 1})
@@ -158,7 +160,9 @@ func test_subir_de_nivel_avisa() -> void:
 	s[1].send({"type": Commands.CRAFT, "receita": "fazer_fogueira", "qtd": 1})
 	s[0].step_once()
 	_ticks(s[0], 3.0)
-	var texts := _events(received, Events.MESSAGE).map(func(e: Dictionary) -> String: return e["text"])
+	var texts := _events(received, Events.MESSAGE).map(
+		func(e: Dictionary) -> String: return e["text"]
+	)
 	check(texts.any(func(t: String) -> bool: return "nível 2" in t), "avisa que subiu de nível")
 	s[1].close()
 	s[0].free()
@@ -195,7 +199,10 @@ func test_colocar_bloco_e_estacao() -> void:
 	server.step_once()
 	check_eq(grid.tile_name(spot.x, spot.y), "fornalha", "fornalha colocada")
 	check(not grid.is_solid(spot.x, spot.y), "estação não bloqueia a passagem")
-	check(Crafting.stations_near(grid, _data, player.position).has("fornalha"), "conta como estação por perto")
+	check(
+		Crafting.stations_near(grid, _data, player.position).has("fornalha"),
+		"conta como estação por perto"
+	)
 	s[1].close()
 	server.free()
 
@@ -206,3 +213,76 @@ func test_vidro_e_transparente() -> void:
 	check(reg.is_solid(glass), "vidro é sólido")
 	check(not reg.is_opaque(glass), "mas não é opaco")
 	check(reg.is_opaque(reg.id_of("tijolo")), "tijolo é opaco")
+
+
+## Do começo ao fim: madeira e argila → bancada → fornalha → tijolo → parede construída.
+func test_cadeia_mao_bancada_fornalha_tijolo() -> void:
+	var received: Array[Dictionary] = []
+	var s := _setup(received)
+	var server = s[0]
+	var player: PlayerState = s[2]
+	var grid: WorldGrid = server.world.grid
+	var spawn := grid.spawn_tile
+	for pair in [["madeira", 4], ["argila", 10], ["calcario", 2]]:
+		player.inventory.add(pair[0], pair[1])
+	var spots := {
+		"bancada": Vector2i(spawn.x + 2, spawn.y - 1),
+		"fornalha": Vector2i(spawn.x - 2, spawn.y - 1)
+	}
+	for station in ["bancada", "fornalha"]:
+		s[1].send({"type": Commands.CRAFT, "receita": "fazer_" + station, "qtd": 1})
+		server.step_once()
+		_ticks(server, 7.0)
+		check_eq(player.inventory.count(station), 1, "%s pronta" % station)
+		var spot: Vector2i = spots[station]
+		grid.set_tile(spot.x, spot.y, 0)
+		grid.set_tile(spot.x, spot.y + 1, grid.registry.id_of("terra"))
+		for i in Inventory.SIZE:
+			if player.inventory.slots[i].get("id") == station:
+				player.selected = i
+		s[1].send({"type": Commands.PLACE, "x": spot.x, "y": spot.y})
+		server.step_once()
+		check_eq(grid.tile_name(spot.x, spot.y), station, "%s colocada" % station)
+	s[1].send({"type": Commands.CRAFT, "receita": "cozer_tijolo", "qtd": 2})
+	server.step_once()
+	_ticks(server, 17.0)
+	check_eq(player.inventory.count("tijolo"), 2, "2 tijolos cozidos na fornalha")
+	check_eq(player.inventory.count("argila"), 0, "argila toda usada")
+	for i in Inventory.SIZE:
+		if player.inventory.slots[i].get("id") == "tijolo":
+			player.selected = i
+	var wall := Vector2i(spawn.x + 3, spawn.y - 1)
+	grid.set_tile(wall.x, wall.y, 0)
+	s[1].send({"type": Commands.PLACE, "x": wall.x, "y": wall.y})
+	server.step_once()
+	check_eq(grid.tile_name(wall.x, wall.y), "tijolo", "parede de tijolo de pé")
+	var queues := _events(received, Events.CRAFT_QUEUE)
+	check(queues.size() >= 6, "cliente acompanhou a fila (%d avisos)" % queues.size())
+	check(_events(received, Events.MASTERY).size() >= 3, "cliente recebeu a XP")
+	s[1].close()
+	server.free()
+
+
+func test_painel_mostra_o_que_falta() -> void:
+	var hud := Hud.new()
+	hud.setup(_data)
+	var inv := Inventory.new(_data)
+	inv.add("madeira", 2)
+	hud.set_inventory(inv.to_array(), 0)
+	hud.toggle_crafting()
+	var rows: Dictionary = {}
+	for row in hud.crafting._rows:
+		rows[row["id"]] = row
+	check(rows["fazer_bancada"]["button"].disabled, "bancada: falta madeira")
+	check_eq(rows["fazer_bancada"]["parts"][0]["count"].text, "2/4", "mostra 2 de 4 madeiras")
+	check(not rows["fazer_tocha_galho"]["button"].disabled, "tocha de galho dá para fazer")
+	check("Bancada" in rows["fazer_balde"]["reason"].text, "balde pede bancada")
+	check_eq(rows["ligar_bronze"]["name"].text, "???", "bronze continua secreto")
+	hud.set_stations({"mao": true, "bancada": true})
+	check(rows["fazer_balde"]["reason"].text.is_empty(), "com bancada perto, o motivo some")
+	hud.set_mastery({"quimica": Mastery.LEVEL_XP[1]})
+	check(
+		not "Química" in rows["misturar_argamassa"]["reason"].text,
+		"nível 2 de química libera a argamassa"
+	)
+	hud.free()

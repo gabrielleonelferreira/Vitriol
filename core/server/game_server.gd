@@ -412,7 +412,7 @@ func _tool_name(player: PlayerState, is_hand: bool) -> String:
 func _place(player: PlayerState, target: Vector2i) -> void:
 	var held: Dictionary = player.selected_item()
 	var item_id: String = held.get("id", "")
-	var kind := _placeable_kind(item_id)
+	var kind := Building.kind_for(data, item_id)
 	if kind.is_empty():
 		return
 	var grid := world.grid
@@ -437,17 +437,6 @@ func _place(player: PlayerState, target: Vector2i) -> void:
 
 
 # ---------------------------------------------------------------- inventário e avisos
-
-
-func _placeable_kind(item_id: String) -> String:
-	var item: Dictionary = data.items.get(item_id, {})
-	if item.get("tipo") == "objeto":
-		return Building.OBJECT
-	if item.get("tipo") == "estacao" and item_id != "mao":
-		return Building.STATION
-	if data.is_block(item_id):
-		return Building.BLOCK
-	return ""
 
 
 func _player_positions() -> Array[Vector2]:
@@ -512,7 +501,11 @@ func _cancel_craft(player: PlayerState, index: int) -> void:
 	for part in recipe.get("entradas", []):
 		var left := player.inventory.add(part["id"], int(part["qtd"]))
 		if left > 0:
-			_message(player, "Sem espaço: %d %s perdidos." % [left, data.display_name(part["id"])], "aviso")
+			_message(
+				player,
+				"Sem espaço: %d %s perdidos." % [left, data.display_name(part["id"])],
+				"aviso"
+			)
 	player.craft_queue.remove_at(index)
 	_send_inventory(player)
 	_send_queue(player)
@@ -531,7 +524,9 @@ func _advance_crafting(player: PlayerState) -> void:
 			if not job["avisado"]:
 				job["avisado"] = true
 				_message(
-					player, "Inventário cheio: libere espaço para pegar %s." % recipe["nome"], "aviso"
+					player,
+					"Inventário cheio: libere espaço para pegar %s." % recipe["nome"],
+					"aviso"
 				)
 			return
 	player.craft_queue.pop_front()

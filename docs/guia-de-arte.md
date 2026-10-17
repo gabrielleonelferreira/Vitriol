@@ -92,9 +92,9 @@ Ajustado no teste da Onda 3: com 45% no Solo, a terra ficava mais clara que o c�
 
 | Fonte de luz | Cor | Alcance | Comportamento |
 | --- | --- | --- | --- |
-| Tocha | `#e2b33c` | 6 tiles | Tremula levemente |
+| Tocha | `#e2b33c` | 9 tiles | Tremula levemente |
 | Fogueira | `#f28a5c` | 7 tiles | Tremula |
-| Fornalha acesa | `#e0503a` | 5 tiles | Pulsa quando está fundindo |
+| Fornalha acesa | `#e0503a` | 6 tiles | Pulsa quando está fundindo |
 | Lava | `#e0503a` | 4 tiles | Constante |
 | Raio | `#c8f0ff` | 20 tiles | Clarão de 0,15 s |
 | Fulgurito e vidro de tempestade | `#7ad8ff` | 2 tiles | Pulso lento |
@@ -148,6 +148,17 @@ quadril e um frasco verde com rolha; olho, sobrancelha, orelha e mechas de cabel
 cadarço e sola. Contorno colorido em volta da silhueta inteira.
 
 Animações prontas: parado (4), andar (8), pular (2). Minerar e fabricar entram com as ações (Ondas 3 e 4).
+
+### Estações e blocos construídos (Onda 4)
+
+`tools/art/gerar_itens.py` desenha as estações no mundo em `art/tiles/objetos.png` (uma linha por
+objeto, quadros na horizontal; `objetos.json` diz quantos quadros e a velocidade): fogueira com 3
+quadros de chama, bancada, fornalha de argila, forno de tijolos e forno de vidro com 2 quadros de
+brasa. Fornalha, forno e forno de vidro emitem luz (raio 6) nas cores da tabela acima.
+
+Blocos feitos pelo jogador (tijolo, tijolo refratário, argamassa, vidro, vidro de tempestade) não têm
+parede de fundo natural: aparecem com junta de argamassa (tijolos) ou reflexo diagonal (vidro). O vidro
+deixa ver a parede e o céu atrás e não segura a luz.
 
 ## Referências de estilo
 

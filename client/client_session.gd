@@ -56,6 +56,14 @@ func swap_slots(a: int, b: int) -> void:
 	transport.send({"type": Commands.SWAP_SLOTS, "a": a, "b": b})
 
 
+func craft(recipe_id: String, qtd: int = 1) -> void:
+	transport.send({"type": Commands.CRAFT, "receita": recipe_id, "qtd": qtd})
+
+
+func craft_cancel(index: int) -> void:
+	transport.send({"type": Commands.CRAFT_CANCEL, "index": index})
+
+
 func debug_kit() -> void:
 	transport.send({"type": Commands.DEBUG_KIT})
 

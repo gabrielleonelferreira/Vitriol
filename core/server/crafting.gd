@@ -50,7 +50,10 @@ static func status(
 	if not is_unlocked(recipe, mastery, known):
 		if recipe["desbloqueio"] == "xp":
 			return _fail(
-				"%s nível %d" % [Mastery.display_name(recipe["maestria"]), int(recipe["nivel_maestria"])]
+				(
+					"%s nível %d"
+					% [Mastery.display_name(recipe["maestria"]), int(recipe["nivel_maestria"])]
+				)
 			)
 		return _fail("Receita secreta: descubra experimentando")
 	if not recipe["requer"].is_empty():

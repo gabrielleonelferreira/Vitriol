@@ -2,9 +2,9 @@ id,nome,tipo,material_base,poder_mineracao,durabilidade,temperatura_max_c,descri
 mao,Mãos,estacao,,1,,,"Fazer à mão, sem estação. Minera blocos de dureza até 1.",,
 fogueira,Fogueira,estacao,madeira,,,600,Queima madeira. Luz e calor básicos.,7,f28a5c
 bancada,Bancada,estacao,madeira,,,,Montagem de ferramentas e misturas. Coloque com o botão direito.,,
-fornalha,Fornalha de argila,estacao,argila,,,1250,"Forno de redução a carvão vegetal, com fole. Funde e reduz minérios.",4,e0503a
-forno,Forno de tijolos,estacao,tijolo,,,1200,"Calcinação, coqueificação e cozimento de cerâmica.",4,e2b33c
-forno_de_vidro,Forno de vidro,estacao,tijolo_refratario,,,1400,Funde vidro. Revestido de tijolo refratário.,4,f28a5c
+fornalha,Fornalha de argila,estacao,argila,,,1250,"Forno de redução a carvão vegetal, com fole. Funde e reduz minérios.",6,e0503a
+forno,Forno de tijolos,estacao,tijolo,,,1200,"Calcinação, coqueificação e cozimento de cerâmica.",6,e2b33c
+forno_de_vidro,Forno de vidro,estacao,tijolo_refratario,,,1400,Funde vidro. Revestido de tijolo refratário.,6,f28a5c
 raio,Raio,fenomeno,,,,30000,Descarga de tempestade ou da Tempestária. Chega a cerca de 30.000 °C.,20,c8f0ff
 picareta_silex,Picareta de sílex,ferramenta,silex,4,40,,"Dura, mas quebra fácil.",,
 picareta_cobre,Picareta de cobre,ferramenta,lingote_cobre,4,150,,Mesma força do sílex e muito mais durável.,,
