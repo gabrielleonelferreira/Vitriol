@@ -142,6 +142,8 @@ def load_itens() -> list[dict]:
             "durabilidade": _int(r["durabilidade"]),
             "temperatura_max_c": _num(r["temperatura_max_c"]),
             "descricao": _text(r["descricao"]),
+            "luz_raio": _num(r.get("luz_raio", "")),
+            "luz_cor": _opt_id(r.get("luz_cor", "")),
         })
     return rows
 

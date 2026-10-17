@@ -7,6 +7,10 @@ const TEST_DIR := "res://tests"
 
 
 func _initialize() -> void:
+	# O servidor do jogo (autoload) não deve gravar saves durante os testes.
+	var game_server := root.get_node_or_null("GameServer")
+	if game_server:
+		game_server.save_name = ""
 	var filter := ""
 	var args := OS.get_cmdline_user_args()
 	if not args.is_empty():
@@ -22,6 +26,11 @@ func _initialize() -> void:
 		if file == "test_case.gd":
 			continue
 		var script: GDScript = load("%s/%s" % [TEST_DIR, file])
+		if script == null or not script.can_instantiate():
+			total_failures += 1
+			total_tests += 1
+			printerr("  FALHA %s: o arquivo não compila (veja o erro acima)" % file)
+			continue
 		for method in script.get_script_method_list():
 			var name: String = method["name"]
 			if not name.begins_with("test_"):

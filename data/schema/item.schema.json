@@ -2,21 +2,83 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vitriol.local/schema/item.schema.json",
   "title": "Item",
-  "description": "Ferramenta, estação de trabalho ou fenômeno usado como estação (ex.: raio).",
+  "description": "Ferramenta, estação de trabalho, objeto colocável (ex.: tocha) ou fenômeno usado como estação (ex.: raio).",
   "type": "object",
   "additionalProperties": false,
-  "required": ["id", "nome", "tipo"],
+  "required": [
+    "id",
+    "nome",
+    "tipo"
+  ],
   "properties": {
-    "id": {"$ref": "comum.schema.json#/$defs/id"},
-    "nome": {"type": "string", "minLength": 1},
-    "tipo": {"enum": ["ferramenta", "estacao", "fenomeno"]},
-    "material_base": {"anyOf": [{"$ref": "comum.schema.json#/$defs/id"}, {"type": "null"}]},
+    "id": {
+      "$ref": "comum.schema.json#/$defs/id"
+    },
+    "nome": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tipo": {
+      "enum": [
+        "ferramenta",
+        "estacao",
+        "objeto",
+        "fenomeno"
+      ]
+    },
+    "material_base": {
+      "anyOf": [
+        {
+          "$ref": "comum.schema.json#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "poder_mineracao": {
       "description": "Minera blocos com dureza_bloco menor ou igual a este valor. Mãos = 1.",
-      "type": ["number", "null"], "minimum": 0, "maximum": 10
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10
     },
-    "durabilidade": {"description": "Usos antes de quebrar. Nulo = não desgasta.", "type": ["integer", "null"], "minimum": 1},
-    "temperatura_max_c": {"description": "Temperatura máxima que a estação alcança (°C).", "type": ["number", "null"]},
-    "descricao": {"type": "string"}
+    "durabilidade": {
+      "description": "Usos antes de quebrar. Nulo = não desgasta.",
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1
+    },
+    "temperatura_max_c": {
+      "description": "Temperatura máxima que a estação alcança (°C).",
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "descricao": {
+      "type": "string"
+    },
+    "luz_raio": {
+      "description": "Alcance da luz em tiles quando colocado ou segurado. Nulo = não emite luz.",
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 30
+    },
+    "luz_cor": {
+      "description": "Cor da luz (hex da paleta, sem #).",
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{6}$"
+    }
   }
 }

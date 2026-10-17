@@ -27,6 +27,9 @@ var solid: PackedByteArray = []
 var liquid: PackedByteArray = []
 var hardness: PackedFloat32Array = []
 var drops: PackedStringArray = []
+## Luz emitida pelo tile (tochas): alcance em tiles (0 = não emite) e cor.
+var light_radius: PackedFloat32Array = []
+var light_color: Array[Color] = []
 var _ids: Dictionary = {}
 
 
@@ -44,6 +47,19 @@ static func from_data(data: DataStore) -> TileRegistry:
 	for id in block_ids:
 		registry._add(id, true, false, float(data.materials[id]["dureza_bloco"]), id)
 	registry._add(WATER, false, true, 0.0, "")
+	# Objetos colocáveis (tochas...): não sólidos, quebram rápido e devolvem o próprio item.
+	var object_ids: Array = []
+	for id in data.items:
+		if data.items[id]["tipo"] == "objeto":
+			object_ids.append(id)
+	object_ids.sort()
+	for id in object_ids:
+		registry._add(id, false, false, 0.1, id)
+	for id in registry.names.size():
+		var item: Dictionary = data.items.get(registry.names[id], {})
+		if item.get("luz_raio") != null and item.get("luz_cor") != null:
+			registry.light_radius[id] = float(item["luz_raio"])
+			registry.light_color[id] = Color(str(item["luz_cor"]))
 	return registry
 
 
@@ -63,6 +79,8 @@ static func from_names(tile_names: PackedStringArray, data: DataStore) -> TileRe
 				reference.hardness[source],
 				reference.drops[source]
 			)
+			registry.light_radius[registry.size() - 1] = reference.light_radius[source]
+			registry.light_color[registry.size() - 1] = reference.light_color[source]
 	return registry
 
 
@@ -95,3 +113,5 @@ func _add(
 	liquid.append(1 if is_liquid_tile else 0)
 	hardness.append(hard)
 	drops.append(drop)
+	light_radius.append(0.0)
+	light_color.append(Color.WHITE)

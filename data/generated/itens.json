@@ -9,7 +9,9 @@
       "poder_mineracao": 1,
       "durabilidade": null,
       "temperatura_max_c": null,
-      "descricao": "Fazer à mão, sem estação. Minera blocos de dureza até 1."
+      "descricao": "Fazer à mão, sem estação. Minera blocos de dureza até 1.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "fogueira",
@@ -19,7 +21,9 @@
       "poder_mineracao": null,
       "durabilidade": null,
       "temperatura_max_c": 600,
-      "descricao": "Queima madeira. Luz e calor básicos."
+      "descricao": "Queima madeira. Luz e calor básicos.",
+      "luz_raio": 7,
+      "luz_cor": "f28a5c"
     },
     {
       "id": "bancada",
@@ -29,7 +33,9 @@
       "poder_mineracao": null,
       "durabilidade": null,
       "temperatura_max_c": null,
-      "descricao": "Montagem de ferramentas e misturas."
+      "descricao": "Montagem de ferramentas e misturas.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "fornalha",
@@ -39,7 +45,9 @@
       "poder_mineracao": null,
       "durabilidade": null,
       "temperatura_max_c": 1250,
-      "descricao": "Forno de redução a carvão vegetal, com fole. Funde e reduz minérios."
+      "descricao": "Forno de redução a carvão vegetal, com fole. Funde e reduz minérios.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "forno",
@@ -49,7 +57,9 @@
       "poder_mineracao": null,
       "durabilidade": null,
       "temperatura_max_c": 1200,
-      "descricao": "Calcinação, coqueificação e cozimento de cerâmica."
+      "descricao": "Calcinação, coqueificação e cozimento de cerâmica.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "forno_de_vidro",
@@ -59,7 +69,9 @@
       "poder_mineracao": null,
       "durabilidade": null,
       "temperatura_max_c": 1400,
-      "descricao": "Funde vidro. Revestido de tijolo refratário."
+      "descricao": "Funde vidro. Revestido de tijolo refratário.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "raio",
@@ -69,7 +81,9 @@
       "poder_mineracao": null,
       "durabilidade": null,
       "temperatura_max_c": 30000,
-      "descricao": "Descarga de tempestade ou da Tempestária. Chega a cerca de 30.000 °C."
+      "descricao": "Descarga de tempestade ou da Tempestária. Chega a cerca de 30.000 °C.",
+      "luz_raio": 20,
+      "luz_cor": "c8f0ff"
     },
     {
       "id": "picareta_silex",
@@ -79,7 +93,9 @@
       "poder_mineracao": 4,
       "durabilidade": 40,
       "temperatura_max_c": null,
-      "descricao": "Dura, mas quebra fácil."
+      "descricao": "Dura, mas quebra fácil.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "picareta_cobre",
@@ -89,7 +105,9 @@
       "poder_mineracao": 4,
       "durabilidade": 150,
       "temperatura_max_c": null,
-      "descricao": "Mesma força do sílex e muito mais durável."
+      "descricao": "Mesma força do sílex e muito mais durável.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "picareta_bronze",
@@ -99,7 +117,9 @@
       "poder_mineracao": 5,
       "durabilidade": 300,
       "temperatura_max_c": null,
-      "descricao": "Abre caminho pela camada Metamórfica."
+      "descricao": "Abre caminho pela camada Metamórfica.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "picareta_ferro",
@@ -109,7 +129,9 @@
       "poder_mineracao": 6,
       "durabilidade": 500,
       "temperatura_max_c": null,
-      "descricao": "Minera hematita."
+      "descricao": "Minera hematita.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "picareta_aco",
@@ -119,7 +141,9 @@
       "poder_mineracao": 7.5,
       "durabilidade": 1000,
       "temperatura_max_c": null,
-      "descricao": "Minera quartzo."
+      "descricao": "Minera quartzo.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "bateia",
@@ -129,7 +153,9 @@
       "poder_mineracao": null,
       "durabilidade": 200,
       "temperatura_max_c": null,
-      "descricao": "Prato raso para garimpar cascalho de rio."
+      "descricao": "Prato raso para garimpar cascalho de rio.",
+      "luz_raio": null,
+      "luz_cor": null
     },
     {
       "id": "balde",
@@ -139,7 +165,21 @@
       "poder_mineracao": null,
       "durabilidade": 300,
       "temperatura_max_c": null,
-      "descricao": "Carrega água."
+      "descricao": "Carrega água.",
+      "luz_raio": null,
+      "luz_cor": null
+    },
+    {
+      "id": "tocha",
+      "nome": "Tocha",
+      "tipo": "objeto",
+      "material_base": "madeira",
+      "poder_mineracao": null,
+      "durabilidade": null,
+      "temperatura_max_c": null,
+      "descricao": "Ilumina cavernas. Coloque com o botão direito.",
+      "luz_raio": 9,
+      "luz_cor": "e2b33c"
     }
   ]
 }
