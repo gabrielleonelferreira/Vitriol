@@ -95,45 +95,45 @@
       "material": "malaquita",
       "camada": 2,
       "forma": "veio",
-      "frequencia": 4,
-      "tamanho_min": 4,
-      "tamanho_max": 9,
+      "frequencia": 6,
+      "tamanho_min": 5,
+      "tamanho_max": 10,
       "observacao": "Veios de cobre"
     },
     {
       "material": "carvao_mineral",
       "camada": 2,
       "forma": "veio",
-      "frequencia": 5,
-      "tamanho_min": 6,
-      "tamanho_max": 14,
+      "frequencia": 6,
+      "tamanho_min": 8,
+      "tamanho_max": 16,
       "observacao": "Camadas de carvão"
     },
     {
       "material": "hematita",
       "camada": 3,
       "forma": "veio",
-      "frequencia": 4,
-      "tamanho_min": 4,
-      "tamanho_max": 10,
+      "frequencia": 6,
+      "tamanho_min": 5,
+      "tamanho_max": 12,
       "observacao": "Ferro em faixas"
     },
     {
       "material": "quartzo",
       "camada": 3,
       "forma": "veio",
-      "frequencia": 3,
+      "frequencia": 4,
       "tamanho_min": 3,
-      "tamanho_max": 7,
+      "tamanho_max": 8,
       "observacao": "Veios de quartzo"
     },
     {
       "material": "acantita",
       "camada": 3,
       "forma": "veio",
-      "frequencia": 1.2,
-      "tamanho_min": 2,
-      "tamanho_max": 5,
+      "frequencia": 1.5,
+      "tamanho_min": 3,
+      "tamanho_max": 6,
       "observacao": "Veios raros de prata"
     }
   ]
