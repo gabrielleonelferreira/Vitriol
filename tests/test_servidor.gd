@@ -68,3 +68,53 @@ func test_comando_desconhecido() -> void:
 	check_eq(received.back().get("type"), Events.ERROR, "comando desconhecido devolve erro")
 	transport.close()
 	server.free()
+
+
+func _joined(server: Node, received: Array[Dictionary]) -> LocalTransport:
+	var transport := LocalTransport.new(server)
+	transport.event_received.connect(func(event: Dictionary) -> void: received.append(event))
+	transport.open()
+	transport.send({"type": Commands.JOIN, "name": "Teste"})
+	server.step_once()
+	return transport
+
+
+func test_movimento_valido_e_aceito() -> void:
+	var server := _server()
+	var received: Array[Dictionary] = []
+	var transport := _joined(server, received)
+	var spawn: Vector2 = server.world.grid.spawn_position()
+	var target := spawn + Vector2(12, 0)
+	transport.send({"type": Commands.MOVE, "position": [target.x, target.y], "facing": 1})
+	server.step_once()
+	check_eq(server.players[transport.peer_id].position, target, "servidor aceita passo curto")
+	check_eq(received.back().get("type"), Events.PLAYER_MOVED, "avisa os outros do movimento")
+	transport.close()
+	server.free()
+
+
+func test_teleporte_e_corrigido() -> void:
+	var server := _server()
+	var received: Array[Dictionary] = []
+	var transport := _joined(server, received)
+	var spawn: Vector2 = server.world.grid.spawn_position()
+	var far := spawn + Vector2(900, -200)
+	transport.send({"type": Commands.MOVE, "position": [far.x, far.y]})
+	server.step_once()
+	check_eq(server.players[transport.peer_id].position, spawn, "posição continua a anterior")
+	check_eq(received.back().get("type"), Events.CORRECTION, "manda correção")
+	transport.close()
+	server.free()
+
+
+func test_dentro_da_rocha_e_corrigido() -> void:
+	var server := _server()
+	var received: Array[Dictionary] = []
+	var transport := _joined(server, received)
+	var spawn: Vector2 = server.world.grid.spawn_position()
+	var inside := spawn + Vector2(0, 20)
+	transport.send({"type": Commands.MOVE, "position": [inside.x, inside.y]})
+	server.step_once()
+	check_eq(received.back().get("type"), Events.CORRECTION, "não aceita o corpo dentro do chão")
+	transport.close()
+	server.free()

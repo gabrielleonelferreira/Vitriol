@@ -10,13 +10,20 @@ materiais por processos com base real e usa magia para criar o que a ciência so
 
 1. Instale o [Godot 4.7 ou mais recente](https://godotengine.org/download) (versão padrão, não a .NET).
 2. No Godot, **Importar** e escolha o arquivo `project.godot` desta pasta.
-3. Rode com **F5**. A tela deve mostrar "Vitriol — servidor local conectado (jogador 1)".
+3. Rode com **F5**.
+
+| Tecla | Ação |
+| --- | --- |
+| A / D ou ← / → | Andar |
+| Espaço, W ou ↑ | Pular (segure para pular mais alto; na água, nada) |
+| F3 | Mostrar ou esconder as informações de depuração |
 
 ## Comandos úteis
 
 ```
 python3 tools/build_data.py      # valida o conteúdo (CSV) e gera os dados do jogo
 python3 tools/check_project.py   # confere os caminhos res:// do projeto
+python3 tools/art/gerar_arte.py  # gera de novo a arte base (tiles e personagem)
 godot --headless --path . --import
 godot --headless --path . -s res://tests/run_tests.gd
 ```

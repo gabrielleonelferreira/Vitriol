@@ -6,3 +6,5 @@ extends RefCounted
 const JOIN := "join"
 const LEAVE := "leave"
 const PING := "ping"
+## Posição do próprio personagem: {"position": [x, y], "velocity": [x, y], "facing": 1}
+const MOVE := "move"

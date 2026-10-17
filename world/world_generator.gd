@@ -371,9 +371,9 @@ func _place_trees() -> void:
 		for h in range(1, tall + 1):
 			_grid.set_tile(x, ground - h, trunk)
 		var crown := ground - tall
-		for dy in range(-3, 2):
+		for dy in range(-3, 1):
 			for dx in range(-2, 3):
-				if absi(dx) == 2 and (dy == -3 or dy == 1):
+				if absi(dx) == 2 and (dy == -3 or dy == 0):
 					continue
 				var tx := x + dx
 				var ty := crown + dy

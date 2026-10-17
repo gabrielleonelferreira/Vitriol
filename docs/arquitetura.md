@@ -28,6 +28,27 @@ quando o multiplayer chegar (Onda 10).
 4. **Estado serializável.** `WorldState` e `PlayerState` expõem `to_dict()`, base para salvar e carregar
    (tarefa 3D) e para enviar estado pela rede.
 
+## Mundo e movimento (Onda 2)
+
+- **O servidor gera o mundo** (`world/world_generator.gd`) a partir de uma semente e o guarda em
+  `WorldState.grid`. Ao entrar, o cliente recebe `world_snapshot` (cópia da grade) e depois `joined`.
+- **O cliente move o próprio personagem** com `PlayerMotor` e envia `move` 20 vezes por segundo. Esperar
+  o servidor a cada passo deixaria o controle travado num jogo de plataforma; é o mesmo modelo do
+  Terraria.
+- **O servidor confere cada posição** com o mesmo `PlayerMotor`: fora do mundo, dentro de um bloco ou
+  rápida demais → manda `correction` com a última posição válida. Aceita → repassa `player_moved` aos
+  outros jogadores.
+- **Ações que mudam o mundo** (minerar, construir, fabricar) serão sempre decididas pelo servidor
+  (Ondas 3 e 4).
+
+```
+Cliente                         Servidor
+PlayerMotor.step() a 60 Hz
+   └─ move (20 Hz) ───────────▶ confere com PlayerMotor.overlaps_solid()
+                                 ├─ ok:    player_moved ─▶ outros clientes
+   ◀────────────── correction ──┴─ falha: volta para a última posição válida
+```
+
 ## Pastas por módulo
 
 | Pasta | Conteúdo | Onda |
@@ -35,10 +56,10 @@ quando o multiplayer chegar (Onda 10).
 | `core/server/` | GameServer, estado do mundo e dos jogadores | 1 |
 | `core/net/` | Transportes cliente ↔ servidor | 1 |
 | `core/shared/` | Comandos e eventos (contrato entre cliente e servidor) | 1 |
-| `client/` | Cena principal e sessão do cliente | 1 |
-| `world/` | Mundo em tiles e geração procedural | 2 (2A) |
-| `player/` | Personagem: movimento, física, câmera | 2 (2B) |
-| `data_loader/` | Leitura dos dados de jogo em `data/generated/` | 2 (2C) |
+| `client/` | Cena principal, sessão do cliente e desenho do mundo (`WorldView`) | 1, 2 |
+| `world/` | Grade de tiles, registro de tipos e gerador procedural | 2 (2A) |
+| `player/` | Física do personagem (`PlayerMotor`), personagem na tela, comandos de teclado | 2 (2B) |
+| `data_loader/` | Autoload `GameData`: dados de jogo de `data/generated/` | 2 (2C) |
 | `art/` | Paleta, tiles e sprites | 1 (1D), 2 (2D) |
 | `data/` | Esquema, conteúdo (CSV) e dados gerados (JSON) | 1 (1B, 1C) |
 | `tools/` | Ferramentas de desenvolvimento (validador de dados) | 1 |
@@ -53,5 +74,10 @@ Na primeira vez, importe o projeto (gera o cache de classes):
 
 ```
 godot --headless --path . --import
-godot --headless --path . -s res://tests/run_tests.gd
+godot --headless --path . -s res://tests/run_tests.gd            # todos os testes
+godot --headless --path . -s res://tests/run_tests.gd -- mundo   # só os que têm "mundo" no nome
+godot --path . -s res://tests/captura.gd -- <pasta>               # roda o jogo e salva prints
+godot --headless --path . -s res://world/export_map.gd -- <semente> <saida.png>   # mapa do mundo
 ```
+
+Os testes ficam em `tests/test_*.gd`; cada método `test_*` é um teste (base em `tests/test_case.gd`).

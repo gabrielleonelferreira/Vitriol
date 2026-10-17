@@ -14,6 +14,11 @@ const TICK_RATE := 20
 const TICK_INTERVAL := 1.0 / TICK_RATE
 ## Semente do mundo solo até existir o menu de novo mundo (Onda 3, salvar/carregar).
 const DEFAULT_SEED := 20261016
+## Validação de movimento: velocidade máxima aceita (px/s) e folga (px) para atrasos.
+const MAX_MOVE_SPEED := 620.0
+const MOVE_SLACK := 24.0
+## Tolerância (px) ao conferir se o personagem está dentro de um bloco.
+const SOLID_TOLERANCE := 2.0
 
 var world: WorldState = WorldState.new()
 var data: DataStore
@@ -101,6 +106,8 @@ func _handle(peer_id: int, command: Dictionary) -> void:
 			disconnect_peer(peer_id)
 		Commands.PING:
 			_emit(peer_id, {"type": Events.PONG, "tick": tick})
+		Commands.MOVE:
+			_move(peer_id, command)
 		_:
 			_emit(peer_id, {"type": Events.ERROR, "reason": "comando desconhecido"})
 
@@ -114,6 +121,7 @@ func _join(peer_id: int, display_name: String) -> void:
 		return
 	var player := PlayerState.new(peer_id, display_name)
 	player.position = world.grid.spawn_position()
+	player.last_move_tick = tick
 	players[peer_id] = player
 	_emit(peer_id, {"type": Events.WORLD_SNAPSHOT, "grid": world.grid.to_snapshot()})
 	_emit(
@@ -126,6 +134,40 @@ func _join(peer_id: int, display_name: String) -> void:
 			"tick": tick,
 		}
 	)
+
+
+## Aceita a posição enviada pelo cliente se ela for possível; se não, corrige.
+func _move(peer_id: int, command: Dictionary) -> void:
+	var player: PlayerState = players.get(peer_id)
+	if player == null:
+		return
+	var raw: Variant = command.get("position")
+	if typeof(raw) != TYPE_ARRAY or raw.size() != 2:
+		return
+	var target := Vector2(float(raw[0]), float(raw[1]))
+	var elapsed := maxf(1.0, tick - player.last_move_tick) * TICK_INTERVAL
+	var too_fast := target.distance_to(player.position) > MAX_MOVE_SPEED * elapsed + MOVE_SLACK
+	var grid := world.grid
+	var outside := (
+		target.x < 0
+		or target.y < PlayerMotor.HITBOX.y
+		or target.x > grid.width * WorldGrid.TILE_SIZE
+		or target.y > grid.height * WorldGrid.TILE_SIZE
+	)
+	if too_fast or outside or PlayerMotor.overlaps_solid(grid, target, SOLID_TOLERANCE):
+		_emit(
+			peer_id, {"type": Events.CORRECTION, "position": [player.position.x, player.position.y]}
+		)
+		return
+	player.position = target
+	var vel: Variant = command.get("velocity", [0, 0])
+	if typeof(vel) == TYPE_ARRAY and vel.size() == 2:
+		player.velocity = Vector2(float(vel[0]), float(vel[1]))
+	player.facing = 1 if int(command.get("facing", 1)) >= 0 else -1
+	player.last_move_tick = tick
+	var moved := player.to_dict()
+	moved["type"] = Events.PLAYER_MOVED
+	_emit(Events.BROADCAST, moved)
 
 
 func _emit(peer_id: int, event: Dictionary) -> void:
