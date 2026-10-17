@@ -3,7 +3,7 @@ extends Node
 ##
 ## No solo, roda no mesmo processo do cliente (servidor local). No multiplayer,
 ## o mesmo código roda num servidor dedicado. Regras:
-##   1. Só o servidor altera o estado (mundo e jogadores).
+##   1. Só o servidor altera o estado (mundo, jogadores, inventários).
 ##   2. Clientes enviam comandos (Commands) por um Transport.
 ##   3. O servidor responde com eventos (Events) pelo sinal event_emitted.
 ##   4. Comandos são processados em ticks fixos, na ordem em que chegaram.
@@ -12,49 +12,106 @@ signal event_emitted(peer_id: int, event: Dictionary)
 
 const TICK_RATE := 20
 const TICK_INTERVAL := 1.0 / TICK_RATE
-## Semente do mundo solo até existir o menu de novo mundo (Onda 3, salvar/carregar).
+## Semente usada quando nenhuma é passada (--semente=N na linha de comando).
 const DEFAULT_SEED := 20261016
+const DEFAULT_WORLD := "mundo_1"
 ## Validação de movimento: velocidade máxima aceita (px/s) e folga (px) para atrasos.
 const MAX_MOVE_SPEED := 620.0
 const MOVE_SLACK := 24.0
 ## Tolerância (px) ao conferir se o personagem está dentro de um bloco.
 const SOLID_TOLERANCE := 2.0
+const AUTOSAVE_SECONDS := 60.0
+## Itens com que todo jogador novo começa.
+const STARTER_KIT := [["tocha", 10]]
+const DEBUG_KIT_ITEMS := [
+	["picareta_silex", 1], ["picareta_bronze", 1], ["picareta_aco", 1], ["bateia", 1], ["tocha", 40]
+]
 
 var world: WorldState = WorldState.new()
 var data: DataStore
 var players: Dictionary = {}
 var tick: int = 0
+## Nome do mundo salvo. Vazio = não salva (testes).
+var save_name: String = ""
+## Jogadores que já estiveram no mundo, por nome (posição, inventário, descobertas).
+var saved_players: Dictionary = {}
 
 var _pending: Array[Dictionary] = []
 var _accumulator: float = 0.0
 var _next_peer_id: int = 1
 var _connected_peers: Dictionary = {}
+var _autosave_timer: float = 0.0
+var _dirty: bool = false
 
 
 func _ready() -> void:
-	start(DEFAULT_SEED, GameData)
+	var options := _command_line()
+	if options.has("novo"):
+		SaveGame.delete(options.get("mundo", DEFAULT_WORLD))
+	start(
+		int(options.get("semente", DEFAULT_SEED)),
+		GameData,
+		WorldGenerator.DEFAULT_WIDTH,
+		WorldGenerator.DEFAULT_HEIGHT,
+		options.get("mundo", DEFAULT_WORLD)
+	)
 
 
-## Gera o mundo e deixa o servidor pronto para receber jogadores.
+## Carrega o mundo salvo (se houver) ou gera um novo, e deixa o servidor pronto.
 func start(
 	world_seed: int,
 	game_data: DataStore,
 	width: int = WorldGenerator.DEFAULT_WIDTH,
-	height: int = WorldGenerator.DEFAULT_HEIGHT
+	height: int = WorldGenerator.DEFAULT_HEIGHT,
+	world_name: String = ""
 ) -> void:
 	data = game_data
-	world = WorldState.new(world_seed)
+	save_name = world_name
+	saved_players.clear()
 	if not data.loaded:
 		push_error("GameServer: dados de jogo não carregados; o mundo não foi gerado.")
+		world = WorldState.new(world_seed)
 		return
 	var started := Time.get_ticks_msec()
-	world.generate(data, width, height)
-	print(
-		(
-			"GameServer: mundo %dx%d gerado em %d ms (semente %d)"
-			% [width, height, Time.get_ticks_msec() - started, world_seed]
+	var saved := SaveGame.read(save_name) if not save_name.is_empty() else {}
+	if not saved.is_empty():
+		world = WorldState.from_save(saved["mundo"], data)
+		saved_players = saved.get("jogadores", {})
+		print(
+			(
+				"GameServer: mundo '%s' carregado em %d ms"
+				% [save_name, Time.get_ticks_msec() - started]
+			)
 		)
-	)
+	else:
+		world = WorldState.new(world_seed)
+		world.generate(data, width, height)
+		print(
+			(
+				"GameServer: mundo %dx%d gerado em %d ms (semente %d)"
+				% [width, height, Time.get_ticks_msec() - started, world_seed]
+			)
+		)
+
+
+## Grava o mundo e todos os jogadores. Devolve OK ou o erro.
+func save_now() -> Error:
+	if save_name.is_empty() or not world.is_ready():
+		return ERR_UNCONFIGURED
+	for player in players.values():
+		saved_players[player.display_name] = player.to_save()
+	var result := SaveGame.write(save_name, world, saved_players)
+	_dirty = false
+	_autosave_timer = 0.0
+	if result != OK:
+		push_error("GameServer: não consegui salvar (%s)" % error_string(result))
+	return result
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST or what == NOTIFICATION_EXIT_TREE:
+		if not save_name.is_empty():
+			save_now()
 
 
 ## Registra uma nova conexão e devolve o id dela.
@@ -69,7 +126,10 @@ func connect_peer() -> int:
 func disconnect_peer(peer_id: int) -> void:
 	_connected_peers.erase(peer_id)
 	if players.has(peer_id):
+		var player: PlayerState = players[peer_id]
+		saved_players[player.display_name] = player.to_save()
 		players.erase(peer_id)
+		_dirty = true
 		_emit(Events.BROADCAST, {"type": Events.PLAYER_LEFT, "player_id": peer_id})
 
 
@@ -88,7 +148,17 @@ func step_once() -> void:
 	_pending = []
 	for entry in batch:
 		_handle(entry["peer_id"], entry["command"])
-	world.step(tick)
+	for player in players.values():
+		if player.mining_active:
+			_advance_mining(player)
+	if world.is_ready():
+		world.step(TICK_INTERVAL)
+		if tick % TICK_RATE == 0:
+			_emit(Events.BROADCAST, {"type": Events.TIME, "time": world.time_of_day})
+	if not save_name.is_empty():
+		_autosave_timer += TICK_INTERVAL
+		if _autosave_timer >= AUTOSAVE_SECONDS and (_dirty or not players.is_empty()):
+			save_now()
 
 
 func _physics_process(delta: float) -> void:
@@ -99,6 +169,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _handle(peer_id: int, command: Dictionary) -> void:
+	var player: PlayerState = players.get(peer_id)
 	match command.get("type", ""):
 		Commands.JOIN:
 			_join(peer_id, str(command.get("name", "Alquimista")))
@@ -108,8 +179,38 @@ func _handle(peer_id: int, command: Dictionary) -> void:
 			_emit(peer_id, {"type": Events.PONG, "tick": tick})
 		Commands.MOVE:
 			_move(peer_id, command)
+		Commands.MINE:
+			if player:
+				_start_mining(
+					player, Vector2i(int(command.get("x", -1)), int(command.get("y", -1)))
+				)
+		Commands.MINE_STOP:
+			if player:
+				_stop_mining(player)
+		Commands.PLACE:
+			if player:
+				_place(player, Vector2i(int(command.get("x", -1)), int(command.get("y", -1))))
+		Commands.SELECT_SLOT:
+			if player:
+				player.selected = clampi(int(command.get("index", 0)), 0, Inventory.HOTBAR - 1)
+				_send_inventory(player)
+		Commands.SWAP_SLOTS:
+			if (
+				player
+				and player.inventory.swap(int(command.get("a", -1)), int(command.get("b", -1)))
+			):
+				_send_inventory(player)
+		Commands.DEBUG_KIT:
+			if player and OS.is_debug_build():
+				for entry in DEBUG_KIT_ITEMS:
+					_give(player, entry[0], entry[1])
+				_send_inventory(player)
+				_message(player, "Kit de teste recebido.", "info")
 		_:
 			_emit(peer_id, {"type": Events.ERROR, "reason": "comando desconhecido"})
+
+
+# ---------------------------------------------------------------- entrada e movimento
 
 
 func _join(peer_id: int, display_name: String) -> void:
@@ -119,21 +220,31 @@ func _join(peer_id: int, display_name: String) -> void:
 	if not world.is_ready():
 		_emit(peer_id, {"type": Events.ERROR, "reason": "mundo não está pronto"})
 		return
-	var player := PlayerState.new(peer_id, display_name)
+	var player := PlayerState.new(peer_id, display_name, data)
 	player.position = world.grid.spawn_position()
+	if saved_players.has(display_name):
+		player.load_save(saved_players[display_name])
+		if PlayerMotor.overlaps_solid(world.grid, player.position, SOLID_TOLERANCE):
+			player.position = world.grid.spawn_position()
+	else:
+		for entry in STARTER_KIT:
+			player.inventory.add(entry[0], entry[1])
+			player.discoveries[entry[0]] = true
 	player.last_move_tick = tick
 	players[peer_id] = player
-	_emit(peer_id, {"type": Events.WORLD_SNAPSHOT, "grid": world.grid.to_snapshot()})
+	var snapshot := world.grid.to_snapshot()
+	_emit(peer_id, {"type": Events.WORLD_SNAPSHOT, "grid": snapshot, "time": world.time_of_day})
 	_emit(
 		peer_id,
 		{
 			"type": Events.JOINED,
 			"player_id": peer_id,
 			"player": player.to_dict(),
-			"world": world.to_dict(),
+			"world": {"seed": world.world_seed},
 			"tick": tick,
 		}
 	)
+	_send_inventory(player)
 
 
 ## Aceita a posição enviada pelo cliente se ela for possível; se não, corrige.
@@ -170,5 +281,196 @@ func _move(peer_id: int, command: Dictionary) -> void:
 	_emit(Events.BROADCAST, moved)
 
 
+# ---------------------------------------------------------------- mineração
+
+
+func _start_mining(player: PlayerState, target: Vector2i) -> void:
+	if target != player.mining_target:
+		player.mining_target = target
+		player.mining_progress = 0.0
+	player.mining_active = true
+
+
+func _stop_mining(player: PlayerState) -> void:
+	player.mining_active = false
+	player.mining_progress = 0.0
+	_emit(player.player_id, {"type": Events.MINE_PROGRESS, "x": -1, "y": -1, "progress": -1.0})
+
+
+## Força e se é mão, a partir do item selecionado.
+func _tool_power(player: PlayerState) -> Array:
+	var held: Dictionary = player.selected_item()
+	var item: Dictionary = data.items.get(held.get("id", ""), {})
+	var power: Variant = item.get("poder_mineracao")
+	if power != null:
+		return [float(power), false]
+	return [MiningRules.HAND_POWER, true]
+
+
+func _advance_mining(player: PlayerState) -> void:
+	var grid := world.grid
+	var target := player.mining_target
+	var id := grid.get_tile(target.x, target.y)
+	if id <= 0 or grid.registry.is_liquid(id):
+		_stop_mining(player)
+		return
+	if not MiningRules.in_reach(player.position, target):
+		_stop_mining(player)
+		return
+	var hardness: float = grid.registry.hardness[id]
+	var tool := _tool_power(player)
+	var seconds := MiningRules.break_time(hardness, tool[0], tool[1])
+	if seconds == INF:
+		_stop_mining(player)
+		if hardness == INF:
+			_message(player, "Esta rocha é indestrutível.", "aviso")
+		else:
+			_message(
+				player,
+				(
+					"Muito duro para %s: precisa de força %s."
+					% [_tool_name(player, tool[1]), _fmt(hardness)]
+				),
+				"aviso"
+			)
+		return
+	player.mining_progress += TICK_INTERVAL / seconds
+	if player.mining_progress < 1.0:
+		_emit(
+			player.player_id,
+			{
+				"type": Events.MINE_PROGRESS,
+				"x": target.x,
+				"y": target.y,
+				"progress": player.mining_progress
+			}
+		)
+		return
+	_break_block(player, target, id, tool[1])
+
+
+func _break_block(player: PlayerState, target: Vector2i, id: int, is_hand: bool) -> void:
+	var grid := world.grid
+	var cells: Array[Vector2i] = [target]
+	if grid.registry.name_of(id) == TileRegistry.TRUNK:
+		cells = world.tree_from(target.x, target.y)
+	var drops := {}
+	for cell in cells:
+		var drop := _drop_for(player, grid.get_tile(cell.x, cell.y))
+		if not drop.is_empty():
+			drops[drop] = drops.get(drop, 0) + 1
+	for drop in drops:
+		if not player.inventory.can_add(drop, drops[drop]):
+			_stop_mining(player)
+			_message(player, "Inventário cheio.", "aviso")
+			return
+	var changes: Array = []
+	for cell in cells:
+		changes.append(world.set_tile(cell.x, cell.y, 0))
+	_dirty = true
+	_emit(Events.BROADCAST, {"type": Events.TILE_CHANGED, "changes": changes})
+	for drop in drops:
+		_give(player, drop, drops[drop])
+	if not is_hand and player.inventory.wear(player.selected):
+		_message(player, "Sua ferramenta quebrou.", "aviso")
+	player.mining_progress = 0.0
+	_emit(player.player_id, {"type": Events.MINE_PROGRESS, "x": -1, "y": -1, "progress": -1.0})
+	_send_inventory(player)
+
+
+## O que um tile rende ao quebrar. Cascalho com bateia vira garimpo.
+func _drop_for(player: PlayerState, id: int) -> String:
+	var name := world.grid.registry.name_of(id)
+	if name == "cascalho" and player.selected_item().get("id") == "bateia":
+		var roll := randf()
+		for entry in MiningRules.PANNING:
+			if roll <= entry[1]:
+				return entry[0]
+	return world.grid.registry.drops[id]
+
+
+func _tool_name(player: PlayerState, is_hand: bool) -> String:
+	if is_hand:
+		return "as mãos"
+	return data.display_name(player.selected_item().get("id", ""))
+
+
+# ---------------------------------------------------------------- colocar objetos
+
+
+func _place(player: PlayerState, target: Vector2i) -> void:
+	var held: Dictionary = player.selected_item()
+	var item_id: String = held.get("id", "")
+	var item: Dictionary = data.items.get(item_id, {})
+	if item.get("tipo") != "objeto":
+		return
+	var grid := world.grid
+	if not grid.in_bounds(target.x, target.y) or grid.get_tile(target.x, target.y) != 0:
+		return
+	if not MiningRules.in_reach(player.position, target):
+		return
+	var supported := (
+		grid.is_solid(target.x, target.y + 1)
+		or grid.is_solid(target.x - 1, target.y)
+		or grid.is_solid(target.x + 1, target.y)
+		or grid.get_wall(target.x, target.y) != 0
+	)
+	if not supported:
+		_message(player, "Precisa de um apoio: chão, parede ou bloco ao lado.", "aviso")
+		return
+	var tile_id := grid.registry.id_of(item_id)
+	if tile_id < 0 or not player.inventory.take_from(player.selected):
+		return
+	var change := world.set_tile(target.x, target.y, tile_id)
+	_dirty = true
+	_emit(Events.BROADCAST, {"type": Events.TILE_CHANGED, "changes": [change]})
+	_send_inventory(player)
+
+
+# ---------------------------------------------------------------- inventário e avisos
+
+
+func _give(player: PlayerState, id: String, qtd: int) -> void:
+	player.inventory.add(id, qtd)
+	if not player.discoveries.has(id):
+		player.discoveries[id] = true
+		var xp := int(data.get_material(id).get("xp_descoberta", 0))
+		_emit(
+			player.player_id,
+			{"type": Events.DISCOVERED, "id": id, "nome": data.display_name(id), "xp": xp}
+		)
+
+
+func _send_inventory(player: PlayerState) -> void:
+	_emit(
+		player.player_id,
+		{
+			"type": Events.INVENTORY,
+			"slots": player.inventory.to_array(),
+			"selected": player.selected,
+		}
+	)
+
+
+func _message(player: PlayerState, text: String, kind: String) -> void:
+	_emit(player.player_id, {"type": Events.MESSAGE, "text": text, "kind": kind})
+
+
 func _emit(peer_id: int, event: Dictionary) -> void:
 	event_emitted.emit(peer_id, event)
+
+
+static func _fmt(value: float) -> String:
+	return str(int(value)) if is_equal_approx(value, roundf(value)) else "%.1f" % value
+
+
+## Opções da linha de comando: --mundo=nome, --semente=N, --novo.
+static func _command_line() -> Dictionary:
+	var options := {}
+	for arg in OS.get_cmdline_user_args() + OS.get_cmdline_args():
+		if not arg.begins_with("--"):
+			continue
+		var parts := arg.trim_prefix("--").split("=", true, 1)
+		if parts[0] in ["mundo", "semente", "novo"]:
+			options[parts[0]] = parts[1] if parts.size() > 1 else true
+	return options

@@ -30,3 +30,5 @@ fazer_forno_de_vidro,Forno de vidro,bancada,montagem,tijolo_refratario:8;argamas
 fundir_vidro,Fundir vidro,forno_de_vidro,fusao_vidro,areia:3;cal_virgem:1;cinzas:1,vidro:2,1100,,15,vidraria,10,experimentacao,,"Vidro medieval: areia, cal e potassa de cinzas."
 formar_fulgurito,Fulgurito,raio,descarga_eletrica,areia:4,fulgurito:1,1800,evento:tempestade|magia:tempestaria,1,arcano,20,experimentacao,,Fulguritos reais se formam quando raios atingem a areia.
 refinar_vidro_de_tempestade,Vidro de tempestade,forno_de_vidro,fusao_vidro,fulgurito:1;vidro:2,vidro_de_tempestade:1,1400,magia:tempestaria,30,arcano,40,xp,1,
+fazer_tocha_galho,Tocha de galho,mao,montagem,madeira:2,tocha:1,,,2,construcao,1,inicial,,Galho seco aceso: a tocha mais antiga.
+fazer_tocha,Tocha,mao,montagem,madeira:1;carvao_vegetal:1,tocha:4,,,2,construcao,2,inicial,,Carvão queima mais forte e por mais tempo.

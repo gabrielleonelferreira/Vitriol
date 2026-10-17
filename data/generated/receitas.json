@@ -908,6 +908,62 @@
       "desbloqueio": "xp",
       "nivel_maestria": 1,
       "base_real": ""
+    },
+    {
+      "id": "fazer_tocha_galho",
+      "nome": "Tocha de galho",
+      "estacao": "mao",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 2
+        }
+      ],
+      "saidas": [
+        {
+          "id": "tocha",
+          "qtd": 1
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 2,
+      "maestria": "construcao",
+      "xp": 1,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "Galho seco aceso: a tocha mais antiga."
+    },
+    {
+      "id": "fazer_tocha",
+      "nome": "Tocha",
+      "estacao": "mao",
+      "processo": "montagem",
+      "entradas": [
+        {
+          "id": "madeira",
+          "qtd": 1
+        },
+        {
+          "id": "carvao_vegetal",
+          "qtd": 1
+        }
+      ],
+      "saidas": [
+        {
+          "id": "tocha",
+          "qtd": 4
+        }
+      ],
+      "temperatura_min_c": null,
+      "requer": [],
+      "tempo_s": 2,
+      "maestria": "construcao",
+      "xp": 2,
+      "desbloqueio": "inicial",
+      "nivel_maestria": null,
+      "base_real": "Carvão queima mais forte e por mais tempo."
     }
   ]
 }
