@@ -8,7 +8,7 @@ materiais por processos com base real e usa magia para criar o que a ciência so
 
 ## Abrir o projeto
 
-1. Instale o [Godot 4.5 ou mais recente](https://godotengine.org/download) (versão padrão, não a .NET).
+1. Instale o [Godot 4.7 ou mais recente](https://godotengine.org/download) (versão padrão, não a .NET).
 2. No Godot, **Importar** e escolha o arquivo `project.godot` desta pasta.
 3. Rode com **F5**. A tela deve mostrar "Vitriol — servidor local conectado (jogador 1)".
 
