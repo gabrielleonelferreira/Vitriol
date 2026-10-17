@@ -25,9 +25,9 @@ fazer_picareta_aco,Picareta de aço,bancada,montagem,aco:3;madeira:2,picareta_ac
 fundir_prata,Fundir prata,fornalha,fundicao,acantita:2;carvao_vegetal:1,lingote_prata:1,1000,,8,metalurgia,10,xp,3,
 fundir_ouro,Fundir ouro,fornalha,fundicao,ouro_aluvial:3,lingote_ouro:1,1064,,8,metalurgia,10,xp,2,O ouro funde a 1.064 °C.
 fazer_tijolo_refratario,Tijolo refratário,forno,coccao,argila:2;areia:1,tijolo_refratario:1,1200,,12,construcao,6,xp,2,Argila refratária com areia suporta o calor dos fornos.
-misturar_argamassa,Argamassa,bancada,mistura,cal_virgem:1;areia:2;agua:1,argamassa:3,,,4,quimica,3,experimentacao,,A cal reage com o CO2 do ar e endurece.
+misturar_argamassa,Argamassa,bancada,mistura,cal_virgem:1;areia:2;agua:1,argamassa:3,,,4,quimica,3,xp,2,A cal reage com o CO2 do ar e endurece.
 fazer_forno_de_vidro,Forno de vidro,bancada,montagem,tijolo_refratario:8;argamassa:2,forno_de_vidro:1,,,8,construcao,8,xp,3,
-fundir_vidro,Fundir vidro,forno_de_vidro,fusao_vidro,areia:3;cal_virgem:1;cinzas:1,vidro:2,1100,,15,vidraria,10,experimentacao,,"Vidro medieval: areia, cal e potassa de cinzas."
+fundir_vidro,Fundir vidro,forno_de_vidro,fusao_vidro,areia:3;cal_virgem:1;cinzas:1,vidro:2,1100,,15,vidraria,10,inicial,,"Vidro medieval: areia, cal e potassa de cinzas."
 formar_fulgurito,Fulgurito,raio,descarga_eletrica,areia:4,fulgurito:1,1800,evento:tempestade|magia:tempestaria,1,arcano,20,experimentacao,,Fulguritos reais se formam quando raios atingem a areia.
 refinar_vidro_de_tempestade,Vidro de tempestade,forno_de_vidro,fusao_vidro,fulgurito:1;vidro:2,vidro_de_tempestade:1,1400,magia:tempestaria,30,arcano,40,xp,1,
 fazer_tocha_galho,Tocha de galho,mao,montagem,madeira:2,tocha:1,,,2,construcao,1,inicial,,Galho seco aceso: a tocha mais antiga.

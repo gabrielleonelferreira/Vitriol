@@ -58,6 +58,28 @@ PlayerMotor.step() a 60 Hz
    ◀────────────── correction ──┴─ falha: volta para a última posição válida
 ```
 
+## Fabricação, maestria e construção (Onda 4)
+
+![Onda 4](img/onda4.png)
+
+- **Fabricar** (`craft {receita, qtd}`): o servidor confere estação por perto (raio de 6 blocos,
+  `Crafting.stations_near`), nível de maestria, receita secreta e materiais (`Crafting.status`). Os
+  materiais saem do inventário na hora e o trabalho entra na fila do jogador (até 20). A cada tick o
+  primeiro trabalho anda; pronto, entrega a saída, soma XP e manda `inventory`, `craft_queue` e
+  `mastery`. Com o inventário cheio, o item espera na fila. `craft_cancel {index}` devolve os materiais.
+- **Maestria** (`core/server/mastery.gd`): XP por área (metalurgia, química, vidraria, construção,
+  arcano), níveis 1 a 10 pela tabela `LEVEL_XP`. Receitas com desbloqueio `xp` pedem um nível; as de
+  `experimentacao` ficam ocultas (`???`) até a Onda 5. Subir de nível manda um aviso.
+- **Construir** (`place {x, y}`): `Building.kind_for` diz se o item vira bloco, objeto ou estação, e
+  `Building.placement_problem` diz se cabe: estação precisa de chão; objeto, de chão, bloco ao lado ou
+  parede; bloco precisa encostar em algo e não pode prender ninguém. O cliente usa as mesmas funções
+  para pintar a moldura do mouse (branca = pode, vermelha = não), mas quem decide é o servidor.
+- **Painel** (`client/crafting_panel.gd`, tecla C): mostra todas as receitas por estação, quantos
+  materiais tem e faltam, e o motivo do bloqueio. O cliente calcula as estações por perto a cada 0,25 s
+  só para mostrar; a contagem regressiva da fila corre no cliente entre um aviso e outro do servidor.
+- Vidro é sólido mas **não opaco**: a luz e a parede de fundo aparecem através dele
+  (`TileRegistry.is_opaque`).
+
 ## Pastas por módulo
 
 | Pasta | Conteúdo | Onda |
@@ -65,7 +87,7 @@ PlayerMotor.step() a 60 Hz
 | `core/server/` | GameServer, estado do mundo e dos jogadores | 1 |
 | `core/net/` | Transportes cliente ↔ servidor | 1 |
 | `core/shared/` | Comandos e eventos (contrato entre cliente e servidor) | 1 |
-| `client/` | Cena principal, sessão do cliente e desenho do mundo (`WorldView`) | 1, 2 |
+| `client/` | Cena principal, sessão do cliente, desenho do mundo (`WorldView`), luz, HUD e painel de fabricação | 1–4 |
 | `world/` | Grade de tiles, registro de tipos e gerador procedural | 2 (2A) |
 | `player/` | Física do personagem (`PlayerMotor`), personagem na tela, comandos de teclado | 2 (2B) |
 | `data_loader/` | Autoload `GameData`: dados de jogo de `data/generated/` | 2 (2C) |

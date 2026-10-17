@@ -14,6 +14,12 @@ var inventory: Inventory
 var selected: int = 0
 ## Materiais e itens já descobertos (id -> true).
 var discoveries: Dictionary = {}
+## XP por área de maestria (metalurgia, química...).
+var mastery: Dictionary = {}
+## Receitas secretas já descobertas (id -> true). Preenchido na Onda 5 (tentativa e erro).
+var known_recipes: Dictionary = {}
+## Fila de fabricação: [{"receita": id, "restante": s, "total": s, "avisado": bool}]
+var craft_queue: Array[Dictionary] = []
 ## Mineração em andamento.
 var mining_active: bool = false
 var mining_target: Vector2i = Vector2i(-1, -1)
@@ -51,7 +57,17 @@ func to_save() -> Dictionary:
 		"inventario": inventory.to_array(),
 		"selecionado": selected,
 		"descobertas": discoveries.keys(),
+		"maestria": mastery.duplicate(),
+		"receitas_conhecidas": known_recipes.keys(),
+		"fila": _queue_for_save(),
 	}
+
+
+func _queue_for_save() -> Array:
+	var out: Array = []
+	for job in craft_queue:
+		out.append({"receita": job["receita"], "restante": job["restante"], "total": job["total"]})
+	return out
 
 
 func load_save(saved: Dictionary) -> void:
@@ -62,3 +78,23 @@ func load_save(saved: Dictionary) -> void:
 	discoveries.clear()
 	for id in saved.get("descobertas", []):
 		discoveries[str(id)] = true
+	mastery.clear()
+	var saved_mastery: Dictionary = saved.get("maestria", {})
+	for area in saved_mastery:
+		mastery[str(area)] = int(saved_mastery[area])
+	known_recipes.clear()
+	for id in saved.get("receitas_conhecidas", []):
+		known_recipes[str(id)] = true
+	craft_queue.clear()
+	for job in saved.get("fila", []):
+		(
+			craft_queue
+			. append(
+				{
+					"receita": str(job["receita"]),
+					"restante": float(job["restante"]),
+					"total": float(job["total"]),
+					"avisado": false,
+				}
+			)
+		)

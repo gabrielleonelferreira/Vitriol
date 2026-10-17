@@ -353,6 +353,55 @@ def hand() -> Image.Image:
     return outline(img)
 
 
+# ================================================================ estações no mundo
+
+
+def campfire_world(frame: int) -> Image.Image:
+    img = new()
+    d = ImageDraw.Draw(img)
+    for x, tone in ((1, "6b737c"), (4, "949ca3"), (10, "949ca3"), (13, "6b737c")):  # pedras em volta
+        d.ellipse([x, 12, x + 2, 14], fill=c(tone))
+    d.line([3, 14, 12, 11], fill=c("57432f"), width=2)
+    d.line([3, 11, 12, 14], fill=c("74593d"), width=2)
+    shapes = [
+        [(8, 2), (11, 8), (10, 11), (5, 11), (5, 6)],
+        [(7, 1), (11, 7), (10, 11), (5, 11), (4, 7)],
+        [(9, 3), (12, 8), (10, 11), (5, 11), (6, 5)],
+    ]
+    pts = shapes[frame % 3]
+    d.polygon(pts, fill=c("e0503a"))
+    d.polygon([(x + (1 if x < 8 else -1), y + 2) for x, y in pts], fill=c("e2b33c"))
+    d.point([7 + frame % 2, 8], fill=c("fbeeb0"))
+    d.point([8, 9], fill=c("fbeeb0"))
+    if frame == 1:
+        d.point([10, 0], fill=c("f28a5c"))  # fagulha
+    return outline(img)
+
+
+def oven_world(icon_painter, frame: int, glow_a: str, glow_b: str) -> Image.Image:
+    """Estação com brilho que pisca na boca do forno."""
+    img = icon_painter()
+    px = img.load()
+    for y in range(T):
+        for x in range(T):
+            r, g, b, a = px[x, y]
+            if a and (r, g, b) == A.PAL[glow_a]:
+                px[x, y] = c(glow_b if frame % 2 else glow_a)
+    return img
+
+
+STATION_FRAMES = {
+    "fogueira": ([campfire_world(f) for f in range(3)], 8),
+    "bancada": ([workbench()], 1),
+    "fornalha": ([oven_world(lambda: furnace(("57432f", "94744f", "b8956a"), "e0503a"), f, "e0503a", "f28a5c")
+                  for f in range(2)], 3),
+    "forno": ([oven_world(lambda: brick_oven(("5e161a", "8a2224", "b8322a"), "e2b33c"), f, "e2b33c", "f2d36b")
+               for f in range(2)], 3),
+    "forno_de_vidro": ([oven_world(lambda: brick_oven(("94744f", "e2b33c", "fbeeb0"), "7ad8ff"), f, "7ad8ff", "c8f0ff")
+                        for f in range(2)], 3),
+}
+
+
 # ================================================================ mapa id -> ícone
 
 METALS = {
@@ -448,13 +497,17 @@ def build(tiles: dict) -> dict:
         encoding="utf-8")
 
     # Objetos no mundo: uma linha por objeto, colunas = quadros de animação.
-    objects = new(3 * T, T)
-    for frame in range(3):
-        objects.alpha_composite(torch_frame(frame), (frame * T, 0))
+    world_objects = {"tocha": ([torch_frame(f) for f in range(3)], 8)}
+    world_objects.update(STATION_FRAMES)
+    objects = new(3 * T, T * len(world_objects))
+    meta = {}
+    for row, (name, (frames, fps)) in enumerate(world_objects.items()):
+        for col, frame in enumerate(frames):
+            objects.alpha_composite(quantize(frame), (col * T, row * T))
+        meta[name] = {"linha": row, "quadros": len(frames), "fps": fps}
     objects.save(ART / "tiles" / "objetos.png")
     (ART / "tiles" / "objetos.json").write_text(json.dumps(
-        {"objetos": {"tocha": {"linha": 0, "quadros": 3, "fps": 8}}}, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8")
+        {"objetos": meta}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     # Rachaduras: 4 estágios, cada um somando rachaduras ao anterior.
     cracks = new(4 * T, T)

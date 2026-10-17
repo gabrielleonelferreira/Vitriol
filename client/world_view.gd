@@ -217,8 +217,8 @@ func _draw_cell(x: int, y: int) -> void:
 	var variant := _variant(x, y)
 	var solid := grid.registry.is_solid(id)
 
-	# Parede e sombra: só onde o bloco da frente deixa ver o fundo.
-	if wall != 0 and not solid and _wall_row_by_id[wall] >= 0:
+	# Parede e sombra: só onde o bloco da frente deixa ver o fundo (ar, objetos, vidro).
+	if wall != 0 and not grid.registry.is_opaque(id) and _wall_row_by_id[wall] >= 0:
 		_walls.set_cell(cell, SOURCE_WALLS, Vector2i(variant, _wall_row_by_id[wall]))
 		var shadow := _shadow_mask(x, y)
 		if shadow != 0:

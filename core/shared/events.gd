@@ -21,6 +21,10 @@ const MINE_PROGRESS := "mine_progress"
 const MESSAGE := "message"
 ## Material ou item descoberto pela primeira vez: {"id", "nome", "xp"}
 const DISCOVERED := "discovered"
+## Fila de fabricação do próprio jogador: {"jobs": [{"receita", "restante", "total"}]}
+const CRAFT_QUEUE := "craft_queue"
+## XP de maestria do próprio jogador: {"xp": {area: int}}
+const MASTERY := "mastery"
 ## Hora do dia: {"time": 0..1}
 const TIME := "time"
 

@@ -4,6 +4,8 @@ extends CanvasLayer
 
 signal slot_selected(index: int)
 signal slots_swapped(a: int, b: int)
+signal craft_requested(recipe_id: String, qtd: int)
+signal craft_cancel_requested(index: int)
 
 const ICONS_PATH := "res://art/itens/icones.png"
 const ICONS_META := "res://art/itens/icones.json"
@@ -21,6 +23,10 @@ const COLORS := {
 var slots: Array = []
 var selected: int = 0
 var data: DataStore
+var mastery: Dictionary = {}
+var queue: Array = []
+var stations: Dictionary = {"mao": true}
+var crafting: CraftingPanel
 
 var _icon_texture: Texture2D
 var _slot_texture: Texture2D
@@ -34,6 +40,11 @@ var _toasts := VBoxContainer.new()
 var _item_label := Label.new()
 var _item_label_timer: float = 0.0
 var _picked: int = -1
+var _queue_box := Control.new()
+var _queue_icon := TextureRect.new()
+var _queue_bar := ColorRect.new()
+var _queue_count := Label.new()
+var _panel_timer: float = 0.0
 
 
 func setup(game_data: DataStore) -> void:
@@ -75,6 +86,36 @@ func setup(game_data: DataStore) -> void:
 	_item_label.position = Vector2(200, 360 - SLOT - 20)
 	add_child(_item_label)
 
+	crafting = CraftingPanel.new()
+	crafting.name = "Fabricacao"
+	crafting.visible = false
+	add_child(crafting)
+	crafting.setup(data, self)
+	crafting.craft_requested.connect(
+		func(id: String, qtd: int) -> void: craft_requested.emit(id, qtd)
+	)
+	crafting.cancel_requested.connect(func(i: int) -> void: craft_cancel_requested.emit(i))
+
+	# Trabalho em andamento, ao lado da barra: ícone, barra de progresso e quantos esperam.
+	_queue_box.position = Vector2(_hotbar.position.x + width + 6, _hotbar.position.y + 1)
+	_queue_box.visible = false
+	add_child(_queue_box)
+	_queue_icon.size = Vector2(16, 16)
+	_queue_box.add_child(_queue_icon)
+	var bar_back := ColorRect.new()
+	bar_back.color = Color("1b1714")
+	bar_back.position = Vector2(0, 17)
+	bar_back.size = Vector2(16, 2)
+	_queue_box.add_child(bar_back)
+	_queue_bar.color = Color("e2b33c")
+	_queue_bar.position = Vector2(0, 17)
+	_queue_bar.size = Vector2(0, 2)
+	_queue_box.add_child(_queue_bar)
+	_queue_count.add_theme_font_size_override("font_size", 8)
+	_style(_queue_count)
+	_queue_count.position = Vector2(18, 4)
+	_queue_box.add_child(_queue_count)
+
 	_toasts.position = Vector2(6, 236)
 	_toasts.size = Vector2(300, 100)
 	_toasts.alignment = BoxContainer.ALIGNMENT_END
@@ -91,6 +132,47 @@ func set_inventory(new_slots: Array, new_selected: int) -> void:
 		_paint(_panel_cells[i], _slot(i), i == _picked)
 	if changed_selection:
 		show_item_name()
+	_refresh_crafting()
+
+
+func set_mastery(xp: Dictionary) -> void:
+	mastery = xp
+	_refresh_crafting()
+
+
+func set_queue(jobs: Array) -> void:
+	queue = jobs
+	_queue_box.visible = not jobs.is_empty()
+	if not jobs.is_empty():
+		var job: Dictionary = jobs[0].duplicate()
+		jobs[0] = job
+		var recipe := data.get_recipe(job["receita"])
+		_queue_icon.texture = icon_for(recipe["saidas"][0]["id"])
+		var total := maxf(float(job["total"]), 0.01)
+		_queue_bar.size.x = 16.0 * clampf(1.0 - float(job["restante"]) / total, 0.0, 1.0)
+		_queue_count.text = "+%d" % (jobs.size() - 1) if jobs.size() > 1 else ""
+	_refresh_crafting()
+
+
+## Estações por perto mudaram (calculado pelo cliente para o painel).
+func set_stations(near: Dictionary) -> void:
+	if near.keys() != stations.keys():
+		stations = near
+		_refresh_crafting()
+
+
+func toggle_crafting() -> void:
+	crafting.visible = not crafting.visible
+	_refresh_crafting()
+
+
+func crafting_open() -> bool:
+	return crafting.visible
+
+
+func _refresh_crafting() -> void:
+	if crafting and crafting.visible:
+		crafting.refresh(slots, mastery, stations, queue)
 
 
 func selected_item() -> Dictionary:
@@ -141,6 +223,16 @@ func _process(delta: float) -> void:
 		_item_label_timer -= delta
 		if _item_label_timer <= 0.6:
 			_item_label.modulate.a = maxf(_item_label_timer / 0.6, 0.0)
+	# O servidor manda a fila só quando muda; a contagem regressiva corre aqui.
+	if not queue.is_empty():
+		var job: Dictionary = queue[0]
+		job["restante"] = maxf(float(job["restante"]) - delta, 0.0)
+		var total := maxf(float(job["total"]), 0.01)
+		_queue_bar.size.x = 16.0 * clampf(1.0 - float(job["restante"]) / total, 0.0, 1.0)
+		_panel_timer -= delta
+		if _panel_timer <= 0.0:
+			_panel_timer = 0.25
+			_refresh_crafting()
 
 
 func _slot(index: int) -> Dictionary:
@@ -195,6 +287,14 @@ func _paint(cell: Dictionary, slot: Dictionary, highlighted: bool) -> void:
 		cell["wear"].color = (
 			Color("86b85a") if ratio > 0.5 else Color("e2b33c") if ratio > 0.2 else Color("e0503a")
 		)
+
+
+func icon_for(id: String) -> Texture2D:
+	return _icon(id)
+
+
+func make_label(text: String, font_size: int) -> Label:
+	return _label(text, font_size)
 
 
 func _icon(id: String) -> Texture2D:

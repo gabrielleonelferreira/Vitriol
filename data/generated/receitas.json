@@ -771,8 +771,8 @@
       "tempo_s": 4,
       "maestria": "quimica",
       "xp": 3,
-      "desbloqueio": "experimentacao",
-      "nivel_maestria": null,
+      "desbloqueio": "xp",
+      "nivel_maestria": 2,
       "base_real": "A cal reage com o CO2 do ar e endurece."
     },
     {
@@ -835,7 +835,7 @@
       "tempo_s": 15,
       "maestria": "vidraria",
       "xp": 10,
-      "desbloqueio": "experimentacao",
+      "desbloqueio": "inicial",
       "nivel_maestria": null,
       "base_real": "Vidro medieval: areia, cal e potassa de cinzas."
     },

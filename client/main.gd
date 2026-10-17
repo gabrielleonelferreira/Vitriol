@@ -19,6 +19,7 @@ var _remotes: Dictionary = {}
 var _mining_tile := Vector2i(-1, -1)
 var _mine_timer: float = 0.0
 var _time_of_day: float = WorldState.START_TIME
+var _station_timer: float = 0.0
 
 @onready var _info: Label = $HUD/Info
 
@@ -30,6 +31,8 @@ func _ready() -> void:
 	_hud.setup(GameData)
 	_hud.slot_selected.connect(func(index: int) -> void: _session.select_slot(index))
 	_hud.slots_swapped.connect(func(a: int, b: int) -> void: _session.swap_slots(a, b))
+	_hud.craft_requested.connect(func(id: String, qtd: int) -> void: _session.craft(id, qtd))
+	_hud.craft_cancel_requested.connect(func(i: int) -> void: _session.craft_cancel(i))
 	_session = ClientSession.new()
 	_session.name = "ClientSession"
 	add_child(_session)
@@ -66,6 +69,10 @@ func _on_event(event: Dictionary) -> void:
 			var xp := int(event.get("xp", 0))
 			var suffix := "  +%d XP" % xp if xp > 0 else ""
 			_hud.toast("Descoberta: %s%s" % [event["nome"], suffix], "descoberta")
+		Events.MASTERY:
+			_hud.set_mastery(event["xp"])
+		Events.CRAFT_QUEUE:
+			_hud.set_queue(event["jobs"])
 		Events.TIME:
 			_time_of_day = float(event["time"])
 		Events.ERROR:
@@ -140,6 +147,10 @@ func _process(delta: float) -> void:
 		return
 	_update_pointer(delta)
 	_update_light()
+	_station_timer -= delta
+	if _station_timer <= 0.0:
+		_station_timer = 0.25
+		_hud.set_stations(Crafting.stations_near(_grid, GameData, _local.position))
 	var tile := WorldGrid.to_tile(_local.position)
 	var layer := clampi(_grid.layer_at(tile.x, tile.y - 1), 0, LAYER_NAMES.size() - 1)
 	var hour := int(_time_of_day * 24.0)
@@ -168,7 +179,7 @@ func _update_light() -> void:
 
 ## Moldura sob o mouse, minerar segurando o botão esquerdo, colocar com o direito.
 func _update_pointer(delta: float) -> void:
-	if _hud.inventory_open():
+	if _hud.inventory_open() or _over_crafting():
 		_mining_view.hide_cursor()
 		_stop_mining()
 		return
@@ -176,9 +187,15 @@ func _update_pointer(delta: float) -> void:
 	var in_reach := MiningRules.in_reach(_local.position, tile) and _grid.in_bounds(tile.x, tile.y)
 	var id := _grid.get_tile(tile.x, tile.y)
 	var held_id: String = _hud.selected_item().get("id", "")
-	var placing: bool = GameData.get_item(held_id).get("tipo") == "objeto"
+	var kind := Building.kind_for(GameData, held_id)
 	var can_mine: bool = id > 0 and not _grid.registry.is_liquid(id) and _breakable(id, held_id)
-	_mining_view.show_cursor(tile, in_reach and (can_mine or (placing and id == 0)))
+	var can_place := false
+	if not kind.is_empty() and (id == 0 or _grid.registry.is_liquid(id)):
+		var feet: Array[Vector2] = [_local.position]
+		for remote in _remotes.values():
+			feet.append(remote.position)
+		can_place = Building.placement_problem(_grid, tile, kind, feet).is_empty()
+	_mining_view.show_cursor(tile, in_reach and (can_mine or can_place))
 
 	if Input.is_action_pressed("minerar") and in_reach and id > 0:
 		if tile != _mining_tile:
@@ -209,9 +226,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		_info.visible = not _info.visible
 	elif event.is_action_pressed("inventario"):
 		_hud.toggle_inventory()
+	elif event.is_action_pressed("fabricar"):
+		_hud.toggle_crafting()
 	elif event.is_action_pressed("kit_teste"):
 		_session.debug_kit()
-	elif event.is_action_pressed("colocar") and _local and not _hud.inventory_open():
+	elif (
+		event.is_action_pressed("colocar")
+		and _local
+		and not _hud.inventory_open()
+		and not _over_crafting()
+	):
 		_session.place(WorldGrid.to_tile(get_global_mouse_position()))
 	elif event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
@@ -222,6 +246,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		for i in Inventory.HOTBAR:
 			if event.is_action_pressed("slot_%d" % (i + 1)):
 				_session.select_slot(i)
+
+
+func _over_crafting() -> bool:
+	var panel := _hud.crafting
+	return (
+		panel.visible
+		and Rect2(panel.global_position, panel.size).has_point(
+			_hud.get_viewport().get_mouse_position()
+		)
+	)
 
 
 static func _vec(value: Array) -> Vector2:

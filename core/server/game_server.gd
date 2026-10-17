@@ -151,6 +151,8 @@ func step_once() -> void:
 	for player in players.values():
 		if player.mining_active:
 			_advance_mining(player)
+		if not player.craft_queue.is_empty():
+			_advance_crafting(player)
 	if world.is_ready():
 		world.step(TICK_INTERVAL)
 		if tick % TICK_RATE == 0:
@@ -200,6 +202,12 @@ func _handle(peer_id: int, command: Dictionary) -> void:
 				and player.inventory.swap(int(command.get("a", -1)), int(command.get("b", -1)))
 			):
 				_send_inventory(player)
+		Commands.CRAFT:
+			if player:
+				_craft(player, str(command.get("receita", "")), int(command.get("qtd", 1)))
+		Commands.CRAFT_CANCEL:
+			if player:
+				_cancel_craft(player, int(command.get("index", -1)))
 		Commands.DEBUG_KIT:
 			if player and OS.is_debug_build():
 				for entry in DEBUG_KIT_ITEMS:
@@ -245,6 +253,8 @@ func _join(peer_id: int, display_name: String) -> void:
 		}
 	)
 	_send_inventory(player)
+	_send_mastery(player)
+	_send_queue(player)
 
 
 ## Aceita a posição enviada pelo cliente se ela for possível; se não, corrige.
@@ -398,28 +408,27 @@ func _tool_name(player: PlayerState, is_hand: bool) -> String:
 # ---------------------------------------------------------------- colocar objetos
 
 
+## Coloca no mundo o item selecionado: objeto (tocha), estação (bancada, fornalha...) ou bloco.
 func _place(player: PlayerState, target: Vector2i) -> void:
 	var held: Dictionary = player.selected_item()
 	var item_id: String = held.get("id", "")
-	var item: Dictionary = data.items.get(item_id, {})
-	if item.get("tipo") != "objeto":
+	var kind := Building.kind_for(data, item_id)
+	if kind.is_empty():
 		return
 	var grid := world.grid
-	if not grid.in_bounds(target.x, target.y) or grid.get_tile(target.x, target.y) != 0:
+	var tile_id := grid.registry.id_of(item_id)
+	if tile_id < 0 or not grid.in_bounds(target.x, target.y):
+		return
+	var current := grid.get_tile(target.x, target.y)
+	if current != 0 and not grid.registry.is_liquid(current):
 		return
 	if not MiningRules.in_reach(player.position, target):
 		return
-	var supported := (
-		grid.is_solid(target.x, target.y + 1)
-		or grid.is_solid(target.x - 1, target.y)
-		or grid.is_solid(target.x + 1, target.y)
-		or grid.get_wall(target.x, target.y) != 0
-	)
-	if not supported:
-		_message(player, "Precisa de um apoio: chão, parede ou bloco ao lado.", "aviso")
+	var problem := Building.placement_problem(grid, target, kind, _player_positions())
+	if not problem.is_empty():
+		_message(player, problem, "aviso")
 		return
-	var tile_id := grid.registry.id_of(item_id)
-	if tile_id < 0 or not player.inventory.take_from(player.selected):
+	if not player.inventory.take_from(player.selected):
 		return
 	var change := world.set_tile(target.x, target.y, tile_id)
 	_dirty = true
@@ -430,15 +439,131 @@ func _place(player: PlayerState, target: Vector2i) -> void:
 # ---------------------------------------------------------------- inventário e avisos
 
 
+func _player_positions() -> Array[Vector2]:
+	var out: Array[Vector2] = []
+	for player in players.values():
+		out.append(player.position)
+	return out
+
+
 func _give(player: PlayerState, id: String, qtd: int) -> void:
 	player.inventory.add(id, qtd)
 	if not player.discoveries.has(id):
 		player.discoveries[id] = true
-		var xp := int(data.get_material(id).get("xp_descoberta", 0))
+		var material := data.get_material(id)
+		var xp := int(material.get("xp_descoberta", 0))
 		_emit(
 			player.player_id,
 			{"type": Events.DISCOVERED, "id": id, "nome": data.display_name(id), "xp": xp}
 		)
+		if xp > 0:
+			_add_xp(player, str(material.get("maestria", "")), xp)
+
+
+# ---------------------------------------------------------------- fabricação e maestria
+
+
+func _craft(player: PlayerState, recipe_id: String, qtd: int) -> void:
+	var recipe := data.get_recipe(recipe_id)
+	if recipe.is_empty():
+		return
+	var stations := Crafting.stations_near(world.grid, data, player.position)
+	var made := 0
+	for n in clampi(qtd, 1, Crafting.MAX_QUEUE):
+		if player.craft_queue.size() >= Crafting.MAX_QUEUE:
+			_message(player, "A fila de produção está cheia.", "aviso")
+			break
+		var check := Crafting.status(
+			recipe, data, player.inventory, player.mastery, player.known_recipes, stations
+		)
+		if not check["ok"]:
+			if made == 0:
+				_message(player, "%s: %s." % [recipe["nome"], check["motivo"]], "aviso")
+			break
+		for part in recipe["entradas"]:
+			player.inventory.remove(part["id"], int(part["qtd"]))
+		var seconds := float(recipe["tempo_s"])
+		player.craft_queue.append(
+			{"receita": recipe_id, "restante": seconds, "total": seconds, "avisado": false}
+		)
+		made += 1
+	if made > 0:
+		_dirty = true
+		_send_inventory(player)
+		_send_queue(player)
+
+
+func _cancel_craft(player: PlayerState, index: int) -> void:
+	if index < 0 or index >= player.craft_queue.size():
+		return
+	var job: Dictionary = player.craft_queue[index]
+	var recipe := data.get_recipe(job["receita"])
+	for part in recipe.get("entradas", []):
+		var left := player.inventory.add(part["id"], int(part["qtd"]))
+		if left > 0:
+			_message(
+				player,
+				"Sem espaço: %d %s perdidos." % [left, data.display_name(part["id"])],
+				"aviso"
+			)
+	player.craft_queue.remove_at(index)
+	_send_inventory(player)
+	_send_queue(player)
+
+
+func _advance_crafting(player: PlayerState) -> void:
+	var job: Dictionary = player.craft_queue[0]
+	job["restante"] = maxf(float(job["restante"]) - TICK_INTERVAL, 0.0)
+	if job["restante"] > 0.0:
+		if tick % 5 == 0:
+			_send_queue(player)
+		return
+	var recipe := data.get_recipe(job["receita"])
+	for part in recipe["saidas"]:
+		if not player.inventory.can_add(part["id"], int(part["qtd"])):
+			if not job["avisado"]:
+				job["avisado"] = true
+				_message(
+					player,
+					"Inventário cheio: libere espaço para pegar %s." % recipe["nome"],
+					"aviso"
+				)
+			return
+	player.craft_queue.pop_front()
+	for part in recipe["saidas"]:
+		_give(player, part["id"], int(part["qtd"]))
+	_add_xp(player, recipe["maestria"], int(recipe["xp"]))
+	_message(player, "Pronto: %s." % recipe["nome"], "info")
+	_dirty = true
+	_send_inventory(player)
+	_send_queue(player)
+
+
+func _add_xp(player: PlayerState, area: String, amount: int) -> void:
+	if amount <= 0 or not area in Mastery.AREAS:
+		return
+	var before := int(player.mastery.get(area, 0))
+	player.mastery[area] = before + amount
+	var old_level := Mastery.level_for(before)
+	var new_level := Mastery.level_for(before + amount)
+	if new_level > old_level:
+		_message(
+			player,
+			"%s subiu para o nível %d!" % [Mastery.display_name(area), new_level],
+			"descoberta"
+		)
+	_send_mastery(player)
+
+
+func _send_mastery(player: PlayerState) -> void:
+	_emit(player.player_id, {"type": Events.MASTERY, "xp": player.mastery.duplicate()})
+
+
+func _send_queue(player: PlayerState) -> void:
+	var jobs: Array = []
+	for job in player.craft_queue:
+		jobs.append({"receita": job["receita"], "restante": job["restante"], "total": job["total"]})
+	_emit(player.player_id, {"type": Events.CRAFT_QUEUE, "jobs": jobs})
 
 
 func _send_inventory(player: PlayerState) -> void:

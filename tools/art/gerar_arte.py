@@ -179,6 +179,65 @@ def rocha_base(rng):
     return img
 
 
+# ================================================================ blocos construídos
+
+
+def tijolo(rng, ramp=("5e161a", "8a2224", "b8322a"), mortar="bfc5c9"):
+    """Tijolos em amarração (fiadas desencontradas) com argamassa clara."""
+    dark, mid, light = ramp
+    img = new()
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, T - 1, T - 1], fill=c(mortar))
+    for row in range(4):
+        y0 = row * 4
+        offset = 0 if row % 2 == 0 else 4
+        for x0 in range(-8 + offset, T, 8):
+            x1 = x0 + 6
+            if x1 < 0:
+                continue
+            d.rectangle([max(0, x0), y0, min(T - 1, x1), y0 + 2], fill=c(mid))
+            d.line([max(0, x0), y0, min(T - 1, x1), y0], fill=c(light))
+            d.line([max(0, x0), y0 + 2, min(T - 1, x1), y0 + 2], fill=c(dark))
+            if rng.random() < 0.3:
+                d.point([rng.randint(max(0, x0), max(0, min(T - 1, x1))), y0 + 1], fill=c(dark))
+    return img
+
+
+def tijolo_refratario(rng):
+    return tijolo(rng, ("94744f", "e2b33c", "fbeeb0"), "74593d")
+
+
+def argamassa(rng):
+    img = clustered(rng, ["949ca3", "bfc5c9", "e3e6e4"], [2, 6, 1.5], 4)
+    d = ImageDraw.Draw(img)
+    for _ in range(5):
+        d.point([rng.randrange(T), rng.randrange(T)], fill=c("6b737c"))
+    for _ in range(2):  # marcas de colher de pedreiro
+        x, y = rng.randrange(0, 10), rng.randrange(2, 14)
+        d.arc([x, y, x + 6, y + 3], 200, 340, fill=c("949ca3"))
+    return img
+
+
+def vidro(rng, tint=("4f86c0", "9fd3f0", "f7f6f0"), storm=False):
+    """Vidro: quase transparente, com reflexos diagonais. A moldura vem das bordas (máscara)."""
+    dark, mid, light = tint
+    img = new()
+    d = ImageDraw.Draw(img)
+    d.rectangle([0, 0, T - 1, T - 1], fill=c(mid, 60))
+    off = rng.randint(0, 4)
+    d.line([2 + off, 12, 9 + off, 5], fill=c(light, 200))
+    d.line([4 + off, 13, 11 + off, 6], fill=c(light, 110))
+    d.point([12, 3], fill=c(light, 230))
+    if storm:  # vidro de tempestade: um raio preso no vidro
+        d.line([7, 1, 5, 6, 8, 8, 6, 14], fill=c("7ad8ff", 230))
+        d.point([5, 6], fill=c("c8f0ff"))
+    return img
+
+
+def vidro_de_tempestade(rng):
+    return vidro(rng, ("2d4f80", "7ad8ff", "c8f0ff"), storm=True)
+
+
 # ================================================================ máscara e bordas
 
 
@@ -546,10 +605,19 @@ SOLIDS = {
     "calcario": (calcario, "4a5058", "e3e6e4", "6b737c"),
     "xisto": (xisto, "2b231d", "bfc5c9", "4a5058"),
     "rocha_base": (rocha_base, "0f0d0c", "3d3128", "0f0d0c"),
+    "tijolo": (tijolo, "3a0f12", "e0503a", "5e161a"),
+    "tijolo_refratario": (tijolo_refratario, "5c3d12", "fbeeb0", "94744f"),
+    "argamassa": (argamassa, "4a5058", "f7f6f0", "6b737c"),
+    "vidro": (vidro, "4f86c0", "f7f6f0", "2d4f80"),
+    "vidro_de_tempestade": (vidro_de_tempestade, "2d4f80", "c8f0ff", "1b2a4a"),
 }
+## Blocos construídos não viram parede de fundo (só as rochas naturais).
+BUILT = {"tijolo", "tijolo_refratario", "argamassa", "vidro", "vidro_de_tempestade"}
 ORES = {
     "malaquita": malaquita, "limonita": limonita, "carvao_mineral": carvao, "hematita": hematita,
     "quartzo": quartzo, "acantita": acantita, "silex": silex,
+    "cassiterita": lambda rng: ore_clusters(rng, ("0f0d0c", "2b231d", "94744f"), 6, (2, 3)),
+    "ouro_aluvial": lambda rng: ore_clusters(rng, ("8a5a12", "e2b33c", "fbeeb0"), 5, (2, 3), "f7f6f0"),
 }
 OTHER_ROWS = ["folhas", "tronco", "tronco_base", "agua", "agua_topo"]
 
@@ -580,8 +648,9 @@ def build_tiles() -> dict:
                     tile = agua(random.Random(seed), surface=name == "agua_topo")
                 atlas.paste(tile, ((mask * VARIANTS + v) * T, row * T))
 
-    walls = new(T * VARIANTS, T * len(SOLIDS))
-    for row, name in enumerate(SOLIDS):
+    natural = [name for name in SOLIDS if name not in BUILT]
+    walls = new(T * VARIANTS, T * len(natural))
+    for row, name in enumerate(natural):
         for v in range(VARIANTS):
             walls.paste(wall_of(SOLIDS[name][0](random.Random(f"{name}-{v}"))), (v * T, row * T))
 
@@ -616,7 +685,7 @@ def build_tiles() -> dict:
         "coluna": "mascara * variacoes + variacao",
         "mascara_bits": {"topo": TOP, "direita": RIGHT, "baixo": BOTTOM, "esquerda": LEFT},
         "tiles": {name: {"linha": i} for i, name in enumerate(rows)},
-        "paredes": {name: {"linha": i} for i, name in enumerate(SOLIDS)},
+        "paredes": {name: {"linha": i} for i, name in enumerate(natural)},
         "minerios": {name: {"linha": i} for i, name in enumerate(ORES)},
         "observacao": "Gerado por tools/art/gerar_arte.py. Minérios vão por cima da rocha da camada.",
     }
@@ -927,7 +996,8 @@ def board(t: dict, composite: Image.Image) -> None:
 
     ore_row = new(T * len(ORES), T)
     hosts = {"malaquita": "calcario", "limonita": "terra", "carvao_mineral": "calcario", "hematita": "xisto",
-             "quartzo": "xisto", "acantita": "xisto", "silex": "terra"}
+             "quartzo": "xisto", "acantita": "xisto", "silex": "terra",
+             "cassiterita": "cascalho", "ouro_aluvial": "cascalho"}
     for i, name in enumerate(ORES):
         ore_row.alpha_composite(tile(hosts[name], 0, i % VARIANTS), (i * T, 0))
         ore_row.alpha_composite(t["ores"].crop((i % VARIANTS * T, i * T, (i % VARIANTS + 1) * T, (i + 1) * T)), (i * T, 0))
