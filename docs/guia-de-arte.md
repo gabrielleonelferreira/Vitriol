@@ -102,26 +102,47 @@ No Godot: `CanvasModulate` para a luz ambiente de cada camada e `PointLight2D` p
 
 ## Arte gerada por código (Onda 2)
 
-A arte base é gerada por `tools/art/gerar_arte.py`, só com cores da paleta (o script recusa qualquer cor
-fora dela). Rodar de novo gera os mesmos arquivos.
+Toda a arte atual é gerada por `tools/art/gerar_arte.py`, só com cores da paleta (o script recusa
+qualquer cor fora dela). Rodar de novo gera os mesmos arquivos.
 
 ![Arte base](img/arte-base.png)
 
 | Arquivo | Conteúdo |
 | --- | --- |
-| `art/tiles/tiles.png` | Uma linha por tile: colunas 0–3 são variações da frente, 4–7 a parede de fundo |
+| `art/tiles/tiles.png` | Uma linha por tile; coluna = máscara × 4 + variação (16 máscaras × 4 variações) |
 | `art/tiles/minerios.png` | Minérios com fundo transparente, desenhados **por cima da rocha** da camada |
-| `art/tiles/bordas.png` | 16 máscaras de borda: contorno e brilho onde o bloco encosta no ar |
+| `art/tiles/paredes.png` | Paredes de fundo: versão escurecida e fria de cada rocha |
+| `art/tiles/sombras.png` | 16 sombras que os blocos projetam na parede ao lado |
+| `art/fundo/*.png` | Céu, montanhas, colinas com mata e nuvens (paralaxe) |
 | `art/personagem/*.png` | Uma folha por parte do corpo, 16 × 32 por quadro |
 
-Por que assim:
+### Como os blocos se encaixam
 
-- **Minério sobre a rocha:** malaquita no calcário tem fundo de calcário; no Solo, fundo de terra. Um
-  desenho por minério serve para qualquer camada.
-- **Bordas automáticas:** em vez de 47 variações de autotile por material, uma camada de bordas por cima
-  dá o contorno. Cantos arredondados ficam para o polimento.
-- **Formas distintas por minério:** faixas (hematita), prismas (quartzo), grãos redondos (prata), lascas
-  (carvão), manchas concêntricas (malaquita).
+Cada bloco tem 16 versões, uma para cada combinação de lados expostos ao ar (topo, direita, baixo,
+esquerda). Só nos lados expostos o bloco ganha:
+
+- contorno na cor mais escura **do próprio material** (não preto genérico);
+- brilho na borda de cima e pontilhado de luz na esquerda (luz vem de cima-esquerda);
+- sombra embaixo e à direita;
+- cantos arredondados onde dois lados vizinhos estão expostos.
+
+A grama nasce só no topo exposto, com lâminas irregulares na silhueta, flores ocasionais e escorre
+pelas laterais dos barrancos. A copa das árvores tem borda ondulada e cantos bem arredondados; o tronco
+tem casca com sulcos, nós, musgo e raízes na base.
+
+### Detalhes com fundo real
+
+- Calcário com estratificação e, às vezes, uma concha fóssil (o calcário se forma de conchas e corais).
+- Xisto com foliação inclinada, mica brilhando e granadas raras.
+- Malaquita em nódulos de faixas concêntricas; hematita em faixas; quartzo em prismas; prata em grãos
+  metálicos; sílex com córtex claro. Formas diferentes ajudam quem tem daltonismo.
+- Montanhas ao fundo mais claras e azuladas que as colinas (perspectiva atmosférica).
+
+### Personagem
+
+Túnica vermelha (Rubedo) com gola em V, alça de bolsa a tiracolo, cinto com fivela dourada, bolsa no
+quadril e um frasco verde com rolha; olho, sobrancelha, orelha e mechas de cabelo; botas com cano,
+cadarço e sola. Contorno colorido em volta da silhueta inteira.
 
 Animações prontas: parado (4), andar (8), pular (2). Minerar e fabricar entram com as ações (Ondas 3 e 4).
 

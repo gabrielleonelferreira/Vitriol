@@ -39,10 +39,15 @@ func _on_event(event: Dictionary) -> void:
 
 func _build_world(snapshot: Dictionary) -> void:
 	_grid = WorldGrid.from_snapshot(snapshot, GameData)
+	var background := Background.new()
+	background.name = "Fundo"
+	add_child(background)
+	move_child(background, 0)
+	background.build(_grid)
 	_world_view = WorldView.new()
 	_world_view.name = "Mundo"
 	add_child(_world_view)
-	move_child(_world_view, 0)
+	move_child(_world_view, 1)
 	_world_view.build(_grid, GameData)
 
 
