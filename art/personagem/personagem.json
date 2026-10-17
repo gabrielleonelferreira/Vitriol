@@ -1,0 +1,35 @@
+{
+  "quadro": [
+    16,
+    32
+  ],
+  "colunas": 8,
+  "animacoes": {
+    "parado": {
+      "linha": 0,
+      "quadros": 4
+    },
+    "andar": {
+      "linha": 1,
+      "quadros": 8
+    },
+    "pular": {
+      "linha": 2,
+      "quadros": 2
+    }
+  },
+  "partes": [
+    "contorno",
+    "braco_tras",
+    "pernas",
+    "tronco",
+    "cabeca",
+    "cabelo",
+    "braco_frente"
+  ],
+  "pes": [
+    8,
+    32
+  ],
+  "observacao": "Partes empilhadas na ordem de 'partes' (de trás para frente). Armadura, ferramenta e efeito entram nas Ondas 3-5."
+}
