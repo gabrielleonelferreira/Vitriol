@@ -22,6 +22,20 @@ func ping() -> void:
 	transport.send({"type": Commands.PING})
 
 
+func move(position: Vector2, velocity: Vector2, facing: int) -> void:
+	(
+		transport
+		. send(
+			{
+				"type": Commands.MOVE,
+				"position": [position.x, position.y],
+				"velocity": [velocity.x, velocity.y],
+				"facing": facing,
+			}
+		)
+	)
+
+
 func _on_event(event: Dictionary) -> void:
 	if event.get("type", "") == Events.JOINED:
 		player_id = int(event["player_id"])

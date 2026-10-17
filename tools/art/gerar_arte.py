@@ -46,14 +46,14 @@ def new_tile() -> Image.Image:
     return Image.new("RGBA", (T, T), (0, 0, 0, 0))
 
 
-def fill_noise(img: Image.Image, ramp: list[str], rng: random.Random, weights: list[float]) -> None:
+def fill_noise(img: Image.Image, ramp: list[str], rng: random.Random, weights: list[float], passes: int = 2) -> None:
     """Preenche com tons da rampa sorteados por peso, em blocos de 1-2 px para não virar chiado."""
     px = img.load()
     for y in range(T):
         for x in range(T):
             px[x, y] = c(rng.choices(ramp, weights)[0])
     # Agrupa: cada pixel tem chance de copiar o vizinho, formando manchas pequenas.
-    for _ in range(2):
+    for _ in range(passes):
         for y in range(T):
             for x in range(T):
                 if rng.random() < 0.45:
@@ -102,8 +102,9 @@ def nearest(rgb: tuple[int, int, int]) -> tuple[int, int, int]:
 
 def terra(rng):
     img = new_tile()
-    fill_noise(img, ["3d3128", "57432f", "74593d", "94744f"], rng, [1, 4, 6, 1.2])
-    for _ in range(rng.randint(1, 2)):
+    fill_noise(img, ["57432f", "74593d", "94744f"], rng, [2.5, 8, 0.8], passes=5)
+    speck(img, "3d3128", 3, rng)
+    for _ in range(rng.randint(0, 1)):
         pebble(img, rng.randrange(1, 12), rng.randrange(1, 12), rng.choice((3, 4)), 3, "3d3128", "94744f", "b8956a")
     return img
 
@@ -150,15 +151,15 @@ def cascalho(rng):
 
 def calcario(rng):
     img = new_tile()
-    fill_noise(img, ["949ca3", "bfc5c9", "e3e6e4"], rng, [1.5, 6, 2])
+    fill_noise(img, ["6b737c", "949ca3", "bfc5c9"], rng, [1.2, 6, 2.2], passes=4)
     d = ImageDraw.Draw(img)
     # Estratificação horizontal (camadas de sedimento).
     for y in (4 + rng.randrange(2), 11 + rng.randrange(2)):
-        d.line([0, y, T - 1, y], fill=c("949ca3"))
+        d.line([0, y, T - 1, y], fill=c("6b737c"))
     # Fósseis de concha.
     if rng.random() < 0.5:
         x, y = rng.randrange(2, 11), rng.randrange(2, 11)
-        d.arc([x, y, x + 4, y + 3], 180, 360, fill=c("6b737c"))
+        d.arc([x, y, x + 4, y + 3], 180, 360, fill=c("4a5058"))
     return img
 
 
@@ -208,23 +209,17 @@ def folhas(rng):
     img = new_tile()
     d = ImageDraw.Draw(img)
     greens = ["1f3a2a", "2f5a3a", "4f8a4a", "86b85a"]
-    for _ in range(14):
+    # Copa densa: base cheia e tufos por cima, com poucos furos para o céu.
+    d.rectangle([0, 0, T - 1, T - 1], fill=c(greens[1]))
+    for _ in range(3):
+        x, y = rng.randrange(0, T), rng.randrange(0, T)
+        d.point([x, y], fill=(0, 0, 0, 0))
+    for _ in range(9):
         x, y = rng.randrange(-2, 14), rng.randrange(-2, 14)
         r = rng.choice((3, 4, 4, 5))
-        d.ellipse([x, y, x + r, y + r], fill=c(greens[1]))
-    px = img.load()
-    for y in range(T):
-        for x in range(T):
-            if px[x, y][3] == 0:
-                continue
-            above = px[x, y - 1][3] if y > 0 else 0
-            below = px[x, y + 1][3] if y < T - 1 else 0
-            if above == 0:
-                px[x, y] = c(greens[3])
-            elif below == 0:
-                px[x, y] = c(greens[0])
-            elif rng.random() < 0.25:
-                px[x, y] = c(greens[2])
+        d.ellipse([x, y, x + r, y + r], fill=c(greens[2]))
+        d.arc([x, y, x + r, y + r], 200, 340, fill=c(greens[3]))
+        d.arc([x, y, x + r, y + r], 20, 160, fill=c(greens[0]))
     return img
 
 

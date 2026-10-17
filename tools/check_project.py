@@ -27,10 +27,13 @@ def main() -> int:
     checked = 0
     for path in files:
         for match in RES.finditer(path.read_text(encoding="utf-8")):
+            ref = match.group(1).rstrip(".,;:")
+            if "*" in ref or "%" in ref:
+                continue  # padrão ou caminho montado em código, não um arquivo
             checked += 1
-            target = ROOT / match.group(1)
+            target = ROOT / ref
             if not target.exists():
-                missing.append(f"{path.relative_to(ROOT)}: res://{match.group(1)}")
+                missing.append(f"{path.relative_to(ROOT)}: res://{ref}")
     if missing:
         print("Caminhos inexistentes:")
         for item in missing:
