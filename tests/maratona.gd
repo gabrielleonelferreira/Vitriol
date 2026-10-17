@@ -17,6 +17,10 @@ var _log: PackedStringArray = []
 var _bugs: PackedStringArray = []
 var _counts: Dictionary = {}
 var _slowest_tick_ms: float = 0.0
+var _target := Vector2i(-1, -1)
+var _wait_ticks := 0
+## Onde ficaram as estações colocadas (para voltar até elas antes de fabricar).
+var _stations: Dictionary = {}
 
 
 func _initialize() -> void:
@@ -106,11 +110,6 @@ func _drain() -> void:
 
 
 # ---------------------------------------------------------------- passos do plano
-
-var _target := Vector2i(-1, -1)
-var _wait_ticks := 0
-## Onde ficaram as estações colocadas (para voltar até elas antes de fabricar).
-var _stations: Dictionary = {}
 
 
 ## Junta `count` do item `item` minerando tiles chamados `tile`.
