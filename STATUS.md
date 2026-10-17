@@ -11,8 +11,9 @@ Onda 2 — Esqueleto técnico: **concluída** (marco `marco/onda-2`). Próxima: 
 - [x] 2B Personagem — `player/`: física própria contra a grade (coyote time, pulo guardado, altura
       variável, degrau automático, água), animação, câmera; servidor valida posições
 - [x] 2C Carregador de dados — autoload `GameData`; regras de geração em `data/content/geracao.csv`
-- [x] 2D Arte base — `tools/art/gerar_arte.py`: tiles, paredes, minérios sobre a rocha, bordas,
-      personagem em 7 camadas (contorno + 6 partes)
+- [x] 2D Arte base — `tools/art/gerar_arte.py`: blocos com 16 encaixes (contorno, brilho e cantos
+      arredondados nos lados expostos), grama e copa recortadas, raízes, paredes com sombra, minérios
+      sobre a rocha, fundo com paralaxe, personagem detalhado em 7 camadas
 
 ## Portão da Onda 2
 
@@ -43,6 +44,7 @@ Onda 2 — Esqueleto técnico: **concluída** (marco `marco/onda-2`). Próxima: 
   calcário (3), Metamórfica = xisto (5)
 - Mundo do MVP: 1200 × 260 tiles; gera em ~0,7 s; desenho inicial em ~1,3 s
 - Arte gerada por código com a paleta oficial; minérios desenhados por cima da rocha da camada
+- Encaixe dos blocos por máscara de 4 bits (16 versões por bloco) em vez de camada de bordas por cima
 - Primeira escola do MVP: Tempestária; a Pena de Ave-Trovão cai em tempestades (fonte provisória)
 
 ## Pendências e observações

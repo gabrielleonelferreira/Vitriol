@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c7pdbiqgp1hkv"
-path="res://.godot/imported/bordas.png-4088d828974500366ac4cd52380bf457.ctex"
+uid="uid://de8u15nrk1nwg"
+path="res://.godot/imported/montanhas.png-48e75a1aa4d99600e0d1d838d8247c06.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://art/tiles/bordas.png"
-dest_files=["res://.godot/imported/bordas.png-4088d828974500366ac4cd52380bf457.ctex"]
+source_file="res://art/fundo/montanhas.png"
+dest_files=["res://.godot/imported/montanhas.png-48e75a1aa4d99600e0d1d838d8247c06.ctex"]
 
 [params]
 

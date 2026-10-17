@@ -1,55 +1,79 @@
 {
   "tamanho": 16,
   "variacoes": 4,
-  "coluna_parede": 4,
+  "mascaras": 16,
+  "coluna": "mascara * variacoes + variacao",
+  "mascara_bits": {
+    "topo": 1,
+    "direita": 2,
+    "baixo": 4,
+    "esquerda": 8
+  },
   "tiles": {
     "terra": {
-      "linha": 0,
-      "parede": true
+      "linha": 0
     },
     "grama": {
-      "linha": 1,
-      "parede": true
+      "linha": 1
     },
     "argila": {
-      "linha": 2,
-      "parede": true
+      "linha": 2
     },
     "areia": {
-      "linha": 3,
-      "parede": true
+      "linha": 3
     },
     "cascalho": {
-      "linha": 4,
-      "parede": true
+      "linha": 4
     },
     "calcario": {
-      "linha": 5,
-      "parede": true
+      "linha": 5
     },
     "xisto": {
-      "linha": 6,
-      "parede": true
+      "linha": 6
     },
     "rocha_base": {
-      "linha": 7,
-      "parede": true
-    },
-    "tronco": {
-      "linha": 8,
-      "parede": false
+      "linha": 7
     },
     "folhas": {
-      "linha": 9,
-      "parede": false
+      "linha": 8
+    },
+    "tronco": {
+      "linha": 9
+    },
+    "tronco_base": {
+      "linha": 10
     },
     "agua": {
-      "linha": 10,
-      "parede": false
+      "linha": 11
     },
     "agua_topo": {
-      "linha": 11,
-      "parede": false
+      "linha": 12
+    }
+  },
+  "paredes": {
+    "terra": {
+      "linha": 0
+    },
+    "grama": {
+      "linha": 1
+    },
+    "argila": {
+      "linha": 2
+    },
+    "areia": {
+      "linha": 3
+    },
+    "cascalho": {
+      "linha": 4
+    },
+    "calcario": {
+      "linha": 5
+    },
+    "xisto": {
+      "linha": 6
+    },
+    "rocha_base": {
+      "linha": 7
     }
   },
   "minerios": {
@@ -75,5 +99,5 @@
       "linha": 6
     }
   },
-  "observacao": "Gerado por tools/art/gerar_arte.py. Minérios são desenhados por cima da rocha da camada."
+  "observacao": "Gerado por tools/art/gerar_arte.py. Minérios vão por cima da rocha da camada."
 }
