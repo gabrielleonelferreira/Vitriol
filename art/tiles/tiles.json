@@ -34,20 +34,35 @@
     "rocha_base": {
       "linha": 7
     },
-    "folhas": {
+    "tijolo": {
       "linha": 8
     },
-    "tronco": {
+    "tijolo_refratario": {
       "linha": 9
     },
-    "tronco_base": {
+    "argamassa": {
       "linha": 10
     },
-    "agua": {
+    "vidro": {
       "linha": 11
     },
-    "agua_topo": {
+    "vidro_de_tempestade": {
       "linha": 12
+    },
+    "folhas": {
+      "linha": 13
+    },
+    "tronco": {
+      "linha": 14
+    },
+    "tronco_base": {
+      "linha": 15
+    },
+    "agua": {
+      "linha": 16
+    },
+    "agua_topo": {
+      "linha": 17
     }
   },
   "paredes": {
@@ -97,6 +112,12 @@
     },
     "silex": {
       "linha": 6
+    },
+    "cassiterita": {
+      "linha": 7
+    },
+    "ouro_aluvial": {
+      "linha": 8
     }
   },
   "observacao": "Gerado por tools/art/gerar_arte.py. Minérios vão por cima da rocha da camada."

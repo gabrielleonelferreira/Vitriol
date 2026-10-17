@@ -4,6 +4,31 @@
       "linha": 0,
       "quadros": 3,
       "fps": 8
+    },
+    "fogueira": {
+      "linha": 1,
+      "quadros": 3,
+      "fps": 8
+    },
+    "bancada": {
+      "linha": 2,
+      "quadros": 1,
+      "fps": 1
+    },
+    "fornalha": {
+      "linha": 3,
+      "quadros": 2,
+      "fps": 3
+    },
+    "forno": {
+      "linha": 4,
+      "quadros": 2,
+      "fps": 3
+    },
+    "forno_de_vidro": {
+      "linha": 5,
+      "quadros": 2,
+      "fps": 3
     }
   }
 }

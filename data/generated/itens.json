@@ -33,7 +33,7 @@
       "poder_mineracao": null,
       "durabilidade": null,
       "temperatura_max_c": null,
-      "descricao": "Montagem de ferramentas e misturas.",
+      "descricao": "Montagem de ferramentas e misturas. Coloque com o botão direito.",
       "luz_raio": null,
       "luz_cor": null
     },
@@ -46,8 +46,8 @@
       "durabilidade": null,
       "temperatura_max_c": 1250,
       "descricao": "Forno de redução a carvão vegetal, com fole. Funde e reduz minérios.",
-      "luz_raio": null,
-      "luz_cor": null
+      "luz_raio": 4,
+      "luz_cor": "e0503a"
     },
     {
       "id": "forno",
@@ -58,8 +58,8 @@
       "durabilidade": null,
       "temperatura_max_c": 1200,
       "descricao": "Calcinação, coqueificação e cozimento de cerâmica.",
-      "luz_raio": null,
-      "luz_cor": null
+      "luz_raio": 4,
+      "luz_cor": "e2b33c"
     },
     {
       "id": "forno_de_vidro",
@@ -70,8 +70,8 @@
       "durabilidade": null,
       "temperatura_max_c": 1400,
       "descricao": "Funde vidro. Revestido de tijolo refratário.",
-      "luz_raio": null,
-      "luz_cor": null
+      "luz_raio": 4,
+      "luz_cor": "f28a5c"
     },
     {
       "id": "raio",

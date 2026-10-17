@@ -30,6 +30,8 @@ var drops: PackedStringArray = []
 ## Luz emitida pelo tile (tochas): alcance em tiles (0 = não emite) e cor.
 var light_radius: PackedFloat32Array = []
 var light_color: Array[Color] = []
+## Sólido mas deixa ver e passar luz (vidro).
+var transparent: PackedByteArray = []
 var _ids: Dictionary = {}
 
 
@@ -46,15 +48,20 @@ static func from_data(data: DataStore) -> TileRegistry:
 	block_ids.sort()
 	for id in block_ids:
 		registry._add(id, true, false, float(data.materials[id]["dureza_bloco"]), id)
+		if data.materials[id]["categoria"] == "vidro":
+			registry.transparent[registry.size() - 1] = 1
 	registry._add(WATER, false, true, 0.0, "")
-	# Objetos colocáveis (tochas...): não sólidos, quebram rápido e devolvem o próprio item.
+	# Objetos colocáveis (tochas) e estações (bancada, fornalha...): não sólidos, quebram rápido e
+	# devolvem o próprio item.
 	var object_ids: Array = []
 	for id in data.items:
-		if data.items[id]["tipo"] == "objeto":
+		var kind: String = data.items[id]["tipo"]
+		if kind == "objeto" or (kind == "estacao" and id != "mao"):
 			object_ids.append(id)
 	object_ids.sort()
 	for id in object_ids:
-		registry._add(id, false, false, 0.1, id)
+		var hard := 0.1 if data.items[id]["tipo"] == "objeto" else 0.8
+		registry._add(id, false, false, hard, id)
 	for id in registry.names.size():
 		var item: Dictionary = data.items.get(registry.names[id], {})
 		if item.get("luz_raio") != null and item.get("luz_cor") != null:
@@ -80,6 +87,7 @@ static func from_names(tile_names: PackedStringArray, data: DataStore) -> TileRe
 				reference.drops[source]
 			)
 			registry.light_radius[registry.size() - 1] = reference.light_radius[source]
+			registry.transparent[registry.size() - 1] = reference.transparent[source]
 			registry.light_color[registry.size() - 1] = reference.light_color[source]
 	return registry
 
@@ -94,6 +102,11 @@ func name_of(id: int) -> String:
 
 func is_solid(id: int) -> bool:
 	return id >= 0 and id < solid.size() and solid[id] == 1
+
+
+## Bloqueia a visão e a luz (sólido e não transparente).
+func is_opaque(id: int) -> bool:
+	return is_solid(id) and transparent[id] == 0
 
 
 func is_liquid(id: int) -> bool:
@@ -114,4 +127,5 @@ func _add(
 	hardness.append(hard)
 	drops.append(drop)
 	light_radius.append(0.0)
+	transparent.append(0)
 	light_color.append(Color.WHITE)

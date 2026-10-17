@@ -18,5 +18,9 @@ const PLACE := "place"
 const SELECT_SLOT := "select_slot"
 ## Troca dois espaços do inventário: {"a", "b"}
 const SWAP_SLOTS := "swap_slots"
+## Fabrica uma receita: {"receita": id, "qtd": 1..20}. Entra na fila de produção.
+const CRAFT := "craft"
+## Cancela um trabalho da fila e devolve os materiais: {"index": int}
+const CRAFT_CANCEL := "craft_cancel"
 ## Só em versão de desenvolvimento: dá um kit de teste (picaretas e tochas).
 const DEBUG_KIT := "debug_kit"
