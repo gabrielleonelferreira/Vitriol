@@ -12,8 +12,11 @@ signal event_emitted(peer_id: int, event: Dictionary)
 
 const TICK_RATE := 20
 const TICK_INTERVAL := 1.0 / TICK_RATE
+## Semente do mundo solo até existir o menu de novo mundo (Onda 3, salvar/carregar).
+const DEFAULT_SEED := 20261016
 
 var world: WorldState = WorldState.new()
+var data: DataStore
 var players: Dictionary = {}
 var tick: int = 0
 
@@ -21,6 +24,32 @@ var _pending: Array[Dictionary] = []
 var _accumulator: float = 0.0
 var _next_peer_id: int = 1
 var _connected_peers: Dictionary = {}
+
+
+func _ready() -> void:
+	start(DEFAULT_SEED, GameData)
+
+
+## Gera o mundo e deixa o servidor pronto para receber jogadores.
+func start(
+	world_seed: int,
+	game_data: DataStore,
+	width: int = WorldGenerator.DEFAULT_WIDTH,
+	height: int = WorldGenerator.DEFAULT_HEIGHT
+) -> void:
+	data = game_data
+	world = WorldState.new(world_seed)
+	if not data.loaded:
+		push_error("GameServer: dados de jogo não carregados; o mundo não foi gerado.")
+		return
+	var started := Time.get_ticks_msec()
+	world.generate(data, width, height)
+	print(
+		(
+			"GameServer: mundo %dx%d gerado em %d ms (semente %d)"
+			% [width, height, Time.get_ticks_msec() - started, world_seed]
+		)
+	)
 
 
 ## Registra uma nova conexão e devolve o id dela.
@@ -80,8 +109,13 @@ func _join(peer_id: int, display_name: String) -> void:
 	if players.has(peer_id):
 		_emit(peer_id, {"type": Events.ERROR, "reason": "jogador já conectado"})
 		return
+	if not world.is_ready():
+		_emit(peer_id, {"type": Events.ERROR, "reason": "mundo não está pronto"})
+		return
 	var player := PlayerState.new(peer_id, display_name)
+	player.position = world.grid.spawn_position()
 	players[peer_id] = player
+	_emit(peer_id, {"type": Events.WORLD_SNAPSHOT, "grid": world.grid.to_snapshot()})
 	_emit(
 		peer_id,
 		{

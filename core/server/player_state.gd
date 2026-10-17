@@ -1,10 +1,14 @@
 class_name PlayerState
 extends RefCounted
-## Estado autoritativo de um jogador conectado.
+## Estado autoritativo de um jogador conectado. Posição em pixels (pés do personagem).
 
 var player_id: int = 0
 var display_name: String = ""
-var tile_position: Vector2i = Vector2i.ZERO
+var position: Vector2 = Vector2.ZERO
+var velocity: Vector2 = Vector2.ZERO
+var facing: int = 1
+## Tick do servidor em que a posição foi aceita pela última vez.
+var last_move_tick: int = 0
 
 
 func _init(new_id: int, new_name: String) -> void:
@@ -16,5 +20,7 @@ func to_dict() -> Dictionary:
 	return {
 		"player_id": player_id,
 		"display_name": display_name,
-		"tile_position": [tile_position.x, tile_position.y],
+		"position": [position.x, position.y],
+		"velocity": [velocity.x, velocity.y],
+		"facing": facing,
 	}
